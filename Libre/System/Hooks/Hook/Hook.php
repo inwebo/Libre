@@ -4,7 +4,8 @@ namespace Libre\System\Hooks {
 
     use Libre\Patterns\AdjustablePriorityQueue;
 
-    class Hook {
+    class Hook
+    {
         /**
          * @var string
          */
@@ -14,31 +15,71 @@ namespace Libre\System\Hooks {
          */
         protected $_callbacks;
 
-        static protected $_index = 0;
-
-        public function __construct($name, $direction = AdjustablePriorityQueue::ASC){
-            $this->_name = $name;
-            $this->_callbacks = new AdjustablePriorityQueue($direction);
-        }
-
-        public function getName() {
+        /**
+         * @return string
+         */
+        public function getName()
+        {
             return $this->_name;
         }
 
-        public function attachCallback(CallBack $callback, $priority = null) {
-            $priority = ( !is_null($priority) && is_int($priority) ) ? $priority : ++self::$_index;
-            $this->_callbacks->insert($callback,$priority);
+        /**
+         * @param string $name
+         */
+        protected function setName($name)
+        {
+            $this->_name = $name;
         }
 
+        /**
+         * @return AdjustablePriorityQueue
+         */
+        public function getCallbacks()
+        {
+            return $this->_callbacks;
+        }
+
+        /**
+         * @param AdjustablePriorityQueue $callbacks
+         */
+        public function setCallbacks($callbacks)
+        {
+            $this->_callbacks = $callbacks;
+        }
+
+        /**
+         * @var int
+         */
+        static protected $_index = 0;
+
+        /**
+         * @param $name
+         * @param int $direction
+         */
+        public function __construct($name, $direction = AdjustablePriorityQueue::ASC)
+        {
+            $this->setName($name);
+            $this->setCallbacks( new AdjustablePriorityQueue($direction) );
+        }
+
+        /**
+         * @param CallBack $callback
+         * @param null $priority
+         */
+        public function attachCallback(CallBack $callback, $priority = null)
+        {
+            $priority = (!is_null($priority) && is_int($priority)) ? $priority : ++self::$_index;
+            $this->_callbacks->insert($callback, $priority);
+        }
+
+        /**
+         * @param mixed $args
+         */
         public function call(&$args=null) {
             $this->_callbacks->rewind();
-            $buffer = array();
             while( $this->_callbacks->valid() ) {
-                $reflection = new \ReflectionMethod($this->_callbacks->current(), '__invoke');
-                $buffer[] = $reflection->invoke(
-                    $this->_callbacks->current(),
-                    $this->_callbacks->current()->getParameters()
-                );
+                $c = $this->_callbacks->current();
+                $args = $c->__invoke($args);
                 $this->_callbacks->next();
             }
         }
