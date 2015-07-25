@@ -13,7 +13,7 @@ Ajoute un nouveau handler à spl_autoload_register, offre une dernière chance d
 
 Manipule un namespace sous forme string.
 
-### Decorators
+### BaseDir
 
 Est un dossier dans lequel rechercher une classe. Représent le nom d'une classe sous sa forme de fichier attendus
 
@@ -23,4 +23,4 @@ Objet ayant pour responsabilté de présenté le callback de spl_autoload_regist
 
 ### IAutoLoadable
 
-Est implémentée par Decorator
+Est implémentée par BaseDir
