@@ -1,2 +1,2 @@
 # Libre
-Simple PHP5 framework
+Libre, usefull PHP5 framework
