@@ -206,7 +206,7 @@ namespace Libre\Helpers {
                 $this->start();
             }
             else {
-                throw new \BenchmarkCallBackException('Callback is not a closure.');
+                throw new \BenchmarkCallBackException('CallBack is not a closure.');
             }
         }
 
