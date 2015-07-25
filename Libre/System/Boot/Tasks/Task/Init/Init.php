@@ -24,7 +24,7 @@ namespace Libre\System\Boot\Tasks\Task {
         }
 
         protected function request() {
-            self::$_request = Request::this(Url::get());
+            self::$_request = Request::get(Url::get());
             return self::$_request;
         }
 
