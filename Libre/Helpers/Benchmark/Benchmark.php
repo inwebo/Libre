@@ -9,17 +9,7 @@ namespace Libre\Helpers {
      * @package Libre\Helpers
      */
     class BenchmarkCallBackException extends Exception{}
-    /*
-    $a = 0;
 
-    class Foo{
-        public function bar(&$a) {echo ++$a;}
-    }
-    $foo = new Foo();
-    $bench = new Benchmark(200, function() use ($foo, &$a) {
-       $foo->bar($a);
-    });
-    */
     /**
      * Simple benchmark.
      *
@@ -33,7 +23,10 @@ namespace Libre\Helpers {
      */
 
     class Benchmark {
-
+        /**
+         * @var string
+         */
+        protected $_name;
         /**
          * @var int Nombre d'itération du benchmark.
          */
@@ -69,6 +62,21 @@ namespace Libre\Helpers {
          */
         protected $memory;
 
+        /**
+         * @return string
+         */
+        public function getName()
+        {
+            return $this->_name;
+        }
+
+        /**
+         * @param string $name
+         */
+        public function setName($name)
+        {
+            $this->_name = $name;
+        }
         /**
          * @return int
          */
@@ -182,15 +190,17 @@ namespace Libre\Helpers {
         }
 
         /**
-         * @param $iterations int Nombre d'itération du benchmark
-         * @param $callback \Closure Une fonction anonyme avec comme corps de function le code à tester
+         * @param int $iterations Nombre d'itération du benchmark
+         * @param \Closure $callback  Une fonction anonyme avec comme corps de function le code à tester
+         * @param string $name
          * @throws \BenchmarkCallBackException Si le callback n'est pas une closure valide.
          */
-        public function __construct( $iterations, $callback ) {
+        public function __construct( $iterations, $callback, $name = '' ) {
             $this->memoryStart = memory_get_usage();
             $this->iterations = $iterations;
             $this->callback   = $callback;
             $this->timeStart = microtime(true);
+            $this->setName($name);
             // Est une closure valide.
             if( is_object($this->callback) && ($this->callback instanceof \Closure)){
                 $this->start();

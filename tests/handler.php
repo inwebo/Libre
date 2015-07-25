@@ -12,7 +12,7 @@ namespace Libre\Autoloader\tests\units {
     class Handler extends atoum\test {
 
         public function testEnabled() {
-            Session::init();
+            Session::start();
 
             $this->boolean(class_exists('\\Libre\\Session'))->isTrue();
         }

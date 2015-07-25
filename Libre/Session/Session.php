@@ -1,47 +1,61 @@
 <?php
 
 namespace Libre {
-
-    use Libre\Models\User;
-
-    class Session {
+    /**
+     * Class Session
+     * @package Libre
+     */
+    class Session
+    {
 
         /**
          * @var Session
          */
         static protected $_this;
-        protected $_id;
+
+        private function __construct(){}
 
         /**
-         * @var User
+         * Session courante
+         * @return Session
          */
-        public $User;
-
-        private function __construct() {}
-        static public function this() {
-            if ( !isset( static::$_this ) ) {
-                $class= get_called_class();
+        static public function this()
+        {
+            if (!isset(static::$_this)) {
+                $class = get_called_class();
                 static::$_this = new $class();
             }
             return static::$_this;
         }
-        static public function init() {
+
+        /**
+         * @param array $defaultValues Tableau associatif pour les valeurs par default de la session
+         */
+        static public function start($defaultValues = array())
+        {
+            self::this();
             if (intval(ini_get('session.auto_start')) === 0 || !isset($_SESSION)) {
                 session_start();
             }
+            foreach ($defaultValues as $k => $v) {
+                $_SESSION[$k] = $v;
+            }
         }
-        static public function destroy() {
+
+        static public function destroy()
+        {
             session_destroy();
         }
 
-        public function __set($key, $var) {
+        public function __set($key, $var)
+        {
             $_SESSION[$key] = $var;
         }
 
-        public function __get($key) {
+        public function __get($key)
+        {
             return $_SESSION[$key];
         }
-
     }
 
 }

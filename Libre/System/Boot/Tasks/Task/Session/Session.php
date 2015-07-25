@@ -18,7 +18,7 @@ namespace Libre\System\Boot\Tasks\Task {
         }
 
         protected function start() {
-            AuthSession::init();
+            AuthSession::start();
             parent::start();
         }
 
