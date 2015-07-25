@@ -12,6 +12,8 @@ namespace Libre\Routing {
      *
      * Peuple la route Route avec les valeurs de l'uri URI.
      *
+     * Pourrait créer des alias autotmatiquement
+     *
      * @package Libre\Routing
      */
     class UriParser {
@@ -45,6 +47,7 @@ namespace Libre\Routing {
 
             foreach( $routeSegments as $routeSegment ) {
                 //var_dump($routeSegment);
+                /* @var \Libre\Routing\UriParser\Segment $routeSegment */
                 if( isset( $uriSegments[$j] ) ) {
                     // Alias segment courant
                     $uriSegment = $uriSegments[$j];
@@ -83,12 +86,16 @@ namespace Libre\Routing {
                             $params[] = $uriSegment->getSegment();
                         }
                     }
-
-
                 }
                 $j++;
             }
             $this->route->params = $params;
+
+            if($this->route->name === null)
+            {
+                //$this->route->name = $this->uri->value;
+            }
+
             return $this->route;
         }
 

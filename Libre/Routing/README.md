@@ -17,3 +17,6 @@ de la route courante si les segments de l'*URI* valide toutes les contraintes de
 
 ### Route
 
+## Todo
+Bug regex segement & constraint
+reroute

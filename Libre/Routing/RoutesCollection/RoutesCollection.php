@@ -1,7 +1,10 @@
 <?php
 
 namespace Libre\Routing {
-
+    /**
+     * Class EmptyRoutesCollection
+     * @package Libre\Routing
+     */
     class EmptyRoutesCollection extends \Exception{};
 
     /**
@@ -14,10 +17,14 @@ namespace Libre\Routing {
     class RoutesCollection {
 
         static protected $instances;
+        /**
+         * @var \SplStack
+         */
         public $routes;
 
         public function __construct(){
             $this->routes = new \SplStack();
+
         }
 
         static public function get( $name ) {
@@ -38,9 +45,9 @@ namespace Libre\Routing {
         }
 
         public function getDefaultRoute() {
-            if( $this->routes->count() > 0 ) {
+            if( $this->count() > 0 ) {
                 $this->routes->rewind();
-                return $this->routes->offsetGet(0);
+                return $this->routes->offsetGet($this->routes->count()-1);
             }
             else {
                 throw new EmptyRoutesCollection('Please populate RoutesCollection before accessing it.');

@@ -18,25 +18,96 @@ namespace Libre\Routing {
      * @package Libre\Routing
      */
     class Router {
-
+        /**
+         * @var Uri
+         */
         protected $_uri;
+        /**
+         * @var RoutesCollection
+         */
         protected $_routesCollection;
-        protected $_defaultRoute;
+        /**
+         * @var bool
+         */
+        protected $_forceDefault;
 
-        public function __construct( Uri $uri, RoutesCollection $routesCollection) {
-            $this->_uri              = $uri;
+        /**
+         * @return Uri
+         */
+        public function getUri()
+        {
+            return $this->_uri;
+        }
+
+        /**
+         * @param Uri $uri
+         */
+        protected function setUri($uri)
+        {
+            $this->_uri = $uri;
+        }
+
+        /**
+         * @return RoutesCollection
+         */
+        public function getRoutesCollection()
+        {
+            return $this->_routesCollection;
+        }
+
+        /**
+         * @param RoutesCollection $routesCollection
+         */
+        protected function setRoutesCollection($routesCollection)
+        {
             $this->_routesCollection = $routesCollection;
         }
 
-        public function routeConstraintFactory(Route $route){
-            return new RouteConstraint($this->_uri, $route);
+        /**
+         * @return boolean
+         */
+        public function isForceDefault()
+        {
+            return $this->_forceDefault;
         }
 
+        /**
+         * @param boolean $forceDefault
+         */
+        protected function setForceDefault($forceDefault)
+        {
+            $this->_forceDefault = $forceDefault;
+        }
+
+        /**
+         * @param Uri $uri
+         * @param RoutesCollection $routesCollection
+         * @param bool|true $forceDefault La premiere route ajoutée dans la collection sera celle par defaut
+         */
+        public function __construct( Uri $uri, RoutesCollection $routesCollection, $forceDefault = true) {
+            $this->setUri($uri);
+            $this->setRoutesCollection($routesCollection);
+            $this->setForceDefault($forceDefault);
+        }
+
+        protected function routeConstraintFactory(Route $route){
+            return new RouteConstraint($this->getUri(), $route);
+        }
+
+        /**
+         * Si l'uri valide un nom de route alors retourn route.
+         * @return bool|Route|mixed
+         * @throws EmptyRoutesCollection
+         * @throws RouterExceptionError404
+         * @throws \Exception
+         */
         public function dispatch() {
-            $this->_routesCollection->routes->rewind();
-            while($this->_routesCollection->routes->valid()) {
-                $route = $this->_routesCollection->routes->current();
-                $routeConstraint = $this->routeConstraintFactory( $this->_routesCollection->routes->current() );
+            $this->getRoutesCollection()->routes->rewind();
+            while($this->getRoutesCollection()->routes->valid()) {
+                /* @var \Libre\Routing\Route $route */
+                $route = $this->getRoutesCollection()->routes->current();
+                /* @var RouteConstraint $routeConstraint */
+                $routeConstraint = $this->routeConstraintFactory( $this->getRoutesCollection()->routes->current() );
                 // Est une route nommée.
                 if( $routeConstraint->isNamedRoute() ) {
                     return $route;
@@ -46,40 +117,32 @@ namespace Libre\Routing {
                     // UriIsGreaterThanRoute
                     if( $routeConstraint->isUriSegmentsGreaterThanRouteSegments() === false ) {
                         try {
-                            $parser = new UriParser( $this->_uri, $this->_routesCollection->routes->current() );
+                            $parser = new UriParser( $this->getUri(), $this->getRoutesCollection()->routes->current() );
                             return $parser->processPattern();
                         }
                         catch(\Exception $e) {
                             throw $e;
                         }
-
-                    }
-                    // Uri invalide 404
-                    else {
-                        if( !is_null($this->_defaultRoute) ) {
-                            return $this->_defaultRoute;
-                        }
-                        else {
-                            throw new RouterError404(sprintf(RouterError404::MSG,$this->_uri->value));
-                        }
-                        throw new RouterError404(sprintf(RouterError404::MSG,$this->_uri->value));
                     }
                 }
-
-                $this->_routesCollection->routes->next();
+                $this->getRoutesCollection()->routes->next();
             }
             // Si on arrive ici est une route inconnue.
-            //throw new RouterExceptionError404('Router : route 404 Not found');
-            return false;
+            if($this->_forceDefault)
+            {
+                return $this->getRoutesCollection()->getDefaultRoute();
+            }
+            else
+            {
+                throw new RouterError404('Router : 404 Not found');
+            }
         }
 
-        public function reRoute(Route $route) {
-            $this->attachDefaultRoute($route);
-            $this->dispatch();
-        }
-
-        public function attachDefaultRoute(Route $route){
-            $this->_defaultRoute = $route;
+        public function reRoute(RoutesCollection $routesCollection, $forceDefault = true)
+        {
+            $this->setRoutesCollection($routesCollection);
+            $this->_forceDefault = $forceDefault;
+            return $this->dispatch();
         }
 
     }

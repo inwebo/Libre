@@ -13,14 +13,13 @@ namespace Libre\Routing {
      * @package Libre\Routing
      */
     class Route {
-
-        public $name;
         public $pattern;
+        public $name;
         public $controller;
         public $action;
         public $params;
 
-        protected $_segments;
+        //protected $_segments;
 
         public function __construct( $pattern, $controller = null, $action = null, $params = null, $name = null ) {
             $this->pattern      = $pattern;
@@ -28,7 +27,7 @@ namespace Libre\Routing {
             $this->action       = $action;
             $this->params       = (is_null($params)) ? array() : $params;
             $this->name         = $name;
-            $this->_segments    = $this->toSegments();
+            //$this->_segments    = $this->toSegments();
         }
 
         public function getMandatorySegments() {

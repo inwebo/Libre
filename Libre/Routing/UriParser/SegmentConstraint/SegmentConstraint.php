@@ -43,6 +43,10 @@ namespace Libre\Routing\UriParser {
             return ($this->segmentRoute->getSegment() === ":instance");
         }
 
+        public function isModule() {
+            return ($this->segmentRoute->getSegment() === ":module");
+        }
+
         public function getController() {
             return ($this->isController()) ? $this->segmentUri->getSegment() : null;
         }
