@@ -1,7 +1,7 @@
 <?php
 namespace Libre {
 
-    use Libre\Ftp\Config\Config;
+    use Libre\Ftp\Config;
     use Libre\Ftp\Resource;
 
     class Ftp {

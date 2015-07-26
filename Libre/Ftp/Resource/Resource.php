@@ -3,8 +3,7 @@ namespace Libre\Ftp {
 
     class FtpConnectException extends \Exception{}
 
-    use Libre\Ftp\Config\Config;
-    use Libre\Ftp\File;
+    use Libre\Ftp\Config;
 
     class Resource {
 

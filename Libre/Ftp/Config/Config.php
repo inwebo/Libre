@@ -1,5 +1,5 @@
 <?php
-namespace Libre\Ftp\Config {
+namespace Libre\Ftp {
 
     class Config {
 
