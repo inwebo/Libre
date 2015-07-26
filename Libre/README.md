@@ -1,4 +1,5 @@
 # Libre
+Super simple PHP5 framework
 
 ## Packages
 * Clean namespaces

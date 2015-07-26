@@ -1,6 +1,6 @@
 # Autoloader
 
-Ajoute un nouveau handler à spl_autoload_register, offre une dernière chance de charger automatiquement une classe.
+Autoloader universel
 
 ## Objets
 
