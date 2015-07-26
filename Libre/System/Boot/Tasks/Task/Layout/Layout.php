@@ -39,7 +39,7 @@ namespace Libre\System\Boot\Tasks\Task {
                 //var_dump($e);
                 // Vue vide
                 $layout = new View(
-                    new Template\TemplateFromString(""),
+                    new Template\FromString(""),
                     self::viewObject()
                 );
             }
