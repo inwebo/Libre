@@ -1,37 +1,8 @@
 <?php
 namespace Libre\Mvc {
 
-    use Libre\ClassNamespace;
-    use Libre\Exception;
-    use Libre\Http\Request;
-    use Libre\Mvc\Controller\ActionController;
-    use Libre\Mvc\Controller\AuthController;
-    use Libre\Mvc\Controller\StaticController;
-    use Libre\Mvc\FrontController\Decorator;
-    use Libre\Mvc\FrontController\Filter;
     use Libre\Routing\Route;
-    use Libre\View;
-    use Libre\System;
-    use Libre\Mvc\Controller\AjaxController;
-    use Libre\Mvc\Controller\AjaxController\PrivateAjaxController;
-
-    /**
-     * Class FrontControllerUnknownController
-     * @package Libre\Mvc
-     */
-    class FrontControllerUnknownController extends \Exception {
-        protected $code = 500;
-        const MSG = 'Action, %s->%s() not found, add method : <cite>public function %s()&#123;&#125;</cite> to %s controller.';
-    };
-
-    /**
-     * Class FrontControllerUnknownAction
-     * @package Libre\Mvc
-     */
-    class FrontControllerUnknownAction extends \Exception {
-        protected $code = 500;
-        const MSG = 'Action, %s->%s() not found, add method : <cite>public function %s()&#123;&#125;</cite> in %s file.';
-    };
+    use Libre\Mvc\FrontController\Decorator;
 
     /**
      * Class FrontControllerException
@@ -65,10 +36,22 @@ namespace Libre\Mvc {
         /**
          * @var \SplStack
          */
-        protected $_controllerDecorators;
+        protected $_factoryDecorator;
 
-
-
+        #region Helpers
+        public function getAction() {
+            return $this->_route->action . self::ACTION_SUFFIX;
+        }
+        public function getParams() {
+            return $this->_route->params;
+        }
+        public function pushDecorator(Decorator $decorator) {
+            $this->_factoryDecorator->push($decorator);
+        }
+        public function getFactoryDecorator() {
+            $this->_factoryDecorator->rewind();
+            return $this->_factoryDecorator;
+        }
         /**
          * @return Route
          */
@@ -84,46 +67,29 @@ namespace Libre\Mvc {
         {
             $this->_route = $route;
         }
+        #endregion
 
         public function __construct( Route $route ) {
             $this->_route               = $route;
-            $this->_controllerDecorators= new \SplStack();
+            $this->_factoryDecorator    = new \SplStack();
         }
 
-        #region Helpers
-        public function getAction() {
-            return $this->_route->action . self::ACTION_SUFFIX;
-        }
-        public function getParams() {
-            return $this->_route->params;
-        }
-        public function pushDecorator(Decorator $decorator) {
-            $this->_controllerDecorators->push($decorator);
-        }
-        public function getControllerDecorators() {
-            $this->_controllerDecorators->rewind();
-            return $this->_controllerDecorators;
-        }
-        #endregion
-
+        /**
+         * @return mixed
+         * @throws FrontControllerException Si aucun decorators ne remplis les conditions
+         * @throws \Exception
+         */
         public function invoker() {
-            $decorators = $this->getControllerDecorators();
+            $decorators = $this->getFactoryDecorator();
             while($decorators->valid()) {
                 /* @var Decorator $decorator */
                 $decorator = $decorators->current();
                     if( $decorator->isValidController() ) {
                         if( $decorator->isValidAction() ) {
                             $decorated = $decorator;
-                            try
-                            {
-                                $instance = $decorated->factory();
-                                $action = new \ReflectionMethod($instance, $this->getRoute()->action);
-                                return $action->invokeArgs($instance,$this->getRoute()->params);
-                            }
-                            catch(Exception $e)
-                            {
-                                throw $e;
-                            }
+                            $instance = $decorated->factory();
+                            $action = new \ReflectionMethod($instance, $this->getRoute()->action);
+                            return $action->invokeArgs($instance,$this->getRoute()->params);
                         }
                     }
                 $decorators->next();
