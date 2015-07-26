@@ -2,7 +2,7 @@
 
 namespace Libre {
 
-    use Libre\View\Template\TemplateFromString;
+    use Libre\View\Template\FromString;
     use Libre\View\Template;
     use Libre\View\ViewObject;
     use Libre\View\Parser;
@@ -17,7 +17,7 @@ namespace Libre {
         /**
          * @var Template
          */
-        protected $_template;
+        protected $_layout;
         /**
          * @var bool
          */
@@ -47,16 +47,9 @@ namespace Libre {
         /**
          * @return Template
          */
-        public function getTemplate()
+        public function getLayout()
         {
-            return $this->_template;
-        }
-        /**
-         * @return Parser
-         */
-        public function getParser()
-        {
-            return $this->_parser;
+            return $this->_layout;
         }
         /**
          * @return array
@@ -100,19 +93,20 @@ namespace Libre {
         /**
          * @param Template $template
          */
-        public function setTemplate(Template $template)
+        public function setLayout(Template $template)
         {
-            $this->_template = $template;
+            $this->_layout = $template;
         }
         #endregion
 
         /**
          * @param Template $template
          * @param ViewObject $viewObject
+         * @todo FromString Template
          */
         public function __construct( Template $template, ViewObject $viewObject ) {
-            $this->_template    = $template;
-            $this->_vo          = $viewObject;
+            $this->_layout    = $template;
+            $this->_vo        = $viewObject;
         }
 
         /**
@@ -132,7 +126,7 @@ namespace Libre {
         //region Factories
         protected function parserFactory() {
             try{
-                $parser = new Parser($this->_template, $this->_vo);
+                $parser = new Parser($this->_layout, $this->_vo);
                 return $parser;
             }
             catch(\Exception $e) {
@@ -146,7 +140,7 @@ namespace Libre {
                 return $template;
             }
             catch(\Exception $e) {
-                $template = new TemplateFromString("");
+                $template = new FromString("");
                 return $template;
             }
         }
@@ -154,17 +148,17 @@ namespace Libre {
 
         //region Layout
         public function changeLayout(Template $template){
-            $this->_template = $template;
+            $this->_layout = $template;
         }
         public function setEmptyLayout(){
-            $this->_template = new TemplateFromString('');
+            $this->_layout = new FromString('');
         }
         //endregion
 
         //region Patrial
         static public function partialsFactory( $path, ViewObject &$viewObject = null ) {
             $template = self::templateFactory($path);
-            $vo = (is_null($viewObject)) ? new ViewObject() : $viewObject;
+            $vo       = (is_null($viewObject)) ? new ViewObject() : $viewObject;
             return new self($template,$vo);
         }
 
@@ -191,8 +185,8 @@ namespace Libre {
         //endregion
 
         public function setContext() {
-            $content = $this->strongTypedView($this->getTemplate()->getFilePath());
-            $this->getTemplate()->setContent($content);
+            $content = $this->strongTypedView($this->getLayout()->getFilePath());
+            $this->getLayout()->setContent($content);
         }
 
         /**

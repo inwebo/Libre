@@ -6,7 +6,7 @@ use Libre\View\Parser\Tag;
 
 /**
  * Une tâche est la combinaison d'un tag PCRE et d'une logique à lui appliquer.
- * 
+ *
  *
  * @category   Libre
  * @package    View
@@ -17,39 +17,43 @@ use Libre\View\Parser\Tag;
  * @link       https://github.com/inwebo/Template
  * @since      File available since Beta
  */
-Class Task {
+Class Task
+{
 
     /**
      * Objet tag
      * @vars Tag
      */
-    protected $tag;
+    protected $_tag;
 
     /**
      * Objet logic
      * @vars Logic
      */
-    protected $logic;
+    protected $_logic;
 
     /**
      * Applique une classe métier LogicComparison au Tag if
-     * 
+     *
      * Retourne le resultat de la comparaison de deux variables selon un opérateur.
      *
      * @param Tag $tag
      * @param IProcess $logic
      */
-    public function __construct(Tag $tag, IProcess $logic) {
-        $this->tag     = $tag;
-        $this->logic   = $logic;
+    public function __construct(Tag $tag, IProcess $logic)
+    {
+        $this->_tag = $tag;
+        $this->_logic = $logic;
     }
 
-    public function getTag() {
-        return $this->tag;
+    public function getTag()
+    {
+        return $this->_tag;
     }
 
-    public function getLogic() {
-        return $this->logic;
+    public function getLogic()
+    {
+        return $this->_logic;
     }
 
 }

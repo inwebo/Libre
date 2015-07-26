@@ -27,7 +27,7 @@ namespace Libre\View\Parser\Logic;
 use Libre\View\Parser\Logic;
 use Libre\View\Parser\Tag;
 use Libre\View\Parser;
-use Libre\View\Template\TemplateFromString;
+use Libre\View\Template\FromString;
 use Libre\View\Task;
 use Libre\View\ViewObject;
 
@@ -170,7 +170,7 @@ class Loop extends Logic {
             $boucleInformations->header = $injectedHeader;
             $boucleInformations->dataProvider = $injectedDataProvider;
             // Parser la nouvelle boucle avec le dataProvider courant $value
-            $template = new TemplateFromString($injected);
+            $template = new FromString($injected);
             //var_dump($value);
             $vo = new ViewObject();
             $vo->$key = $value;
