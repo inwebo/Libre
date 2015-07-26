@@ -115,57 +115,22 @@ namespace Libre\Http\Rest {
          */
         public function __construct($serviceUrl)
         {
-            $validUrl = filter_var($serviceUrl, \FILTER_VALIDATE_URL, \FILTER_FLAG_PATH_REQUIRED);
+            $validUrl = filter_var(rtrim($serviceUrl,'/'), \FILTER_VALIDATE_URL);
             if($validUrl)
             {
                 $this->setServiceUrl($serviceUrl);
-                /*
-                if($this->isValid())
-                {
-                    $this->setServiceUrl($serviceUrl);
-                }
-                else
-                {
-                    throw new RestClientException('"'.$serviceUrl . '", HTTP header status code is not 300!');
-                }
-                */
+                $this->isValidService();
             }
-            else {
-                throw new RestClientException('"'.$serviceUrl . '" is not a valid URL, don\'t forget the final / !');
-            }
-
         }
 
         /**
-         * Le status code de l'en tête HTML de réponse sur l'url <code>$_serviceUrl</code> DOIT renvoyer 300, pour être une source valide.
-         *
+         * @todo Le status code de l'en tête HTML de réponse sur l'url <code>$_serviceUrl</code> DOIT renvoyer 300,
+         * pour être une source valide.
          * @return bool
          */
-        public function isValid()
+        public function isValidService()
         {
-            /*
-            stream_context_set_default(
-                array(
-                    'http' => array(
-                        'method' => 'HEAD'
-                    )
-                )
-            );
-            @get_headers($this->getServiceUrl());
-            $response_code = http_response_code();
-            */
-            /*
-            $valid = @fopen($this->getServiceUrl(), 'r', null, $this->getDefaultStreamContext('GET'));
-            var_dump($valid);
-            if($valid === false)
-            {
-                return false;
-            }
-            else {
-
-            }
-*/
-            //return ( $response_code !== 300 );
+            $this->head();
         }
 
         /**
@@ -185,7 +150,15 @@ namespace Libre\Http\Rest {
             return $context;
         }
 
-        protected function open($verb, $uri='', $options=0)
+        /**
+         * @param $verb
+         * @param string $uri
+         * @param null $options
+         * @return \Libre\Http\Rest\Response
+         * @throws RestClientException
+         * @throws RestResponseException
+         */
+        protected function open($verb, $uri='', $options=null)
         {
             $queryUrl = $this->getServiceUrl() . $uri;
             $handler = @fopen($queryUrl,'r',false,$this->getDefaultStreamContext($verb));
@@ -202,16 +175,42 @@ namespace Libre\Http\Rest {
             {
                 return new Response($handler);
             }
-
-
         }
 
         //region VERBS
+        /**
+         * @param string $uri
+         * @return \Libre\Http\Rest\Response
+         * @throws RestClientException
+         * @throws RestResponseException
+         */
         public function get($uri='')
         {
-            $resource = $this->open('GET',$uri);
-
-            return $resource;
+            return $this->open('GET',$uri);
+        }
+        public function post($uri='', $params)
+        {
+            return $this->open('POST',$uri, $params);
+        }
+        public function update($uri='', $params)
+        {
+            return $this->open('UPDATE',$uri, $params);
+        }
+        public function delete($uri='', $params)
+        {
+            return $this->open('DELETE',$uri, $params);
+        }
+        public function head($uri='')
+        {
+            return $this->open('HEAD',$uri);
+        }
+        public function options($uri='')
+        {
+            return $this->open('OPTIONS',$uri);
+        }
+        public function patch($uri='')
+        {
+            return $this->open('PATCH',$uri);
         }
         //@todo ajouter les autres verb possible
         //endregion CRUD
