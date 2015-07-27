@@ -1,15 +1,9 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: inwebo
- * Date: 19/07/15
- * Time: 18:27
- */
 
 namespace Libre\Web\Rss;
 
 
-use Libre\Web\Base;
+use Libre\Web\Rss\Base;
 use Libre\Web\Rss;
 use Libre\Web\Rss\Item;
 

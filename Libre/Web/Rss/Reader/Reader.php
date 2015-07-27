@@ -1,13 +1,5 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: inwebo
- * Date: 19/07/15
- * Time: 22:59
- */
-
 namespace Libre\Web\Rss;
-
 
 class Reader {
 
