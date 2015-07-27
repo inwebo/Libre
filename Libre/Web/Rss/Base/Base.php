@@ -1,6 +1,6 @@
 <?php
 
-namespace Libre\Web;
+namespace Libre\Web\Rss;
 
 use Libre\Exception;
 
