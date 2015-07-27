@@ -159,7 +159,10 @@ namespace Libre\Web {
 
         public function toUrl($trailingSlah = true)
         {
-            $url = $this->getBaseUrl() . $this->getParent() . '/' . $this->_name;
+            //$url = $this->getBaseUrl() . basename($this->getParent()) . '/' . $this->_name;
+            $return = explode($this->getBaseUri(),$this->getParent());
+            //var_dump($return);
+            $url = $this->getBaseUrl() . end($return) . DIRECTORY_SEPARATOR. $this->_name;
             $url .= ($trailingSlah) ? "/" : "";
             return $url;
         }

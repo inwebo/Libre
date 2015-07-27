@@ -143,6 +143,7 @@ namespace Libre\Web\Instance {
                 $asDirName = implode($this->getLocalSeparator(), $url);
                 $baseDir = $this->getBaseDir() . $asDirName . DIRECTORY_SEPARATOR;
                 if(is_dir( $baseDir )) {
+                    var_dump(pathinfo($baseDir));
                     return new Instance($this->getBaseDir() . $asDirName);
                 }
                 array_pop($url);
