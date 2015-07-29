@@ -127,6 +127,11 @@ namespace Libre\Mvc {
         }
     }
 
+    abstract class _Controller
+    {
+
+    }
+
 }
 
 /* ActionController
