@@ -51,7 +51,7 @@ namespace Libre\Http {
 
         public function getHeader($name)
         {
-            $headers = $this->getHeaders();
+            $headers = $this->getAllHeaders();
             if (isset($headers[$name])) {
                 return $headers[$name];
             }
@@ -69,6 +69,7 @@ namespace Libre\Http {
         {
             return $this->getUrl()->getVerb();
         }
+
         private function __construct(Url $url)
         {
             $this->_url = $url;
