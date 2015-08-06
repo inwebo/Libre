@@ -45,9 +45,17 @@ namespace Libre\Mvc {
         public function getParams() {
             return $this->_route->params;
         }
+
+        /**
+         * @param Decorator $decorator Est un dossier qui respecte le PSR-0
+         */
         public function pushDecorator(Decorator $decorator) {
             $this->_factoryDecorator->push($decorator);
         }
+
+        /**
+         * @return \SplStack
+         */
         public function getFactoryDecorator() {
             $this->_factoryDecorator->rewind();
             return $this->_factoryDecorator;
