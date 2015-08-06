@@ -18,28 +18,106 @@ class Response
      */
     protected $_forceRender = true;
     /**
-     * @var array
+     * @var \ArrayObject
      */
     protected $_headers;
     /**
-     * @var array
+     * @var \ArrayObject
      */
     protected $_segments;
 
-    public function prependSegment($name,$content){}
-    public function appendSegment($name,$content){}
-    public function getSegment($name){}
-    public function deleteSegment($name){}
+    /**
+     * @return boolean
+     */
+    public function isForceRender()
+    {
+        return $this->_forceRender;
+    }
 
-    public function setHeader($key, $value, $replace=false){}
-    public function getHeader($key){}
-    public function getHeaders(){}
+    /**
+     * @param boolean $forceRender
+     */
+    public function setForceRender($forceRender)
+    {
+        $this->_forceRender = $forceRender;
+    }
 
-    public function __construct($forceRender=true)
+    /**
+     * @return \ArrayObject
+     */
+    public function getSegments()
+    {
+        return $this->_segments;
+    }
+
+    /**
+     * @param \ArrayObject $segments
+     */
+    public function setSegments($segments)
+    {
+        $this->_segments = $segments;
+    }
+
+    /**
+     * @param string $name Clef
+     * @param string $content Valeur
+     */
+    public function prependSegment($name, $content)
+    {
+        $buffer = array_merge(array($name => $content), $this->getSegments());
+        $this->setSegments(new \ArrayObject($buffer));
+    }
+
+    /**
+     * @param string $name Clef
+     * @param string $content Valeur
+     */
+    public function appendSegment($name, $content)
+    {
+        $this->getSegments()[$name] = $content;
+    }
+
+    /**
+     * @param string $name Clef demandée
+     * @return string
+     */
+    public function getSegment($name)
+    {
+        if ($this->getSegments()->offsetExists($name)) {
+            return $this->getSegment($name);
+        }
+    }
+
+    /**
+     * @param $name Clef
+     */
+    public function deleteSegment($name)
+    {
+        if ($this->getSegments()->offsetExists($name)) {
+            return $this->getSegments()->offsetUnset($name);
+        }
+    }
+
+    public function setHeader($key, $value, $replace = false)
+    {
+    }
+
+    public function getHeader($key)
+    {
+    }
+
+    public function getHeaders()
+    {
+    }
+
+    /**
+     * @param bool|true $forceRender
+     */
+    public function __construct($forceRender = true)
     {
         $this->_forceRender = true;
-        $this->_headers = new \ArrayObject();
-        $this->_segments = new \ArrayObject();
+        $this->_headers     = new \ArrayObject();
+        $this->_segments    = new \ArrayObject();
     }
 
     /**
