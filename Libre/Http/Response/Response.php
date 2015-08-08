@@ -95,10 +95,6 @@ class Response
     }
 
     /**
-     * @return \ArrayObject
-     */
-    public function getSegments()
-    /**
      * @param string $key Le nom de l'entête à setter
      * @param string $value La valeur de l'entête
      * @param bool|false $replace Si la clef est déjà présente dans le tableau header. Force son écrasement.

@@ -55,17 +55,14 @@ namespace Libre\System {
                 while ($methods->valid()) {
                     $method = $methods->current();
                     try {
-                        $reflectionMethod = new \ReflectionMethod($class, $method->getName());
+                        $reflectionMethod   = new \ReflectionMethod($class, $method->getName());
                         $reflectionMethod->setAccessible(true);
-                        $result = $reflectionMethod->invoke($task);
-                        $name = $method->getName();
+                        $result             = $reflectionMethod->invoke($task);
+                        $name               = $method->getName();
                         if(!is_null($result)) {
                             $this->_dataProvider->this()->$name = $result;
                         }
                     } catch (\Exception $e) {
-                        //var_dump(__FILE__);
-                        //var_dump($e);
-                        // exception MVC
                         throw $e;
                     }
                     $methods->next();
