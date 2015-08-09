@@ -11,5 +11,6 @@ namespace Libre\Mvc\Controller;
 
 
 interface IController {
-    static public function getControllerName();
+    //static public function getControllerName();
+    public function dispatch();
 }

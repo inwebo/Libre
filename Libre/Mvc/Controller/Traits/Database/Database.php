@@ -12,7 +12,9 @@ namespace Libre\Mvc\Controller\Traits;
 use Libre\Database\Driver\IDriver;
 
 trait DataBase {
-
+    /**
+     * @var IDriver
+     */
     protected $_driver;
 
     /**
