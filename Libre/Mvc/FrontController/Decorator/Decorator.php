@@ -5,6 +5,8 @@ namespace Libre\Mvc\FrontController {
     /**
      * Class Decorator
      *
+     * Représente un dossier racine dans lequel recherché une classe PSR-0
+     *
      * @package Libre\Mvc\FrontController
      */
     class Decorator
@@ -29,8 +31,8 @@ namespace Libre\Mvc\FrontController {
          */
         public function __construct($classToInstanciate, $methodToInvoke, $constructorArgs = array())
         {
-            $this->_controller = $classToInstanciate;
-            $this->_action = $methodToInvoke;
+            $this->_controller      = $classToInstanciate;
+            $this->_action          = $methodToInvoke;
             $this->_constructorArgs = $constructorArgs;
         }
 
@@ -64,9 +66,9 @@ namespace Libre\Mvc\FrontController {
          */
         public function factory()
         {
-            $class = new \ReflectionClass($this->_controller);
             try {
-                $instance = $class->newInstanceArgs($this->_constructorArgs);
+                $class      = new \ReflectionClass($this->_controller);
+                $instance   = $class->newInstanceArgs($this->_constructorArgs);
                 return $instance;
             } catch (\Exception $e) {
                 throw $e;
