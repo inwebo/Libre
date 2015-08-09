@@ -24,9 +24,12 @@ namespace Libre\Routing {
 
         public function __construct(){
             $this->routes = new \SplStack();
-
         }
 
+        /**
+         * @param $name
+         * @return RoutesCollection
+         */
         static public function get( $name ) {
 
             if( is_null( self::$instances ) ) {
@@ -70,7 +73,7 @@ namespace Libre\Routing {
             return $this->routes->serialize();
         }
 
-        public function hasRoute( Route $route ) {
+        public function hasRoute( Routed $route ) {
             return $this->routes->offsetExists($route);
         }
 

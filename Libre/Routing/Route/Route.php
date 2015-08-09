@@ -11,6 +11,7 @@ namespace Libre\Routing {
      * Un segment représente un fragment de l'uri càd chaine entre /
      *
      * @package Libre\Routing
+     * @todo Métier segments est ce vraiment sa place ?
      */
     class Route {
         public $pattern;
@@ -19,29 +20,12 @@ namespace Libre\Routing {
         public $action;
         public $params;
 
-        //protected $_segments;
-
         public function __construct( $pattern, $controller = null, $action = null, $params = null, $name = null ) {
             $this->pattern      = $pattern;
             $this->controller   = $controller;
             $this->action       = $action;
             $this->params       = (is_null($params)) ? array() : $params;
             $this->name         = $name;
-            //$this->_segments    = $this->toSegments();
-        }
-
-        public function getMandatorySegments() {
-            $return = Array();
-            foreach( $this->segments as $segment ) {
-                if( $segment->mandatory ) {
-                    $return[$segment];
-                }
-            }
-            return $return;
-        }
-
-        public function getSegments() {
-            return $this->_segments;
         }
 
         /**

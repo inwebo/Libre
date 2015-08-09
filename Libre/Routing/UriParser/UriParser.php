@@ -24,7 +24,7 @@ namespace Libre\Routing {
 
         /**
          * @param Uri $uri L'URI entrante
-         * @param Route $route La Route de comparai
+         * @param Routed $route La Route de comparai
          */
         public function __construct( Uri $uri, Route $route) {
             $this->uri      = $uri;
@@ -37,13 +37,15 @@ namespace Libre\Routing {
          * Va extraire le controller, l'action du controller ainsi que les eventuels parametres de l'uri pour les placer
          * dans la route courante.
          *
-         * @return bool|Route False si les segments de l'uri ne valide pas les contraintes de segments, sinon la route correspondante.
+         * @return bool|Routed False si les segments de l'uri ne valide pas les contraintes de segments, sinon la route correspondante.
          */
         public function processPattern() {
             $uriSegments    = $this->uri->toSegments();
             $routeSegments  = $this->route->toSegments();
             $j              = 0;
             $params         = array();
+            // Force valeurs par défaut
+            $routed         = new Routed($this->route->controller,$this->route->action, $this->route->params);
 
             foreach( $routeSegments as $routeSegment ) {
                 //var_dump($routeSegment);
@@ -55,18 +57,19 @@ namespace Libre\Routing {
                     $constraint = new SegmentConstraint( $uriSegment, $routeSegment );
 
                     // Le segment un element static
-                    if( $constraint->isStatic() ) {
-                        $this->route->action = $constraint->getStatic();
-                    }
+                    // @todo static
+                    //if( $constraint->isStatic() ) {
+                        //$this->route->action = $constraint->getStatic();
+                    //}
 
                     // Le segment valide t il la contraite d'un controller
                     if( $constraint->isController() ) {
-                        $this->route->controller = $constraint->getController();
+                        $routed->setDispatchable($constraint->getController());
                     }
 
                     // Le segment valide t il la contraite d'une action
                     if( $constraint->isAction() ) {
-                        $this->route->action = $constraint->getAction();
+                        $routed->setAction($constraint->getAction());
                     }
 
                     // Est un parametre
@@ -89,14 +92,8 @@ namespace Libre\Routing {
                 }
                 $j++;
             }
-            $this->route->params = $params;
-
-            if($this->route->name === null)
-            {
-                //$this->route->name = $this->uri->value;
-            }
-
-            return $this->route;
+            $routed->setParams(new \ArrayObject($params));
+            return $routed;
         }
 
     }

@@ -5,7 +5,7 @@ namespace Libre\System\Boot\Tasks {
     use Libre\Files\Config;
     use Libre\Http\Request;
     use Libre\Patterns\Observer\Observable;
-    use Libre\Routing\Route;
+    use Libre\Routing\Routed;
     //use Libre\System\Boot\Tasks\Task\Instance;
     //use Libre\System\Boot\Tasks\Task\Paths;
     use Libre\View;
@@ -71,7 +71,7 @@ namespace Libre\System\Boot\Tasks {
          */
         static protected $_layout;
         /**
-         * @var Route
+         * @var Routed
          */
         static protected $_routed;
         /**

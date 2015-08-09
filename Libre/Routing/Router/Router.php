@@ -96,7 +96,7 @@ namespace Libre\Routing {
 
         /**
          * Si l'uri valide un nom de route alors retourn route.
-         * @return bool|Route|mixed
+         * @return bool|Routed|mixed
          * @throws EmptyRoutesCollection
          * @throws RouterExceptionError404
          * @throws \Exception
@@ -107,7 +107,7 @@ namespace Libre\Routing {
                 /* @var \Libre\Routing\Route $route */
                 $route = $this->getRoutesCollection()->routes->current();
                 /* @var RouteConstraint $routeConstraint */
-                $routeConstraint = $this->routeConstraintFactory( $this->getRoutesCollection()->routes->current() );
+                $routeConstraint = $this->routeConstraintFactory( $route );
                 // Est une route nommée.
                 if( $routeConstraint->isNamedRoute() ) {
                     return $route;
@@ -141,7 +141,7 @@ namespace Libre\Routing {
         public function reRoute(RoutesCollection $routesCollection, $forceDefault = true)
         {
             $this->setRoutesCollection($routesCollection);
-            $this->_forceDefault = $forceDefault;
+            $this->setForceDefault($forceDefault);
             return $this->dispatch();
         }
 
