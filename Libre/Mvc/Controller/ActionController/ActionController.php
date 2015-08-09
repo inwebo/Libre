@@ -4,9 +4,16 @@ namespace Libre\Mvc\Controller;
 use Libre\Mvc\Controller;
 use Libre\View;
 use Libre\Http\Response;
+use Libre\View\Template;
 
 abstract class ActionController extends Controller
 {
+
+    const ACTION_SUFFIX     = 'Action';
+    const CONTROLLER_SUFFIX = 'Controller';
+    const FILE_EXTENSION    = '.php';
+    const VIEW_PATH_FORMAT  = "{controller}/{action}{ext}";
+
     /**
      * @var View
      */
@@ -52,7 +59,7 @@ abstract class ActionController extends Controller
     public function init()
     {
         // Chemin index par defaut pour le layout
-        $this->setView(new View());
+        $this->setView(new View(new Template\FromString('+--+'), new View\ViewObject()));
         $this->getView()->setAutoRender(false);
     }
 
@@ -65,4 +72,12 @@ abstract class ActionController extends Controller
         return $this->getResponse();
     }
 
+    public function render()
+    {
+        $methodName = debug_backtrace()[1]['function'];
+        $fileName = str_replace(self::ACTION_SUFFIX,'',$methodName) . self::FILE_EXTENSION;
+        // Doit préparer la view partielle demandée par l'action dans la vue courante.
+        $this->getView()->attachPartial('body',$fileName);
+        //echo $fileName;
+    }
 }
