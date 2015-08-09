@@ -1,16 +1,12 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- * User: inwebo
- * Date: 01/02/14
- * Time: 23:03
- * To change this template use File | Settings | File Templates.
- */
 
 namespace Libre\Mvc\Controller;
 
+use Libre\Http\Response;
 
 interface IController {
-    //static public function getControllerName();
+    /**
+     * @return Response
+     */
     public function dispatch();
 }

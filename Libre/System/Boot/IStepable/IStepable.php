@@ -2,7 +2,5 @@
 
 namespace Libre\System\Boot {
 
-    interface IStepable {
-
-    }
+    interface IStepable {}
 }
