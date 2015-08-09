@@ -60,7 +60,7 @@ class Response
      */
     public function appendSegment($name, $content)
     {
-        $this->_segments = array_merge($this->_segments, array($name => $content));
+        $this->_segments = array_merge((array)$this->_segments, array($name => $content));
     }
     /**
      * Retourne le contenus d'un segment nommé.
