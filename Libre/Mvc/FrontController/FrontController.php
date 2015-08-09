@@ -1,7 +1,7 @@
 <?php
 namespace Libre\Mvc {
 
-    use Libre\Routing\Route;
+    use Libre\Routing\Routed;
     use Libre\Mvc\FrontController\Decorator;
 
     /**
@@ -30,9 +30,9 @@ namespace Libre\Mvc {
         const ACTION_SUFFIX     = "Action";
 
         /**
-         * @var Route
+         * @var Routed
          */
-        protected $_route;
+        protected $_routed;
         /**
          * @var \SplStack
          */
@@ -40,10 +40,10 @@ namespace Libre\Mvc {
 
         #region Helpers
         public function getAction() {
-            return $this->_route->action . self::ACTION_SUFFIX;
+            return $this->_routed->getAction() . self::ACTION_SUFFIX;
         }
         public function getParams() {
-            return $this->_route->params;
+            return $this->_routed->getParams();
         }
 
         /**
@@ -61,24 +61,24 @@ namespace Libre\Mvc {
             return $this->_factoryDecorator;
         }
         /**
-         * @return Route
+         * @return Routed
          */
-        public function getRoute()
+        public function getRouted()
         {
-            return $this->_route;
+            return $this->_routed;
         }
 
         /**
-         * @param Route $route
+         * @param Routed $route
          */
-        public function setRoute($route)
+        public function setRouted(Routed $route)
         {
-            $this->_route = $route;
+            $this->_routed = $route;
         }
         #endregion
 
-        public function __construct( Route $route ) {
-            $this->_route               = $route;
+        public function __construct( Routed $routed ) {
+            $this->setRouted($routed);
             $this->_factoryDecorator    = new \SplStack();
         }
 
@@ -94,10 +94,13 @@ namespace Libre\Mvc {
                 $decorator = $decorators->current();
                     if( $decorator->isValidController() ) {
                         if( $decorator->isValidAction() ) {
-                            $decorated = $decorator;
-                            $instance = $decorated->factory();
-                            $action = new \ReflectionMethod($instance, $this->getRoute()->action);
-                            return $action->invokeArgs($instance,$this->getRoute()->params);
+                            $decorated  = $decorator;
+                            $instance   = $decorated->factory();
+                            $action     = new \ReflectionMethod($instance, $this->getRouted()->getAction());
+                            // Dispatch Controller
+                            // Est un objet Response
+                            $action->invokeArgs($instance,(array)$this->getRouted()->getParams());
+                            return $instance->dispatch();
                         }
                     }
                 $decorators->next();
