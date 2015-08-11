@@ -72,6 +72,7 @@ abstract class ActionController extends Controller
         return $this->getResponse();
     }
 
+
     public function render()
     {
         $methodName = debug_backtrace()[1]['function'];

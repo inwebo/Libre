@@ -8,10 +8,11 @@ namespace Libre\Mvc {
      * Class FrontControllerException
      * @package Libre\Mvc
      */
-    class FrontControllerException extends \Exception {
+    class FrontControllerException extends \Exception
+    {
         protected $code     = 500;
         protected $message  = 'FrontController : controller or action not found.';
-    };
+    }
 
     /**
      * Class Dispatcher (Distributeur)
@@ -23,43 +24,65 @@ namespace Libre\Mvc {
      *
      * @package Libre\Mvc
      */
-
-    class FrontController {
+    class FrontController
+    {
 
         const DEFAULT_ACTION    = "index";
         const ACTION_SUFFIX     = "Action";
+        const CONTROLLER_SUFFIX = "Controller";
 
         /**
          * @var Routed
          */
         protected $_routed;
+
         /**
          * @var \SplStack
          */
         protected $_factoryDecorator;
 
         #region Helpers
-        public function getAction() {
+        /**
+         * @return string Chaine suffixé par la constante <code>self::ACTION_SUFFIX</code>
+         */
+        public function getAction()
+        {
             return $this->_routed->getAction() . self::ACTION_SUFFIX;
         }
-        public function getParams() {
+
+        /**
+         * @return \ArrayObject
+         */
+        public function getParams()
+        {
             return $this->_routed->getParams();
+        }
+
+        /**
+         * @return \ArrayObject
+         */
+        public function getParamsAsArray()
+        {
+            return (array)$this->_routed->getParams();
         }
 
         /**
          * @param Decorator $decorator Est un dossier qui respecte le PSR-0
          */
-        public function pushDecorator(Decorator $decorator) {
+        public function pushDecorator(Decorator $decorator)
+        {
             $this->_factoryDecorator->push($decorator);
         }
 
         /**
          * @return \SplStack
          */
-        public function getFactoryDecorator() {
+        public function getFactoryDecorator()
+        {
             $this->_factoryDecorator->rewind();
             return $this->_factoryDecorator;
         }
+
         /**
          * @return Routed
          */
@@ -77,9 +100,13 @@ namespace Libre\Mvc {
         }
         #endregion
 
-        public function __construct( Routed $routed ) {
+        /**
+         * @param Routed $routed
+         */
+        public function __construct(Routed $routed)
+        {
             $this->setRouted($routed);
-            $this->_factoryDecorator    = new \SplStack();
+            $this->_factoryDecorator = new \SplStack();
         }
 
         /**
@@ -87,22 +114,21 @@ namespace Libre\Mvc {
          * @throws FrontControllerException Si aucun decorators ne remplis les conditions
          * @throws \Exception
          */
-        public function invoker() {
+        public function invoker()
+        {
             $decorators = $this->getFactoryDecorator();
-            while($decorators->valid()) {
+            while ($decorators->valid()) {
                 /* @var Decorator $decorator */
                 $decorator = $decorators->current();
-                    if( $decorator->isValidController() ) {
-                        if( $decorator->isValidAction() ) {
-                            $decorated  = $decorator;
-                            $instance   = $decorated->factory();
-                            $action     = new \ReflectionMethod($instance, $this->getRouted()->getAction());
-                            // Dispatch Controller
-                            // Est un objet Response
-                            $action->invokeArgs($instance,(array)$this->getRouted()->getParams());
-                            return $instance->dispatch();
-                        }
+                if ($decorator->isValidController()) {
+                    if ($decorator->isValidAction()) {
+                        $decorated  = $decorator;
+                        $instance   = $decorated->factory();
+                        $action     = new \ReflectionMethod($instance, $this->getRouted()->getAction());
+                        $action->invokeArgs($instance, $this->getRouted()->getParamsAsArray());
+                        return $instance->dispatch();
                     }
+                }
                 $decorators->next();
             }
             throw new FrontControllerException();
