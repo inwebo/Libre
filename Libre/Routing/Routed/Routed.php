@@ -58,6 +58,14 @@ class Routed
     }
 
     /**
+     * @return \ArrayObject
+     */
+    public function getParamsAsArray()
+    {
+        return (array) $this->_params;
+    }
+
+    /**
      * @param \ArrayObject $params
      */
     public function setParams($params)
