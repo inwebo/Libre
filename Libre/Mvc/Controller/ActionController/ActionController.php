@@ -55,6 +55,7 @@ abstract class ActionController extends Controller
 
     /**
      * Prépare le layout
+     * @todo
      */
     public function init()
     {
@@ -72,7 +73,10 @@ abstract class ActionController extends Controller
         return $this->getResponse();
     }
 
-
+    /**
+     * Prépare la vue partielle
+     * @todo
+     */
     public function render()
     {
         $methodName = debug_backtrace()[1]['function'];

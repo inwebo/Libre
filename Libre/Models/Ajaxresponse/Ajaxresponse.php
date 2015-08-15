@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: inwebo
- * Date: 02/02/15
- * Time: 20:07
- */
-
 namespace Libre\Models {
 
 
