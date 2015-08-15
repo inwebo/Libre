@@ -4,195 +4,224 @@ namespace Libre;
 
 use Libre\Files\Config;
 use Libre\Http\Request;
-use Libre\Modules\AuthUser\Models\AuthUser;
-use Libre\Routing\Route;
-use Libre\View\ViewObject;
+use Libre\Models\Module;
+use Libre\Patterns\AdjustablePriorityQueue;
+use Libre\System\Services\PathsLocator;
 use Libre\Web\Instance;
-use Libre\Web\Instance\PathsFactory\Path;
 
 class System {
-
+    #region Pattern Singleton
     /**
      * @var System
      */
-    protected static $_instance;
-    protected $readOnly = false;
+    static protected $_this;
+    protected $_readOnly = false;
 
-    /**
-     * @var bool
-     */
-    public $debug;
+    private function __construct() {}
+    private function __clone() {}
+    static public function this() {
+        if ( !isset( static::$_this ) ) {
+            $class= get_called_class();
+            static::$_this = new $class();
+        }
+        return static::$_this;
+    }
+    public function readOnly($bool) {
+        if(is_bool($bool)) {
+            $this->_readOnly = $bool;
+        }
+    }
+    public function __set($key, $value) {
+        static::$_this->$key = $value;
+    }
+    public function __get($key) {
+        return static::$_this->$key;
+    }
+    #endregion
 
+    #region Request
     /**
      * @var Request
      */
-    public $request;
+    protected $_request;
+    /**
+     * @return Request
+     */
+    public function getRequest()
+    {
+        return $this->_request;
+    }
+    /**
+     * @param Request $request
+     */
+    public function setRequest(Request $request)
+    {
+        $this->_request = $request;
+    }
+    #endregion
 
+    #region Config
     /**
      * @var Config
      */
-    public $config;
+    protected $_config;
 
     /**
-     * @var Path
+     * @return Config
      */
-    public $basePaths;
+    public function getConfig()
+    {
+        return $this->_config;
+    }
 
     /**
-     * @var Path
+     * @param Config $config
      */
-    public $appPaths;
+    public function setConfig($config)
+    {
+        $this->_config = $config;
+    }
+    #endregion
 
+    #region Base dir
+    /**
+     * @var string Realpath
+     */
+    protected $_baseDir;
+
+    /**
+     * @return string
+     */
+    public function getBaseDir()
+    {
+        return $this->_baseDir;
+    }
+
+    /**
+     * @param string $baseDir
+     */
+    public function setBaseDir($baseDir)
+    {
+        $this->_baseDir = $baseDir;
+    }
+    #endregion
+
+    #region Instance
     /**
      * @var Instance
      */
-    public $instance;
-
+    protected $_instance;
     /**
-     * @var Path
+     * @var PathsLocator
      */
-    public $instancePaths;
-
+    protected $_instanceLocator;
     /**
-     * @var ViewObject
+     * @var Config
      */
-    public $viewObject;
-
+    protected $_instanceConfig;
     /**
-     * @var View
+     * @return Instance
      */
-    public $layout;
-
-    /**
-     * @var Route
-     */
-    public $routed;
-
-    /**
-     * @var array[LibreModule]
-     */
-    public $modules = array();
-
-    /**
-     * @var array[Theme]
-     */
-    public $themes = array();
-
-    /**
-     * @var AuthUser
-     */
-    public $defaultUser;
-
-    /**
-     * @var Config Instance config
-     */
-    public $instanceConfig;
-
-    private function __construct() {}
-
-    public function readOnly($bool) {
-        if(is_bool($bool)) {
-            $this->readOnly = $bool;
-        }
+    public function getInstance()
+    {
+        return $this->_instance;
     }
 
-    public static function this() {
-        if ( !isset( self::$_instance ) ) {
-            self::$_instance = new self();
-        }
-        return self::$_instance;
+    /**
+     * @param Instance $instance
+     */
+    public function setInstance($instance)
+    {
+        $this->_instance = $instance;
     }
 
-    public function __set($key, $value) {
-        if( !$this->readOnly ) {
-            $this->$key = $value;
-        }
+    /**
+     * @return PathsLocator
+     */
+    public function getInstanceLocator()
+    {
+        return $this->_instanceLocator;
     }
 
-    public function __get($key) {
-        if (isset($this->$key)) {
-            return $this->$key;
-        }
+    /**
+     * @param PathsLocator $instanceLocator
+     */
+    public function setInstanceLocator($instanceLocator)
+    {
+        $this->_instanceLocator = $instanceLocator;
     }
 
     /**
      * @return Config
      */
-    public function getInstanceConfig() {
-        return $this->instanceConfig;
+    public function getInstanceConfig()
+    {
+        return $this->_instanceConfig;
     }
 
     /**
-     * @param $name
-     * @return Path\BasePath\AppPath\InstancePath\Module
+     * @param Config $instanceConfig
      */
-    public function getModule($name){
-        return (isset($this->modules[$name])) ? $this->modules[$name] : null;
+    public function setInstanceConfig($instanceConfig)
+    {
+        $this->_instanceConfig = $instanceConfig;
+    }
+    #endregion
+
+    #region Module
+
+    /**
+     * @var AdjustablePriorityQueue
+     */
+    protected $_modules;
+
+    protected $_modulesConfig;
+    /**
+     * @return AdjustablePriorityQueue
+     */
+    public function getModules()
+    {
+        return $this->_modules;
     }
 
-    public function getModules(){
-        return $this->modules;
+    /**
+     * @param Module $module
+     */
+    public function setModule(Module $module)
+    {
+        $this->_modules->insert($module, $module->getPriority());
+    }
+    public function initModules()
+    {
+        $this->_modules = new AdjustablePriorityQueue();
+    }
+    #endregion
+
+    #region Themes
+    /**
+     * @var AdjustablePriorityQueue
+     */
+    protected $_themes;
+
+    /**
+     * @return AdjustablePriorityQueue
+     */
+    public function getThemes()
+    {
+        return $this->_themes;
     }
 
-    public function getTheme($name){
-        return (isset($this->themes[$name])) ? $this->themes[$name] : null;
+    /**
+     * @param $theme
+     */
+    public function setTheme($theme)
+    {
+        $this->getThemes()->insert($theme, $theme->getPriority());
     }
 
-    public function getThemes(){
-        return $this->themes;
+    public function initThemes()
+    {
+        $this->_themes = new AdjustablePriorityQueue();
     }
-
-    public function getPaths($wich) {
-        switch($wich) {
-            case "base":
-                return $this->basePaths;
-
-            case "app":
-                return $this->appPaths;
-
-            case "instance":
-                return $this->instancePaths;
-
-            default:
-                return null;
-        }
-
-    }
-
-    public function getRoute(){
-        return $this->routed;
-    }
-
-    public function getBaseDirs($el=null){
-        return $this->basePaths->getBaseDir($el);
-    }
-
-    public function getBaseUrls($el=null){
-        return $this->basePaths->getBaseUrl($el);
-    }
-
-    public function getInstanceBaseDirs($el=null){
-        return $this->instancePaths->getBaseDir($el);
-    }
-
-    public function getInstanceBaseUrls($el=null){
-        return $this->instancePaths->getBaseUrl($el);
-    }
-
-    public function getModuleBaseDirs($module, $el = null){
-        return $this->getModule($module)->getBaseDir($el);
-    }
-
-    public function getModuleBaseUrl($module, $el = null){
-        return $this->getModule($module)->getBaseUrl($el);
-    }
-
-    public function getThemeBaseUrl($name, $el = null){
-        return $this->getModule($name)->getBaseUrl($el);
-    }
-
-    public function getThemeBaseDir($name, $el = null){
-        return $this->getModule($name)->getBaseUrl($el);
-    }
-
+    #endregion
 }
