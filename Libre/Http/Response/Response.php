@@ -157,9 +157,9 @@ class Response
     public function send()
     {
         $this->headers();
-        foreach($this->_segments as $segment)
+        if( $this->_forceRender )
         {
-            if( $this->_forceRender )
+            foreach($this->_segments as $segment)
             {
                 echo $segment;
             }
