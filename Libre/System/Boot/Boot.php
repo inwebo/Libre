@@ -4,78 +4,54 @@ namespace Libre\System {
 
     use Libre\System;
     use Libre\System\Boot\IStepable;
+    use Libre\System\Boot\AbstractTasks;
 
     class Boot
     {
         /**
-         * @var
-         */
-        protected $_config;
-        /**
-         * @var SplObserver
-         */
-        protected $_observer;
-        /**
          * @var Tasks
          */
         protected $_tasks;
+
         /**
-         * @var
+         * @return IStepable
          */
-        protected $_dataProvider;
-
-        protected $_exceptions;
-
-        public function __construct(\SplObserver $_observer, IStepable $_tasks, $_dataProvider) {
-            $this->_dataProvider = $_dataProvider;
-            $this->_observer = $_observer;
-            $this->_tasks = $_tasks;
-            $this->attachObserver();
+        protected function getTasks()
+        {
+            return $this->_tasks;
         }
 
-        public function attachObserver(){
-            $this->_tasks->rewind();
-            while ($this->_tasks->valid()) {
-                $task = $this->_tasks->current();
-                $task->attach($this->_observer);
-                $this->_tasks->next();
-            }
+        /**
+         * @param IStepable $tasks
+         */
+        protected function setTasks(IStepable $tasks)
+        {
+            $this->_tasks = $tasks;
+        }
+
+        public function __construct(IStepable $_tasks) {
+            $this->setTasks($_tasks);
+
         }
 
         public function start()
         {
-            $this->_tasks->rewind();
-            while ($this->_tasks->valid()) {
-                $task = $this->_tasks->current();
-                $class = get_class($task);
-                $reflectionClass = new \ReflectionClass($class);
-                $methods = $reflectionClass->getMethods(\ReflectionMethod::IS_PROTECTED);
-                $methods = new \ArrayIterator($methods);
+            $this->getTasks()->rewind();
+            while ($this->getTasks()->valid()) {
+                $task = $this->getTasks()->current();
+                $rc         = new \ReflectionClass($task);
+                $methods    = $rc->getMethods(\ReflectionMethod::IS_PROTECTED);
+                $methods    = new \ArrayIterator($methods);
 
                 while ($methods->valid()) {
-                    $method = $methods->current();
-                    try {
-                        $reflectionMethod   = new \ReflectionMethod($class, $method->getName());
-                        $reflectionMethod->setAccessible(true);
-                        $result             = $reflectionMethod->invoke($task);
-                        $name               = $method->getName();
-                        if(!is_null($result)) {
-                            $this->_dataProvider->this()->$name = $result;
-                        }
-                    } catch (\Exception $e) {
-                        throw $e;
-                    }
+                    $rm = new \ReflectionMethod($task, $methods->current()->name);
+                    $rm->setAccessible(true);
+                    $rm->invoke($task);
                     $methods->next();
                 }
 
-                $this->_tasks->next();
+                $this->getTasks()->next();
             }
         }
-
-        protected function isValidMethod(ReflectionMethod $reflectionMethod)
-        {
-            return ($reflectionMethod->isProtected() && !$reflectionMethod->isStatic());
-        }
-
     }
 }
