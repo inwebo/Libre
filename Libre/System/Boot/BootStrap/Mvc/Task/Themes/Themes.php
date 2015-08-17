@@ -74,4 +74,23 @@ class Themes extends AbstractTask
         }
     }
 
+    protected function themesAssets()
+    {
+        $iterator = $this->getSystem()->getThemes();
+        $iterator->rewind();
+        while($iterator->valid())
+        {
+            /** @var Theme $current */
+            $current = $iterator->current();
+            $this->getSystem()->setCss($current->getCss());
+            $this->getSystem()->setJs($current->getJs());
+            $autoload = $current->getPathsLocator()->getAutoloadDir();
+            if( is_file($autoload) )
+            {
+                include_once $autoload;
+            }
+            $iterator->next();
+        }
+    }
+
 }
