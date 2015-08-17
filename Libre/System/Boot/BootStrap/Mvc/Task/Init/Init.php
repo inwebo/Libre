@@ -7,59 +7,12 @@ use Libre\Http\Request;
 use Libre\Http\Url;
 use Libre\Session;
 use Libre\System;
-use Libre\System\Boot\AbstractTask;
 use Libre\Web\Instance\InstanceFactory;
 use Libre\System\Services\PathsLocator;
+use Libre\System\Boot\BootStrap\Mvc\DefaultTask;
 
-class Init extends AbstractTask
+class Init extends DefaultTask
 {
-    /**
-     * @var System
-     */
-    protected $_system;
-    /**
-     * @var Config
-     */
-    protected $_config;
-
-    /**
-     * @return System
-     */
-    public function getSystem()
-    {
-        return $this->_system;
-    }
-
-    /**
-     * @param System $system
-     */
-    public function setSystem($system)
-    {
-        $this->_system = $system;
-    }
-
-    /**
-     * @return Config
-     */
-    public function getConfig()
-    {
-        return $this->_config;
-    }
-
-    /**
-     * @param Config $config
-     */
-    public function setConfig($config)
-    {
-        $this->_config = $config;
-    }
-
-    public function __construct(System $system, Config $config)
-    {
-        $this->setSystem($system);
-        $this->setConfig($config);
-    }
-
     protected function request()
     {
         $this->getSystem()->setRequest(Request::get(Url::get()));
