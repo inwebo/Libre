@@ -8,6 +8,7 @@ namespace Libre\Mvc\FrontController {
      * Représente un dossier racine dans lequel recherché une classe PSR-0
      *
      * @package Libre\Mvc\FrontController
+     * @todo Rename est doit avoir un objet Routed
      */
     class Decorator
     {
