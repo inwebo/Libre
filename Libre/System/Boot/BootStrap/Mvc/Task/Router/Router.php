@@ -2,12 +2,28 @@
 
 namespace Libre\System\Boot\BootStrap\Mvc\Task;
 
-use Libre\System\Boot\AbstractTask;
+use Libre\Routing\Routed;
+use Libre\Routing\Uri;
+use Libre\System\Boot\BootStrap\Mvc\DefaultTask;
+use Libre\Routing\Router as _Router;
 
-class Router extends AbstractTask
+class Router extends DefaultTask
 {
-    protected function test()
+
+    protected function router()
     {
-        echo 'Test';
+        try
+        {
+            $router = new _Router(Uri::this(),$this->getSystem()->getRoutesCollection());
+            $routed = $router->dispatch();
+            $tmpRouted = new Routed('Test','index');
+            $this->getSystem()->setRouted($tmpRouted);
+            var_dump($this->getSystem());
+        }
+        catch(\Exception $e)
+        {
+            // Default route
+
+        }
     }
 }
