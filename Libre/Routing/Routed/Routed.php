@@ -4,6 +4,8 @@ namespace Libre\Routing;
 
 class Routed
 {
+    const ACTION_SUFFIX = 'Action';
+
     /**
      * @var string Une classe implémentant IController
      */
@@ -38,7 +40,7 @@ class Routed
      */
     public function getAction()
     {
-        return $this->_action;
+        return $this->_action . self::ACTION_SUFFIX;
     }
 
     /**
@@ -78,5 +80,44 @@ class Routed
         (!is_null($dispatchable)) ? $this->setDispatchable($dispatchable) : null;
         (!is_null($action)) ? $this->setAction($action) : null;
         (!is_null($params)) ? $this->setParams($params) : null;
+    }
+
+    /**
+     * @param bool|true $autoload
+     * @return bool
+     */
+    public function isValidController($autoload = true)
+    {
+        return class_exists($this->getDispatchable(), $autoload);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isValidAction()
+    {
+        // Relection class
+        try {
+            $rc = new \ReflectionClass($this->getDispatchable());
+            $rc->getMethod($this->getAction());
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    /**
+     * @return object
+     * @throws \Exception
+     */
+    public function factory()
+    {
+        try {
+            $class      = new \ReflectionClass($this->getDispatchable());
+            $instance   = $class->newInstanceArgs($this->getParamsAsArray());
+            return $instance;
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 }
