@@ -4,12 +4,17 @@ namespace Libre;
 
 use Libre\Files\Config;
 use Libre\Http\Request;
+use Libre\Http\Response;
 use Libre\Models\Module;
 use Libre\Patterns\AdjustablePriorityQueue;
+use Libre\Routing\Route;
+use Libre\Routing\Routed;
+use Libre\Routing\RoutesCollection;
 use Libre\System\Services\PathsLocator;
 use Libre\Web\Instance;
 
 class System {
+
     #region Pattern Singleton
     /**
      * @var System
@@ -222,6 +227,123 @@ class System {
     public function initThemes()
     {
         $this->_themes = new AdjustablePriorityQueue();
+    }
+    #endregion
+
+    #region Assets
+    /**
+     * @var array
+     */
+    protected $_css = array();
+    /**
+     * @var array
+     */
+    protected $_js = array();
+    /**
+     * @return array
+     */
+    public function getCss()
+    {
+        return $this->_css;
+    }
+
+    /**
+     * @param array|string $css
+     */
+    public function setCss($css)
+    {
+        if( is_array($css) )
+        {
+            $this->_css = array_merge($this->_css, $css);
+        }
+        else {
+            $this->_css[] = $css;
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function getJs()
+    {
+        return $this->_js;
+    }
+
+    /**
+     * @param array $js
+     */
+    public function setJs($js)
+    {
+        if( is_array($js) )
+        {
+            $this->_js = array_merge($this->_js, $js);
+        }
+        else {
+            $this->_js[] = $js;
+        }
+    }
+    #endregion
+
+    #region RoutesCollection
+    /**
+     * @var RoutesCollection
+     */
+    protected $_routesCollection;
+
+    /**
+     * @return RoutesCollection
+     */
+    public function getRoutesCollection()
+    {
+        if( is_null($this->_routesCollection) )
+        {
+            $this->_routesCollection = RoutesCollection::get('default');
+        }
+        return $this->_routesCollection;
+    }
+    #endregion
+
+    #region Routed
+    /**
+     * @var Routed
+     */
+    protected $_routed;
+    /**
+     * @return Routed
+     */
+    public function getRouted()
+    {
+        return $this->_routed;
+    }
+    /**
+     * @param Routed $routed
+     */
+    public function setRouted($routed)
+    {
+        $this->_routed = $routed;
+    }
+    #endregion
+
+    #region Response
+    /**
+     * @var Response
+     */
+    protected $_response;
+
+    /**
+     * @return Response
+     */
+    public function getResponse()
+    {
+        return $this->_response;
+    }
+
+    /**
+     * @param Response $response
+     */
+    public function setResponse(Response $response)
+    {
+        $this->_response = $response;
     }
     #endregion
 }
