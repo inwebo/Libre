@@ -4,4 +4,6 @@ namespace Libre {
 
     Autoloader\Handler::addDecorator(new Autoloader\BaseDir(__DIR__));
     spl_autoload_register( "\\Libre\\Autoloader\\Handler::handle" );
+
+    class Modules{}
 }
