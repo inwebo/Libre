@@ -16,19 +16,7 @@ namespace Libre\Mvc\Controller\Traits {
          */
         public function getSystem()
         {
-            return $this->_system;
-        }
-
-        /**
-         * @param Sys $system
-         */
-        public function setSystem(Sys $system)
-        {
-            $this->_system = $system;
-        }
-
-        public function getModuleConfig($name) {
-            return $this->getSystem()->getModule($name)->getLoadedConfig();
+            return Sys::this();
         }
 
     }
