@@ -60,8 +60,8 @@ abstract class ActionController extends Controller
     public function init()
     {
         // Devrait setter le layout ainsi que la vue de l'action courante.
-        $this->setView(new View(new Template\FromString('+--+'), new View\ViewObject()));
-        $this->getView()->setAutoRender(false);
+        //$this->setView(new View(new Template\FromString('+--+'), new View\ViewObject()));
+        //$this->getView()->setAutoRender(false);
     }
 
     /**
@@ -79,10 +79,10 @@ abstract class ActionController extends Controller
      */
     public function render()
     {
-        $methodName = debug_backtrace()[1]['function'];
-        $fileName = str_replace(self::ACTION_SUFFIX,'',$methodName) . self::FILE_EXTENSION;
+        //$methodName = debug_backtrace()[1]['function'];
+        //$fileName = str_replace(self::ACTION_SUFFIX,'',$methodName) . self::FILE_EXTENSION;
         // Doit préparer la view partielle demandée par l'action dans la vue courante.
-        $this->getView()->attachPartial('body',$fileName);
+        //$this->getView()->attachPartial('body',$fileName);
         //echo $fileName;
     }
 }
