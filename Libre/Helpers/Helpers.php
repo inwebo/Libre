@@ -16,12 +16,12 @@ namespace Libre {
 
         static public function registerModule()
         {
-            Handler::addDecorator(new BaseDir(getcwd()));
+            Handler::addDecorator(new BaseDir(System::this()->getInstanceLocator()->getModulesDir()));
         }
 
         static public function registerInstance()
         {
-            Handler::addDecorator(new BaseDir(getcwd()));
+            Handler::addDecorator(new BaseDir(System::this()->getInstanceLocator()->getRealPath()));
         }
 
         static public function getCssAsTags()
