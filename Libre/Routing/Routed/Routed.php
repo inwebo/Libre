@@ -18,7 +18,6 @@ class Routed
      * @var \ArrayObject
      */
     protected $_params;
-
     /**
      * @return string
      */
