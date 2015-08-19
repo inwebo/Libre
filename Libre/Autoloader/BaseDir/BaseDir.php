@@ -99,11 +99,25 @@ namespace Libre\Autoloader {
             $classArray = $classObj->toArray();
             unset($classArray[0]);
 
+
+            //var_dump($classArray);
+
             $nameSpace = implode(DIRECTORY_SEPARATOR,$classArray);
             $fileName = str_replace('{class}', $this->_classInfos->getClassName(), $this->_classFilePattern);
             $path = $this->_baseDir . DIRECTORY_SEPARATOR .$nameSpace.DIRECTORY_SEPARATOR.$fileName;
             $path = str_replace('_', DIRECTORY_SEPARATOR, $path);
             return $path;
+            /*
+            if(is_file($path))
+            {
+                return $path;
+            }
+            else {
+                $nameSpace = implode(DIRECTORY_SEPARATOR,$classArray) . '.php';
+                echo $nameSpace;
+            }
+            */
+
         }
 
     }
