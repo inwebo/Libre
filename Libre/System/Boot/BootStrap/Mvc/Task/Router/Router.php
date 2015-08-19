@@ -16,8 +16,9 @@ class Router extends DefaultTask
         {
             $router = new _Router(Uri::this(),$this->getSystem()->getRoutesCollection());
             $routed = $router->dispatch();
-            $tmpRouted = new Routed('Test','index');
-            $this->getSystem()->setRouted($tmpRouted);
+            //var_dump($routed);
+            //$tmpRouted = new Routed('Test','index');
+            //$this->getSystem()->setRouted($tmpRouted);
         }
         catch(\Exception $e)
         {
