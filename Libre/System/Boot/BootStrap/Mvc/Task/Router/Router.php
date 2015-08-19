@@ -18,7 +18,6 @@ class Router extends DefaultTask
             $routed = $router->dispatch();
             $tmpRouted = new Routed('Test','index');
             $this->getSystem()->setRouted($tmpRouted);
-            var_dump($this->getSystem());
         }
         catch(\Exception $e)
         {
