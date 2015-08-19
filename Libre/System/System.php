@@ -317,7 +317,7 @@ class System {
     /**
      * @param Routed $routed
      */
-    public function setRouted($routed)
+    public function setRouted(Routed $routed)
     {
         $this->_routed = $routed;
     }
@@ -350,6 +350,11 @@ class System {
     public function getLayout()
     {
         return $this->getConfig()->getIndexDir();
+    }
+
+    public function getDefaultView()
+    {
+
     }
     #endregion
 }
