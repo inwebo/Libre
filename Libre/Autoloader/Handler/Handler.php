@@ -16,7 +16,7 @@ namespace Libre\Autoloader {
             $this->load($this->_classInfos);
         }
 
-        public function load(ClassInfos $classInfos){
+        protected function load(ClassInfos $classInfos){
             foreach(self::$_decorators as $decorator) {
                 /* @var \Libre\Autoloader\BaseDir $decorator */
                 if($decorator->isLoadable($classInfos)) {
