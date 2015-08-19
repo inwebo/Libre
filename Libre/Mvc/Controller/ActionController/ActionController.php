@@ -59,7 +59,7 @@ abstract class ActionController extends Controller
      */
     public function init()
     {
-        // Chemin index par defaut pour le layout
+        // Devrait setter le layout ainsi que la vue de l'action courante.
         $this->setView(new View(new Template\FromString('+--+'), new View\ViewObject()));
         $this->getView()->setAutoRender(false);
     }
