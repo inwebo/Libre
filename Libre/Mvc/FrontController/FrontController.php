@@ -1,6 +1,7 @@
 <?php
 namespace Libre\Mvc {
 
+    use Libre\Routing\Route;
     use Libre\Routing\Routed;
 
     /**
@@ -10,7 +11,36 @@ namespace Libre\Mvc {
     class FrontControllerException extends \Exception
     {
         protected $code = 500;
-        protected $message = 'FrontController : controller or action not found.';
+        protected $message;
+
+        /**
+         * @var Route
+         */
+        protected $_routed;
+
+        /**
+         * @return Routed
+         */
+        public function getRouted()
+        {
+            return $this->_routed;
+        }
+
+        /**
+         * @param Route $routed
+         */
+        public function setRouted($routed)
+        {
+            $this->_routed = $routed;
+        }
+
+
+        public function __construct(Routed $routed)
+        {
+            parent::__construct();
+            $this->setRouted($routed);
+            $this->message = '`'.$this->getRouted()->getDispatchable().'`' . " is not a valid controller, or method " . $this->getRouted()->getMvcAction() . " is missing";
+        }
     }
 
     /**
@@ -25,10 +55,6 @@ namespace Libre\Mvc {
     class FrontController
     {
 
-        const DEFAULT_ACTION = "index";
-        const ACTION_SUFFIX = "Action";
-        const CONTROLLER_SUFFIX = "Controller";
-
         /**
          * @var Routed
          */
@@ -38,17 +64,9 @@ namespace Libre\Mvc {
         /**
          * @return string Chaine suffixé par la constante <code>self::ACTION_SUFFIX</code>
          */
-        public function getAction()
+        public function getMvcAction()
         {
-            return $this->getRawAction() . self::ACTION_SUFFIX;
-        }
-
-        /**
-         * @return string Nom de l'action sans suffix
-         */
-        public function getRawAction()
-        {
-            return $this->getRouted()->getAction();
+            return $this->getRouted()->getMvcAction();
         }
 
         /**
@@ -101,13 +119,13 @@ namespace Libre\Mvc {
         {
             if ($this->getRouted()->isValidController()) {
                 if ($this->getRouted()->isValidAction()) {
-                    $instance = $this->getRouted()->factory();
-                    $action = new \ReflectionMethod($instance, $this->getRouted()->getAction());
-                    $action->invokeArgs($instance, $this->getRouted()->getParamsAsArray());
-                    return $instance->dispatch();
+                    //$instance = $this->getRouted()->factory();
+                    //$action = new \ReflectionMethod($instance, $this->getRouted()->getMvcAction());
+                    //$action->invokeArgs($instance, $this->getRouted()->getParamsAsArray());
+                    //return $instance->dispatch();
                 }
             } else {
-                throw new FrontControllerException();
+                throw new FrontControllerException($this->getRouted());
             }
         }
 

@@ -4,7 +4,9 @@ namespace Libre\Routing;
 
 class Routed
 {
-    const ACTION_SUFFIX = 'Action';
+    const DEFAULT_ACTION = "index";
+    const ACTION_SUFFIX = "Action";
+    const CONTROLLER_SUFFIX = "Controller";
 
     /**
      * @var string Une classe implémentant IController
@@ -43,6 +45,14 @@ class Routed
     }
 
     /**
+     * @return string
+     */
+    public function getMvcAction()
+    {
+        return $this->_action . self::ACTION_SUFFIX;
+    }
+
+    /**
      * @param string $action
      */
     public function setAction($action)
@@ -76,9 +86,9 @@ class Routed
 
     public function __construct($dispatchable = null, $action = null, $params = null)
     {
-        (!is_null($dispatchable)) ? $this->setDispatchable($dispatchable) : null;
-        (!is_null($action)) ? $this->setAction($action) : null;
-        (!is_null($params)) ? $this->setParams($params) : null;
+        (!is_null($dispatchable))   ? $this->setDispatchable($dispatchable) : null;
+        (!is_null($action))         ? $this->setAction($action) : null;
+        (!is_null($params))         ? $this->setParams($params) : null;
     }
 
     /**
@@ -98,7 +108,7 @@ class Routed
         // Relection class
         try {
             $rc = new \ReflectionClass($this->getDispatchable());
-            $rc->getMethod($this->getAction());
+            $rc->getMethod($this->getMvcAction());
             return true;
         } catch (\Exception $e) {
             return false;
