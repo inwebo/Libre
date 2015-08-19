@@ -7,7 +7,6 @@ use Libre\Http\Request;
 use Libre\Http\Response;
 use Libre\Models\Module;
 use Libre\Patterns\AdjustablePriorityQueue;
-use Libre\Routing\Route;
 use Libre\Routing\Routed;
 use Libre\Routing\RoutesCollection;
 use Libre\System\Services\PathsLocator;
@@ -344,6 +343,13 @@ class System {
     public function setResponse(Response $response)
     {
         $this->_response = $response;
+    }
+    #endregion
+
+    #region View
+    public function getLayout()
+    {
+        return $this->getConfig()->getIndexDir();
     }
     #endregion
 }
