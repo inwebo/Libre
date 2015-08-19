@@ -130,7 +130,8 @@ namespace Libre\Routing {
             // Si on arrive ici est une route inconnue.
             if($this->_forceDefault)
             {
-                return $this->getRoutesCollection()->getDefaultRoute();
+
+                //return $this->getRoutesCollection()->getDefaultRoute();
             }
             else
             {
