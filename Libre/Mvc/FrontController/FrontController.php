@@ -2,7 +2,6 @@
 namespace Libre\Mvc {
 
     use Libre\Routing\Routed;
-    use Libre\Mvc\FrontController\Decorator;
 
     /**
      * Class FrontControllerException
@@ -20,7 +19,6 @@ namespace Libre\Mvc {
      * Recoit un objet Http\Request, une routes déjà routée ainsi qu'une vue, le frontcontroller doit permettre
      * l'instaciation de l'ActionController, appel de la methode d'action correspondante avec les bon paramètres.
      *
-     * @todo : Devrait gérér les plugins.
      *
      * @package Libre\Mvc
      */
@@ -42,7 +40,15 @@ namespace Libre\Mvc {
          */
         public function getAction()
         {
-            return $this->getRouted()->getAction() . self::ACTION_SUFFIX;
+            return $this->getRawAction() . self::ACTION_SUFFIX;
+        }
+
+        /**
+         * @return string Nom de l'action sans suffix
+         */
+        public function getRawAction()
+        {
+            return $this->getRouted()->getAction();
         }
 
         /**
