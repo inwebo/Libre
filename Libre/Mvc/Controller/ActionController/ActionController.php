@@ -8,31 +8,30 @@ use Libre\View\Template;
 
 abstract class ActionController extends Controller
 {
-
-    const ACTION_SUFFIX     = 'Action';
-    const CONTROLLER_SUFFIX = 'Controller';
-    const FILE_EXTENSION    = '.php';
-    const VIEW_PATH_FORMAT  = "{controller}/{action}{ext}";
+    /**
+     * @var Controller\Traits\System
+     */
+    use Controller\Traits\System;
 
     /**
      * @var View
      */
-    protected $_view;
+    protected $_layout;
 
     /**
      * @return View
      */
-    public function getView()
+    public function getLayout()
     {
-        return $this->_view;
+        return $this->_layout;
     }
 
     /**
      * @param View $view
      */
-    public function setView(View $view)
+    protected function setLayout(View $view)
     {
-        $this->_view = $view;
+        $this->_layout = $view;
     }
 
     /**
@@ -41,7 +40,7 @@ abstract class ActionController extends Controller
      */
     protected function toView($key, $value)
     {
-        $this->getView()->getViewObject()->$key = $value;
+        $this->getLayout()->getViewObject()->$key = $value;
     }
 
     /**
@@ -50,12 +49,11 @@ abstract class ActionController extends Controller
      */
     protected function setPartial($name, $path)
     {
-        $this->getView()->attachPartial($name,$path);
+        $this->getLayout()->attachPartial($name,$path);
     }
 
     /**
      * Prépare le layout
-     * @todo
      */
     public function init()
     {
@@ -69,20 +67,20 @@ abstract class ActionController extends Controller
      */
     public function dispatch()
     {
-        $this->getResponse()->appendSegment('layout', $this->getView()->render());
+        $this->getResponse()->appendSegment('layout', $this->getLayout()->render());
         return $this->getResponse();
     }
 
     /**
      * Prépare la vue partielle
-     * @todo
      */
     public function render()
     {
-        //$methodName = debug_backtrace()[1]['function'];
-        //$fileName = str_replace(self::ACTION_SUFFIX,'',$methodName) . self::FILE_EXTENSION;
-        // Doit préparer la view partielle demandée par l'action dans la vue courante.
-        //$this->getView()->attachPartial('body',$fileName);
-        //echo $fileName;
+        $this->getLayout()->attachPartial('body', $this->getSystem()->getDefaultView());
+    }
+
+    public function indexAction()
+    {
+        $this->render();
     }
 }
