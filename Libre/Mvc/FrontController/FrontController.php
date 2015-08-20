@@ -1,6 +1,9 @@
 <?php
 namespace Libre\Mvc {
 
+    use Libre\Http\Request;
+    use Libre\Http\Response;
+    use Libre\Http\Url;
     use Libre\Routing\Route;
     use Libre\Routing\Routed;
 
@@ -8,7 +11,7 @@ namespace Libre\Mvc {
      * Class FrontControllerException
      * @package Libre\Mvc
      */
-    class FrontControllerException extends \Exception
+    class FrontControllerUnknownControllerException extends \Exception
     {
         protected $code = 500;
         protected $message;
@@ -34,12 +37,21 @@ namespace Libre\Mvc {
             $this->_routed = $routed;
         }
 
-
         public function __construct(Routed $routed)
         {
             parent::__construct();
             $this->setRouted($routed);
-            $this->message = '`'.$this->getRouted()->getDispatchable().'`' . " is not a valid controller, or method " . $this->getRouted()->getMvcAction() . " is missing";
+            $this->message = '`'.$this->getRouted()->getDispatchable().'`' . ' is not a valid controller';
+        }
+    }
+
+    class FrontControllerUnknownActionException extends FrontControllerUnknownControllerException
+    {
+        public function __construct(Routed $routed)
+        {
+            parent::__construct();
+            $this->setRouted($routed);
+            $this->message =  '`'.$this->getRouted()->getDispatchable().'`->' .$this->getRouted()->getMvcAction() . '() is not a valid MVC action';
         }
     }
 
@@ -96,7 +108,7 @@ namespace Libre\Mvc {
         /**
          * @param Routed $route
          */
-        public function setRouted(Routed $route)
+        protected function setRouted(Routed $route)
         {
             $this->_routed = $route;
         }
@@ -111,21 +123,28 @@ namespace Libre\Mvc {
         }
 
         /**
-         * @return mixed
-         * @throws FrontControllerException Si n'est pas une classe connue ni un action de classe connue.
-         * @throws \Exception
+         * @return Response
+         * @throws FrontControllerUnknownActionException Si n'est pas une classe connue ni un action de classe connue.
+         * @throws FrontControllerUnknownControllerException Si n'est pas une classe connue ni un action de classe connue.
          */
         public function invoker()
         {
             if ($this->getRouted()->isValidController()) {
-                if ($this->getRouted()->isValidAction()) {
-                    //$instance = $this->getRouted()->factory();
-                    //$action = new \ReflectionMethod($instance, $this->getRouted()->getMvcAction());
-                    //$action->invokeArgs($instance, $this->getRouted()->getParamsAsArray());
-                    //return $instance->dispatch();
+                if ($this->getRouted()->isValidMvcAction()) {
+                    $className = $this->getRouted()->getDispatchable();
+                    /** @var Controller $instance */
+                    // More efficient than Reflection classes
+                    $instance   = new $className(Request::get(Url::get()));
+                    $methodName = $this->getRouted()->getMvcAction();
+                    $instance->$methodName($this->getRouted()->getParamsAsArray());
+                    return $instance->dispatch();
+                }
+                else
+                {
+                    throw new FrontControllerUnknownActionException($this->getRouted());
                 }
             } else {
-                throw new FrontControllerException($this->getRouted());
+                throw new FrontControllerUnknownControllerException($this->getRouted());
             }
         }
 
