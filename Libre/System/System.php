@@ -354,7 +354,7 @@ class System {
 
     public function getDefaultView()
     {
-
+        return $this->getConfig()->getViewsDir() . $this->getRouted()->getAction() . Routed::FILE_EXT;
     }
     #endregion
 }
