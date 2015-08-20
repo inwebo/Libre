@@ -4,9 +4,10 @@ namespace Libre\Routing;
 
 class Routed
 {
-    const DEFAULT_ACTION = "index";
-    const ACTION_SUFFIX = "Action";
+    const DEFAULT_ACTION    = "index";
+    const ACTION_SUFFIX     = "Action";
     const CONTROLLER_SUFFIX = "Controller";
+    const FILE_EXT          = ".php";
 
     /**
      * @var string Une classe implémentant IController
@@ -31,7 +32,7 @@ class Routed
     /**
      * @param string $controller
      */
-    public function setDispatchable($controller)
+    protected function setDispatchable($controller)
     {
         $this->_dispatchable = $controller;
     }
@@ -55,7 +56,7 @@ class Routed
     /**
      * @param string $action
      */
-    public function setAction($action)
+    protected function setAction($action)
     {
         $this->_action = $action;
     }
@@ -69,7 +70,7 @@ class Routed
     }
 
     /**
-     * @return \ArrayObject
+     * @return array
      */
     public function getParamsAsArray()
     {
@@ -79,7 +80,7 @@ class Routed
     /**
      * @param \ArrayObject $params
      */
-    public function setParams($params)
+    protected function setParams($params)
     {
         $this->_params = $params;
     }
@@ -87,8 +88,8 @@ class Routed
     public function __construct($dispatchable = null, $action = null, $params = null)
     {
         (!is_null($dispatchable))   ? $this->setDispatchable($dispatchable) : null;
-        (!is_null($action))         ? $this->setAction($action) : null;
-        (!is_null($params))         ? $this->setParams($params) : null;
+        (!is_null($action))         ? $this->setAction($action)             : null;
+        (!is_null($params))         ? $this->setParams($params)             : null;
     }
 
     /**
@@ -103,30 +104,11 @@ class Routed
     /**
      * @return bool
      */
-    public function isValidAction()
+    public function isValidMvcAction()
     {
-        // Relection class
-        try {
-            $rc = new \ReflectionClass($this->getDispatchable());
-            $rc->getMethod($this->getMvcAction());
-            return true;
-        } catch (\Exception $e) {
-            return false;
-        }
-    }
-
-    /**
-     * @return object
-     * @throws \Exception
-     */
-    public function factory()
-    {
-        try {
-            $class      = new \ReflectionClass($this->getDispatchable());
-            $instance   = $class->newInstanceArgs($this->getParamsAsArray());
-            return $instance;
-        } catch (\Exception $e) {
-            throw $e;
+        if( $this->isValidController() )
+        {
+            return method_exists($this->getDispatchable(), $this->getMvcAction());
         }
     }
 }
