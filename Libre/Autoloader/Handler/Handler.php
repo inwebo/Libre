@@ -2,7 +2,8 @@
 
 namespace Libre\Autoloader {
 
-    class Handler{
+    class Handler
+    {
 
         /**
          * @var ClassInfos
@@ -11,19 +12,20 @@ namespace Libre\Autoloader {
 
         static protected $_decorators = array();
 
-        public function __construct(ClassInfos $classInfos){
+        public function __construct(ClassInfos $classInfos)
+        {
             $this->_classInfos = $classInfos;
             $this->load($this->_classInfos);
         }
 
-        protected function load(ClassInfos $classInfos){
-            foreach(self::$_decorators as $decorator) {
+        protected function load(ClassInfos $classInfos)
+        {
+            foreach (self::$_decorators as $decorator) {
                 /* @var \Libre\Autoloader\BaseDir $decorator */
-                if($decorator->isLoadable($classInfos)) {
-                    if( !class_exists( $classInfos->toAbsolute() ) ) {
+                if ($decorator->isLoadable($classInfos)) {
+                    if (!class_exists($classInfos->toAbsolute())) {
                         $path = $decorator->toPath();
-                        if( is_file($path) )
-                        {
+                        if (is_file($path)) {
                             include($path);
                         }
                     }
@@ -34,7 +36,8 @@ namespace Libre\Autoloader {
         /**
          * @param IAutoloadable $decorator Dirs pools
          */
-        static public function addDecorator( IAutoloadable $decorator ){
+        static public function addDecorator(IAutoloadable $decorator)
+        {
             self::$_decorators[] = $decorator;
         }
 
@@ -42,7 +45,8 @@ namespace Libre\Autoloader {
          * @param string $class A class name
          * @return Handler
          */
-        static public function handle($class){
+        static public function handle($class)
+        {
             $c = new ClassInfos($class);
             return new self($c);
         }

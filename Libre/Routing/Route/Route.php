@@ -14,18 +14,120 @@ namespace Libre\Routing {
      * @todo Métier segments est ce vraiment sa place ?
      */
     class Route {
-        public $pattern;
-        public $name;
-        public $controller;
-        public $action;
-        public $params;
+        /**
+         * @var string
+         */
+        protected $pattern;
+        /**
+         * @var null|string
+         */
+        protected $name;
+        /**
+         * @var string
+         */
+        protected $controller;
+        /**
+         * @var string
+         */
+        protected $action;
+        /**
+         * @var array
+         */
+        protected $params;
 
-        public function __construct( $pattern, $controller = null, $action = null, $params = null, $name = null ) {
-            $this->pattern      = $pattern;
-            $this->controller   = $controller;
-            $this->action       = $action;
-            $this->params       = (is_null($params)) ? array() : $params;
-            $this->name         = $name;
+        /**
+         * @return string
+         */
+        public function getPattern()
+        {
+            return $this->pattern;
+        }
+
+        /**
+         * @param string $pattern
+         */
+        public function setPattern($pattern)
+        {
+            $this->pattern = $pattern;
+        }
+
+        /**
+         * @return null|string
+         */
+        public function getName()
+        {
+            return $this->name;
+        }
+
+        /**
+         * @param null|string $name
+         */
+        public function setName($name)
+        {
+            $this->name = $name;
+        }
+
+        /**
+         * @return string
+         */
+        public function getController()
+        {
+            return $this->controller;
+        }
+
+        /**
+         * @param string $controller
+         */
+        public function setController($controller)
+        {
+            $this->controller = $controller;
+        }
+
+        /**
+         * @return string
+         */
+        public function getAction()
+        {
+            return $this->action;
+        }
+
+        /**
+         * @param string $action
+         */
+        public function setAction($action)
+        {
+            $this->action = $action;
+        }
+
+        /**
+         * @return array
+         */
+        public function getParams()
+        {
+            return $this->params;
+        }
+
+        /**
+         * @param array $params
+         */
+        public function setParams($params)
+        {
+            $this->params = $params;
+        }
+
+        /**
+         * @param string $pattern
+         * @param string $controller
+         * @param string $action
+         * @param array $params
+         * @param null|string $name
+         */
+        public function __construct( $pattern, $controller, $action, $params = array(), $name = null ) {
+            $this->setPattern($pattern);
+            $this->setController($controller);
+            $this->setAction($action);
+            $this->setParams($params);
+            $this->setName($name);
         }
 
         /**
@@ -36,15 +138,19 @@ namespace Libre\Routing {
         protected function extractMandatorySegment() {
             $crochetStart = strpos($this->pattern,"[");
             if( $crochetStart !== false ) {
-                $mandatory = substr( $this->pattern, 0, $crochetStart );
+                $mandatory = substr( $this->getPattern(), 0, $crochetStart );
             }
             else {
-                $mandatory = $this->pattern;
+                $mandatory = $this->getPattern();
             }
             return $mandatory;
         }
 
-        public function mandatoryToArray() {
+        /**
+         * @return array
+         */
+        public function mandatoryToArray()
+        {
             $mandatory = $this->extractMandatorySegment();
             // 1 - Final slash ?
             $finalSlash = (substr($mandatory, -1) === '/') ? true : false ;
@@ -72,8 +178,12 @@ namespace Libre\Routing {
             return $buffer;
         }
 
-        public function toArray() {
-            $buffer = $this->pattern;
+        /**
+         * @return array
+         */
+        public function toArray()
+        {
+            $buffer = $this->getPattern();
             preg_match_all(
                 '#(\[:(.*)(\#\])|\[{1}(.*)\|\#\]$]{1})|\[{1}(.*)\]{1}#mU',
                 $buffer,
@@ -83,7 +193,11 @@ namespace Libre\Routing {
             return array_merge( $this->mandatoryToArray(), $match[0] )  ;
         }
 
-        public function toSegments() {
+        /**
+         * @return array
+         */
+        public function toSegments()
+        {
             $buffer = array();
             $segments = $this->toArray();
             foreach($segments as $segment) {
@@ -92,7 +206,11 @@ namespace Libre\Routing {
             return $buffer;
         }
 
-        public function countSegments() {
+        /**
+         * @return int
+         */
+        public function countSegments()
+        {
             return count($this->toSegments());
         }
 

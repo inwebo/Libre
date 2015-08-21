@@ -57,13 +57,13 @@ abstract class ActionController extends Controller
      */
     public function init()
     {
-        // Layout
-        $this->setLayout(
-            new View(
+        $view = new View(
                 new Template($this->getSystem()->getLayout()),
                 new View\ViewObject()
-            )
-        );
+            );
+        $view->setAutoRender(false);
+        // Layout
+        $this->setLayout($view);
     }
 
     /**
@@ -80,7 +80,6 @@ abstract class ActionController extends Controller
      */
     public function render()
     {
-        echo $this->getSystem()->getDefaultView();
-        $this->getLayout()->attachPartial('body', $this->getSystem()->getDefaultView());
+        $this->getLayout()->attachPartial('body', $this->getSystem()->getCurrentView());
     }
 }
