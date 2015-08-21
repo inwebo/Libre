@@ -12,6 +12,11 @@ use Libre\Routing\RoutesCollection;
 use Libre\System\Services\PathsLocator;
 use Libre\Web\Instance;
 
+/**
+ * Class System
+ * @todo Les dépendences tain
+ * @package Libre
+ */
 class System {
 
     #region Pattern Singleton
@@ -349,12 +354,14 @@ class System {
     #region View
     public function getLayout()
     {
-        return $this->getConfig()->getIndexDir();
+        return $this->getInstanceLocator()->getIndexDir();
     }
 
     public function getDefaultView()
     {
-        return $this->getConfig()->getViewsDir() . $this->getRouted()->getAction() . Routed::FILE_EXT;
+        //@todo buggé le bordel
+        //echo $this->getInstanceLocator()->getIndexDir();
+        //echo $this->getInstanceLocator()->getViewsDir();
     }
     #endregion
 }
