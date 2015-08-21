@@ -13,7 +13,13 @@ namespace Libre {
     {
         public function indexAction($s)
         {
-            echo ' @'.$s;
+            $this->toView('foo', __CLASS__ . __METHOD__ . '("'.$s.'"")');
+            $this->render();
+        }
+
+        public function testAction($s)
+        {
+            $this->toView('foo', __CLASS__ . __METHOD__ . '("'.$s.'"")');
             $this->render();
         }
     }
@@ -29,7 +35,7 @@ namespace Libre {
             )
         );
         $bootable->start();
-
+        echo Helpers::getBaseJsUrl();
         //var_dump(System::this());
     } catch (\Exception $e) {
         echo $e->getMessage();
