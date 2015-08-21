@@ -8,8 +8,10 @@ namespace Libre\Autoloader {
      *
      * @package Libre\Autoloader
      */
-    interface IAutoloadable {
+    interface IAutoloadable
+    {
         public function isLoadable(ClassInfos $classInfos);
+
         public function toPath();
     }
 }
