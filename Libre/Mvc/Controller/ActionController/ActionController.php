@@ -57,9 +57,13 @@ abstract class ActionController extends Controller
      */
     public function init()
     {
-        // Devrait setter le layout ainsi que la vue de l'action courante.
-        //$this->setView(new View(new Template\FromString('+--+'), new View\ViewObject()));
-        //$this->getView()->setAutoRender(false);
+        // Layout
+        $this->setLayout(
+            new View(
+                new Template($this->getSystem()->getLayout()),
+                new View\ViewObject()
+            )
+        );
     }
 
     /**
@@ -76,11 +80,7 @@ abstract class ActionController extends Controller
      */
     public function render()
     {
+        echo $this->getSystem()->getDefaultView();
         $this->getLayout()->attachPartial('body', $this->getSystem()->getDefaultView());
-    }
-
-    public function indexAction()
-    {
-        $this->render();
     }
 }
