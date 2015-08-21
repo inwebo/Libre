@@ -8,7 +8,8 @@ namespace Libre\Autoloader {
      *
      * @package Libre\Autoloader
      */
-    class BaseDir implements IAutoloadable{
+    class BaseDir implements IAutoloadable
+    {
         /**
          * @var ClassInfos
          */
@@ -74,9 +75,10 @@ namespace Libre\Autoloader {
          * @param string $baseDir
          * @param string $classFilePattern Default {class}.php sera substitué avec le nom de la classe courante
          */
-        public function __construct($baseDir, $classFilePattern = '{class}.php'){
-            $this->_baseDir             = $baseDir;
-            $this->_classFilePattern    = $classFilePattern;
+        public function __construct($baseDir, $classFilePattern = '{class}.php')
+        {
+            $this->_baseDir = $baseDir;
+            $this->_classFilePattern = $classFilePattern;
         }
 
         /**
@@ -84,7 +86,8 @@ namespace Libre\Autoloader {
          * @param ClassInfos $classInfos
          * @return bool
          */
-        public function isLoadable(ClassInfos $classInfos){
+        public function isLoadable(ClassInfos $classInfos)
+        {
             $this->_classInfos = $classInfos;
             return is_file($this->toPath());
         }
@@ -93,18 +96,19 @@ namespace Libre\Autoloader {
          * Représente un namespace sous forme de chaine PSR-0
          * @return string
          */
-        public function toPath(){
+        public function toPath()
+        {
             $className = $this->_classInfos->trim();
-            $classObj  = new ClassInfos($className);
+            $classObj = new ClassInfos($className);
             $classArray = $classObj->toArray();
             unset($classArray[0]);
 
 
             //var_dump($classArray);
 
-            $nameSpace = implode(DIRECTORY_SEPARATOR,$classArray);
+            $nameSpace = implode(DIRECTORY_SEPARATOR, $classArray);
             $fileName = str_replace('{class}', $this->_classInfos->getClassName(), $this->_classFilePattern);
-            $path = $this->_baseDir . DIRECTORY_SEPARATOR .$nameSpace.DIRECTORY_SEPARATOR.$fileName;
+            $path = $this->_baseDir . DIRECTORY_SEPARATOR . $nameSpace . DIRECTORY_SEPARATOR . $fileName;
             $path = str_replace('_', DIRECTORY_SEPARATOR, $path);
             return $path;
             /*
