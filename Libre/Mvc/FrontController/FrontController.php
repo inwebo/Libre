@@ -51,7 +51,8 @@ namespace Libre\Mvc {
         {
             parent::__construct();
             $this->setRouted($routed);
-            $this->message =  '`'.$this->getRouted()->getDispatchable().'`->' .$this->getRouted()->getMvcAction() . '() is not a valid MVC action';
+            //$this->message =  '`'.$this->getRouted()->getDispatchable().'`->' .$this->getRouted()->getMvcAction() . '() is not a valid MVC action';
+            $this->message =  $this->getRouted()->getDispatchable() . $this->getRouted()->getMvcAction() . '() is not a valid MVC action';
         }
     }
 
@@ -73,6 +74,12 @@ namespace Libre\Mvc {
         protected $_routed;
 
         #region Helpers
+
+        public function getDispatchable()
+        {
+            return $this->getRouted()->getDispatchable();
+        }
+
         /**
          * @return string Chaine suffixé par la constante <code>self::ACTION_SUFFIX</code>
          */
@@ -130,13 +137,18 @@ namespace Libre\Mvc {
         public function invoker()
         {
             if ($this->getRouted()->isValidController()) {
-                if ($this->getRouted()->isValidMvcAction()) {
+                if ($this->getRouted()->isValidMvcAction())
+                {
                     $className = $this->getRouted()->getDispatchable();
+
                     /** @var Controller $instance */
                     // More efficient than Reflection classes
-                    $instance   = new $className(Request::get(Url::get()));
-                    $methodName = $this->getRouted()->getMvcAction();
-                    $instance->$methodName($this->getRouted()->getParamsAsArray());
+                    $instance = new $className(Request::get(Url::get()));
+
+                    // Reflection method
+                    $reflectionMethod = new \ReflectionMethod($className, $this->getMvcAction());
+                    $reflectionMethod->invokeArgs($instance, $this->getParamsAsArray());
+
                     return $instance->dispatch();
                 }
                 else
