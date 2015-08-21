@@ -110,5 +110,9 @@ class Routed
         {
             return method_exists($this->getDispatchable(), $this->getMvcAction());
         }
+        else
+        {
+            return false;
+        }
     }
 }
