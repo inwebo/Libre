@@ -7,7 +7,8 @@ namespace Libre\Autoloader {
      *
      * @package Libre\Autoloader
      */
-    class ClassInfos {
+    class ClassInfos
+    {
         /**
          * @var string
          */
@@ -16,6 +17,7 @@ namespace Libre\Autoloader {
          * @var string
          */
         protected $_extension = '.php';
+
         /**
          * @return string
          */
@@ -58,36 +60,34 @@ namespace Libre\Autoloader {
 
         public function trim()
         {
-            return  trim( $this->getClass(), '\\' );
+            return trim($this->getClass(), '\\');
         }
 
         public function isNamespaced()
         {
-            return ( strpos($this->getClass(), '\\') !== false ) ? true : false ;
+            return (strpos($this->getClass(), '\\') !== false) ? true : false;
         }
 
         /**
          * @param int $offset
          * @return null|string
          */
-        public function getVendor($offset=1)
+        public function getVendor($offset = 1)
         {
-            if( $this->isNamespaced() ) {
-                $asArray = explode( '\\', $this->trim() );
-                if( $offset > 1 ) {
+            if ($this->isNamespaced()) {
+                $asArray = explode('\\', $this->trim());
+                if ($offset > 1) {
                     $a = $asArray;
                     $toPop = count($a) - $offset;
-                    for($i=0;$i<$toPop;$i++){
+                    for ($i = 0; $i < $toPop; $i++) {
                         array_pop($a);
                     }
-                    return implode('\\',$a);
-                }
-                else {
-                    return ( isset( $asArray[0] ) && !empty( $asArray[0] ) ) ? $asArray[0] : $this->getClass();
+                    return implode('\\', $a);
+                } else {
+                    return (isset($asArray[0]) && !empty($asArray[0])) ? $asArray[0] : $this->getClass();
                 }
 
-            }
-            else {
+            } else {
                 return null;
             }
         }
@@ -106,11 +106,10 @@ namespace Libre\Autoloader {
         public function toArray()
         {
             $v = array();
-            if( $this->isNamespaced() ) {
-                $array = explode( '\\', $this->trim() );
+            if ($this->isNamespaced()) {
+                $array = explode('\\', $this->trim());
                 $v = $array;
-            }
-            else {
+            } else {
                 $v[] = $this->getClass();
             }
             return $v;
@@ -118,7 +117,7 @@ namespace Libre\Autoloader {
 
         public function toPSR0($baseDir)
         {
-            $str = str_replace(array('\\','_'),DIRECTORY_SEPARATOR, $this->getClass());
+            $str = str_replace(array('\\', '_'), DIRECTORY_SEPARATOR, $this->getClass());
             return $baseDir . $str . $this->getExtension();
         }
 
