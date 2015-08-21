@@ -33,7 +33,7 @@ namespace Libre {
         /**
          * @return string
          */
-        public function getBaseDir()
+        protected function getBaseDir()
         {
             return $this->_baseDir;
         }
@@ -41,7 +41,7 @@ namespace Libre {
         /**
          * @param string $baseDir
          */
-        public function setBaseDir($baseDir)
+        protected function setBaseDir($baseDir)
         {
             $this->_baseDir = $baseDir;
         }
@@ -49,7 +49,7 @@ namespace Libre {
         /**
          * @return string
          */
-        public function getFile()
+        protected function getFile()
         {
             return $this->_file;
         }
@@ -65,7 +65,7 @@ namespace Libre {
         /**
          * @return int
          */
-        public function getBirth()
+        protected function getBirth()
         {
             return $this->_birth;
         }
@@ -81,7 +81,7 @@ namespace Libre {
         /**
          * @return int
          */
-        public function getDeath()
+        protected function getDeath()
         {
             return $this->_death;
         }
@@ -89,7 +89,7 @@ namespace Libre {
         /**
          * @param int $death
          */
-        public function setDeath($death)
+        protected function setDeath($death)
         {
             $this->_death = $death;
         }
@@ -97,7 +97,7 @@ namespace Libre {
         /**
          * @return int
          */
-        public function getLife()
+        protected function getLife()
         {
             return $this->_life;
         }
@@ -113,7 +113,7 @@ namespace Libre {
         /**
          * @return boolean
          */
-        public function isFlagUpdating()
+        protected function isFlagUpdating()
         {
             return $this->_flagUpdating;
         }
@@ -121,13 +121,13 @@ namespace Libre {
         /**
          * @param boolean $flagUpdating
          */
-        public function setFlagUpdating($flagUpdating)
+        protected function setFlagUpdating($flagUpdating)
         {
             $this->_flagUpdating = $flagUpdating;
         }
 
         /**
-         * @param string $baseDir Cache base dir
+         * @param string $baseDir Place to save cache files. Must be readable & writable
          * @param string $file Cached file name
          * @param int $life Seconds
          * @throws \Exception
@@ -135,23 +135,27 @@ namespace Libre {
         public function __construct( $baseDir, $file, $life = 10 ) {
             try {
                 $this->validatePaths($baseDir);
-                $this->_baseDir = $baseDir;
-                $this->_file = $file;
-                $this->_life = $life;
+                $this->setBaseDir($baseDir);
+                $this->setFile($file);
+                $this->setLife($life);
 
                 if( file_exists($this->toPathFile()) ) {
-                    $this->_birth = (integer) filemtime($this->toPathFile());
+                    $this->setBirth( (integer) filemtime($this->toPathFile()) );
                 }
                 else {
-                    $this->_birth = (integer) time();
+                    $this->setBirth( (integer) time() );
                 }
-                $this->_death = $this->_birth + $this->_life;
+                $this->setDeath($this->getBirth() + $this->getLife());
             }
             catch(\Exception $e) {
                 throw $e;
             }
         }
 
+        /**
+         * @param string $baseDir Base dir path, must exists & must be writable.
+         * @throws CacheException
+         */
         protected function validatePaths($baseDir){
             if (!file_exists($baseDir)) {
                 throw new CacheException('Dir ' . $baseDir . ' doesn\'t exists ');
@@ -160,6 +164,9 @@ namespace Libre {
             }
         }
 
+        /**
+         * Start cache until the $this->stop() method has been found.
+         */
         public function start(){
             // Already cached ?
             if( file_exists($this->toPathFile()) ) {
@@ -168,18 +175,21 @@ namespace Libre {
                     readfile($this->toPathFile());
                 }
                 else {
-                    $this->_flagUpdating = true;
+                    $this->setFlagUpdating(true);
                 }
             }
             else {
-                $this->_flagUpdating = true;
+                $this->setFlagUpdating(true);
             }
             ob_start();
         }
 
+        /**
+         * @return int
+         */
         public function stop() {
             // Save
-            if($this->_flagUpdating){
+            if($this->isFlagUpdating()){
                 $f = fopen($this->toPathFile(), 'w+');
                 fputs($f,ob_get_contents());
                 fclose($f);
@@ -189,11 +199,11 @@ namespace Libre {
             ob_get_clean();
         }
 
-        public function isValidCache() {
+        protected function isValidCache() {
             return ($this->_death < (integer) time()) ? false : true;
         }
 
-        public function toPathFile(){
+        protected function toPathFile(){
             return $this->_baseDir . $this->_file;
         }
 
