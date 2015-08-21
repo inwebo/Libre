@@ -2,6 +2,8 @@
 
 namespace Libre;
 
+use Libre\Autoloader\BaseDir;
+use Libre\Autoloader\ClassInfos;
 use Libre\Files\Config;
 use Libre\Http\Request;
 use Libre\Http\Response;
@@ -357,11 +359,15 @@ class System {
         return $this->getInstanceLocator()->getIndexDir();
     }
 
-    public function getDefaultView()
+    public function getCurrentView()
     {
         //@todo buggé le bordel
-        //echo $this->getInstanceLocator()->getIndexDir();
-        //echo $this->getInstanceLocator()->getViewsDir();
+        $ci = new ClassInfos($this->getRouted()->getDispatchable());
+        $ci->getClassName();
+
+        return  $this->getInstanceLocator()->getViewsDir() .
+                strtolower($ci->getClassName()) . DIRECTORY_SEPARATOR .
+                $this->getRouted()->getAction()  . Routed::FILE_EXT;
     }
     #endregion
 }
