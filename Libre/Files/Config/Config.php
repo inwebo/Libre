@@ -61,13 +61,19 @@ namespace Libre\Files {
             }
         }
 
-        public function getSection($name)
+        public function getSection($name, $toObject = false)
         {
             if (isset($this->getData()->$name)) {
-                return $this->getData()->$name;
+                return ($toObject) ? (object) $this->getData()->$name : $this->getData()->$name;
             }
         }
 
+        /**
+         * @param $name
+         * @param $key
+         * @param $value
+         * @todo
+         */
         public function addToSection($name, $key, $value)
         {
             if (!is_null($this->getSection($name))) {
