@@ -16,7 +16,7 @@ namespace Libre {
 
         static public function registerModule()
         {
-            Handler::addDecorator(new BaseDir(System::this()->getInstanceLocator()->getModulesDir()));
+            Handler::addDecorator(new BaseDir\ModuleBaseDir(System::this()->getInstanceLocator()->getModulesDir() ));
         }
 
         static public function registerInstance()
@@ -64,6 +64,11 @@ namespace Libre {
         static public function getBaseCssUrl()
         {
             return System::this()->getInstanceLocator()->getCssUrl();
+        }
+
+        static public function renderBody()
+        {
+            include(System::this()->getCurrentView());
         }
 
     }
