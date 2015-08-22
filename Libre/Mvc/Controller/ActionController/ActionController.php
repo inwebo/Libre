@@ -13,6 +13,7 @@ abstract class ActionController extends Controller
      */
     use Controller\Traits\System;
 
+
     /**
      * @var View
      */
