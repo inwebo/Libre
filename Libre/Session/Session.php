@@ -34,9 +34,11 @@ namespace Libre {
         static public function start($defaultValues = array())
         {
             self::this();
-            if (intval(ini_get('session.auto_start')) === 0 || !isset($_SESSION)) {
+            if (intval(ini_get('session.auto_start')) === 0 && !isset($_SESSION)) {
                 session_start();
             }
+            elseif(!isset($_SESSION))
+            {session_start();}
             foreach ($defaultValues as $k => $v) {
                 $_SESSION[$k] = $v;
             }
