@@ -131,7 +131,7 @@ namespace Libre\Web\Instance {
          * @return Instance
          * @throws InstanceException
          */
-        public function search()
+        public function find()
         {
             $url  = $url2 = explode($this->getLocalSeparator(), Instance::urlToDir( $this->getUrl() ) );
             $loop = count($url);
