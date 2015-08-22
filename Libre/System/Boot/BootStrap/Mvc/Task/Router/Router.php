@@ -14,15 +14,15 @@ namespace Libre\System\Boot\BootStrap\Mvc\Task {
         {
             try
             {
-                $router = new _Router(Uri::this(),$this->getSystem()->getRoutesCollection());
+                $router = new _Router(Uri::this(),$this->getSystem()->getRoutesCollection(),true);
                 $routed = $router->dispatch();
-                // @todo routed !
-                //$this->getSystem()->setRouted($tmpRouted);
+                $this->getSystem()->setRouted($routed);
             }
             catch(\Exception $e)
             {
-                // @todo Default route
 
+                // @todo Default route
+                var_dump($e);
             }
         }
     }
