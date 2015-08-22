@@ -69,7 +69,7 @@ class Themes extends AbstractTask
             $baseDir = $this->getSystem()->getInstanceLocator()->getThemesDir() . basename($theme) . DIRECTORY_SEPARATOR;
             $pl      = new PathsLocator($baseUrl, $baseDir, $this->getConfig()->getSection('Themes'));
             $config  = new Config($pl->getConfigDir());
-            $theme   = new Theme($config, $pl);
+            $theme   = new Theme($config, $pl,$this->getSystem());
             $this->getSystem()->setTheme($theme);
         }
     }
