@@ -45,7 +45,7 @@ namespace Libre\Routing {
             $j              = 0;
             $params         = array();
             // Force valeurs par défaut
-            $routed         = new Routed($this->route->controller,$this->route->action, $this->route->params);
+            $routed         = new Routed($this->route->getController(),$this->route->getAction(), $this->route->getParams());
 
             foreach( $routeSegments as $routeSegment ) {
                 //var_dump($routeSegment);
