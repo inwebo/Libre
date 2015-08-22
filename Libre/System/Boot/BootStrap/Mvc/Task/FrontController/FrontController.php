@@ -18,7 +18,8 @@ namespace Libre\System\Boot\BootStrap\Mvc\Task {
 
         protected function renderResponse()
         {
-            System::this()->getResponse()->setStatusCode('HTTP/1.1 404 Not Found');
+            // @todo les headers
+            // System::this()->getResponse()->setStatusCode('HTTP/1.1 404 Not Found');
             System::this()->getResponse()->setForceRender(true);
             System::this()->getResponse()->send();
         }
