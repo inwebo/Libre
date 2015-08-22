@@ -19,5 +19,13 @@ namespace Libre\Mvc\Controller\Traits {
             return Sys::this();
         }
 
+        /**
+         * @return \Libre\Files\Config
+         */
+        public function getInstanceConfigDir()
+        {
+            return $this->getSystem()->getInstanceConfig();
+        }
+
     }
 }
