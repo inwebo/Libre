@@ -37,7 +37,7 @@ namespace Libre\Routing {
         /**
          * @param string $controller
          */
-        protected function setDispatchable($controller)
+        public function setDispatchable($controller)
         {
             $this->_dispatchable = $controller;
         }
@@ -61,7 +61,7 @@ namespace Libre\Routing {
         /**
          * @param string $action
          */
-        protected function setAction($action)
+        public function setAction($action)
         {
             $this->_action = $action;
         }
@@ -85,7 +85,7 @@ namespace Libre\Routing {
         /**
          * @param \ArrayObject $params
          */
-        protected function setParams($params)
+        public function setParams($params)
         {
             $this->_params = $params;
         }
