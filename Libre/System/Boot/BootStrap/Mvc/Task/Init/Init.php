@@ -7,6 +7,7 @@ use Libre\Http\Request;
 use Libre\Http\Url;
 use Libre\Session;
 use Libre\System;
+use Libre\Web\Instance;
 use Libre\Web\Instance\InstanceFactory;
 use Libre\System\Services\PathsLocator;
 use Libre\System\Boot\BootStrap\Mvc\DefaultTask;
@@ -30,20 +31,37 @@ class Init extends DefaultTask
 
     protected function instance()
     {
-        $baseDir = $this->getSystem()->getBaseDir().'/assets/instances/';
-        $wi = new InstanceFactory('http://www.test.fr', $baseDir);
-        $instance = $wi->search();
-        $this->getSystem()->setInstance($instance);
+        try{
+            // @todo prod
+            $baseDir = $this->getSystem()->getBaseDir() . DIRECTORY_SEPARATOR. $this->getSystem()->getConfig()->getSection('App', true)->sites;
+
+            $wi = new InstanceFactory(Url::getUrl(), $baseDir);
+            $instance = $wi->find();
+            $this->getSystem()->setInstance($instance);
+        }
+        catch(\Exception $e)
+        {
+            // default instance
+            // @todo pour $this->instancePath(), bug!
+            $defaultInstance = $this->getSystem()->getBaseDir() . DIRECTORY_SEPARATOR . $this->getSystem()->getConfig()->getSection('Default', true)->site;
+            $instance = new Instance($defaultInstance);
+            $this->getSystem()->setInstance($instance);
+        }
+
     }
 
+    /**
+     * @todo Cas si provient de default intance
+     */
     protected function instancePath()
     {
-        $pl = new PathsLocator('http://www.test.fr', $this->getSystem()->getInstance()->getRealPath(), $this->getConfig()->getSection('Base'));
+        $pl = new PathsLocator(Url::getUrl(), $this->getSystem()->getInstance()->getRealPath(), $this->getConfig()->getSection('Base'));
         $this->getSystem()->setInstanceLocator($pl);
     }
 
     protected function instanceAutoload()
     {
+        // @todo ne fonctionne pas si instance par defaut
         if( is_file($this->getSystem()->getInstanceLocator()->getAutoloadDir()) )
         {
             include $this->getSystem()->getInstanceLocator()->getAutoloadDir();
