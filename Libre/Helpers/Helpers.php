@@ -29,8 +29,8 @@ namespace Libre {
             $js = System::this()->getCss();
             $buffer = "";
             $cache = ($nocache) ? '?t='. time() : '';
-            foreach($js as $v) {
-                $buffer .= '<link rel="stylesheet" href="'.$v . $cache .'"/>'. "\n";
+            foreach($js as $k=>$v) {
+                $buffer .= '<link rel="stylesheet" href="'.$k . $cache .'"/>'. "\n";
             }
             if($echo) {
                 echo $buffer;
@@ -45,8 +45,8 @@ namespace Libre {
             $js = System::this()->getJs();
             $buffer = "";
             $cache = ($nocache) ? '?t='. time() : '';
-            foreach($js as $v) {
-                $buffer .= '<script src="'.$v .$cache.'"></script>'. "\n";
+            foreach($js as $k=>$v) {
+                $buffer .= '<script src="'.$k .$cache.'"></script>'. "\n";
             }
             if($echo) {
                 echo $buffer;
