@@ -2,6 +2,9 @@
 
 namespace Libre\Mvc\Controller\Traits {
 
+
+    use Libre\View;
+
     class StaticViewException extends \Exception {
         protected $code = 500;
         const ERROR_STRING = 'Partial view \'body\' => %s not found';
@@ -9,10 +12,18 @@ namespace Libre\Mvc\Controller\Traits {
 
     trait StaticView {
 
+        /**
+         * @var string
+         */
+        protected $_currentFile;
+
+        /**
+         * @var string
+         */
         protected $_baseDir;
 
         /**
-         * @return mixed
+         * @return string
          */
         public function getBaseDir()
         {
@@ -20,22 +31,40 @@ namespace Libre\Mvc\Controller\Traits {
         }
 
         /**
-         * @param mixed $baseDir
+         * @param string $baseDir
          */
         public function setBaseDir($baseDir)
         {
             $this->_baseDir = $baseDir;
         }
 
+        public function getStaticFilePath($name)
+        {
+            return $this->getBaseDir() . $name . '.php';
+        }
+
+        /**
+         * @return string
+         */
+        public function getCurrentFile()
+        {
+            return $this->_currentFile;
+        }
+
+        /**
+         * @param string $currentCallName
+         */
+        public function setCurrentFile($currentCallName)
+        {
+            $this->_currentFile = $currentCallName;
+        }
 
         public function __call( $name, $arguments ) {
-            $partial = $this->_baseDir . $name . static::FILE_EXTENSION;
-            if( is_file($partial) ) {
-                $this->_view->attachPartial('body',$partial);
-                return $this->_view->render();
-            }
-            else {
-                throw new StaticViewException(sprintf(StaticViewException::ERROR_STRING, $partial));
+            $staticFile = $this->getBaseDir() . $name . '.php';
+            $this->setCurrentFile($staticFile );
+            if( is_file($this->getStaticFilePath($name)) )
+            {
+                $this->render();
             }
         }
     }
