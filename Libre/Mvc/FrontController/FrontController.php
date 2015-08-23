@@ -49,10 +49,10 @@ namespace Libre\Mvc {
     {
         public function __construct(Routed $routed)
         {
-            parent::__construct();
+            parent::__construct($routed);
             $this->setRouted($routed);
             //$this->message =  '`'.$this->getRouted()->getDispatchable().'`->' .$this->getRouted()->getMvcAction() . '() is not a valid MVC action';
-            $this->message =  $this->getRouted()->getDispatchable() . $this->getRouted()->getMvcAction() . '() is not a valid MVC action';
+            $this->message =  $this->getRouted()->getDispatchable() .'->'. $this->getRouted()->getMvcAction() . '() is not a valid MVC action';
         }
     }
 
@@ -136,8 +136,18 @@ namespace Libre\Mvc {
          */
         public function invoker()
         {
-            if ($this->getRouted()->isValidController()) {
-                if ($this->getRouted()->isValidMvcAction())
+            if ($this->getRouted()->isValidController())
+            {
+                if($this->isStaticController())
+                {
+                    $className = $this->getRouted()->getDispatchable();
+                    $instance = new $className(Request::get(Url::get()));
+                    $method = $this->getRouted()->getAction();
+                    $instance->$method();
+
+                    return $instance->dispatch();
+                }
+                elseif ($this->getRouted()->isValidMvcAction())
                 {
                     $className = $this->getRouted()->getDispatchable();
 
@@ -155,9 +165,16 @@ namespace Libre\Mvc {
                 {
                     throw new FrontControllerUnknownActionException($this->getRouted());
                 }
-            } else {
+            }
+            else
+            {
                 throw new FrontControllerUnknownControllerException($this->getRouted());
             }
+        }
+
+        public function isStaticController()
+        {
+            return ('\\Libre\\Mvc\\Controller\\StaticController'===$this->getDispatchable());
         }
 
     }
