@@ -8,4 +8,5 @@ namespace Libre {
     define('CONFIG', DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'config.ini');
 
     class Modules{}
+    class Admin{}
 }
