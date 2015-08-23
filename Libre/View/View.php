@@ -177,8 +177,10 @@ namespace Libre {
         }
 
         public function renderPartial($name){
+
             if( !is_null($this->getPartial($name) && is_string($name)) ) {
                 //@todo if type of View
+                $this->getPartial($name)->setAutoRender(true);
                 $this->getPartial($name)->render();
             }
         }
