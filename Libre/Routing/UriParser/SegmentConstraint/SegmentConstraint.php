@@ -51,6 +51,10 @@ namespace Libre\Routing\UriParser {
             return ($this->isController()) ? $this->segmentUri->getSegment() : null;
         }
 
+        public function getModule() {
+            return ($this->isModule()) ? $this->segmentUri->getSegment() : null;
+        }
+
         public function getAction() {
             return ($this->isAction()) ? $this->segmentUri->getSegment() : null;
         }

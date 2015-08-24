@@ -10,7 +10,7 @@ namespace Libre\Routing {
     /**
      * Class UriParser
      *
-     * Peuple la route Route avec les valeurs de l'uri URI.
+     * Peuple la route Route avec les valeurs de l'uri URI. Et retourne un objet Routed
      *
      * Pourrait créer des alias autotmatiquement
      *
@@ -18,17 +18,54 @@ namespace Libre\Routing {
      */
     class UriParser {
 
-        protected $uri;
-        protected $route;
-        protected $segmentConstraintClass;
+        /**
+         * @var Uri
+         */
+        protected $_uri;
+        /**
+         * @var Route
+         */
+        protected $_route;
+
+        /**
+         * @return Uri
+         */
+        public function getUri()
+        {
+            return $this->_uri;
+        }
+
+        /**
+         * @param Uri $uri
+         */
+        public function setUri($uri)
+        {
+            $this->_uri = $uri;
+        }
+
+        /**
+         * @return Route
+         */
+        public function getRoute()
+        {
+            return $this->_route;
+        }
+
+        /**
+         * @param Route $route
+         */
+        public function setRoute(Route $route)
+        {
+            $this->_route = $route;
+        }
 
         /**
          * @param Uri $uri L'URI entrante
          * @param Routed $route La Route de comparai
          */
         public function __construct( Uri $uri, Route $route) {
-            $this->uri      = $uri;
-            $this->route    = $route;
+            $this->setUri($uri);
+            $this->setRoute($route);
         }
 
         /**
@@ -40,12 +77,12 @@ namespace Libre\Routing {
          * @return bool|Routed False si les segments de l'uri ne valide pas les contraintes de segments, sinon la route correspondante.
          */
         public function processPattern() {
-            $uriSegments    = $this->uri->toSegments();
-            $routeSegments  = $this->route->toSegments();
+            $uriSegments    = $this->_uri->toSegments();
+            $routeSegments  = $this->_route->toSegments();
             $j              = 0;
             $params         = array();
             // Force valeurs par défaut
-            $routed         = new Routed($this->route->getController(),$this->route->getAction(), $this->route->getParams());
+            $routed         = new Routed($this->_route->getController(),$this->_route->getAction(), $this->_route->getParams());
 
             foreach( $routeSegments as $routeSegment ) {
                 //var_dump($routeSegment);
@@ -61,6 +98,11 @@ namespace Libre\Routing {
                     //if( $constraint->isStatic() ) {
                         //$this->route->action = $constraint->getStatic();
                     //}
+
+                    if( $constraint->isModule() )
+                    {
+                        $routed->setModule($constraint->getModule());
+                    }
 
                     // Le segment valide t il la contraite d'un controller
                     if( $constraint->isController() ) {

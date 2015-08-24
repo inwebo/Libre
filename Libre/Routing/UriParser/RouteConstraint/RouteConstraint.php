@@ -30,7 +30,7 @@ namespace Libre\Routing\UriParser {
         }
 
         public function isNamedRoute() {
-            return ( $this->uri->value === $this->route->getName() ) ;
+            return ( $this->uri->value === $this->route->getAlias() ) ;
         }
 
         public function isUriSegmentsGreaterThanRouteSegments() {

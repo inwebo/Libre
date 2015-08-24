@@ -22,6 +22,41 @@ namespace Libre\Routing {
          */
         protected $_params;
         /**
+         * @var string|null
+         */
+        protected $_module;
+
+        /**
+         * @return null|string
+         */
+        public function getModule()
+        {
+            return $this->_module;
+        }
+
+        /**
+         * @param null|string $module
+         */
+        public function setModule($module)
+        {
+            // si contient -
+            if(strstr($module,'-') !==false )
+            {
+                $module = str_replace('-', ' ', $module);
+                $moduleArray = explode(' ', $module);
+                $callback = function($a){
+                    return ucfirst($a);
+                };
+                $moduleArray = array_map($callback,$moduleArray);
+                $this->_module = implode('',$moduleArray);
+            }
+            else
+            {
+                $this->_module = ucfirst($module);
+            }
+        }
+
+        /**
          * @return string
          */
         public function getDispatchable()
@@ -90,11 +125,12 @@ namespace Libre\Routing {
             $this->_params = $params;
         }
 
-        public function __construct($dispatchable = null, $action = null, $params = null)
+        public function __construct($dispatchable = null, $action = null, $params = null, $module = null)
         {
             (!is_null($dispatchable))   ? $this->setDispatchable($dispatchable) : null;
             (!is_null($action))         ? $this->setAction($action)             : null;
             (!is_null($params))         ? $this->setParams($params)             : null;
+            (!is_null($module))         ? $this->setModule($module)             : null;
         }
 
         /**

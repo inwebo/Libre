@@ -21,7 +21,7 @@ namespace Libre\Routing {
         /**
          * @var null|string
          */
-        protected $name;
+        protected $alias;
         /**
          * @var string
          */
@@ -34,6 +34,26 @@ namespace Libre\Routing {
          * @var array
          */
         protected $params;
+        /**
+         * @var string|null
+         */
+        protected $_module;
+
+        /**
+         * @return null|string
+         */
+        public function getModule()
+        {
+            return $this->_module;
+        }
+
+        /**
+         * @param null|string $module
+         */
+        public function setModule($module)
+        {
+            $this->_module = $module;
+        }
 
         /**
          * @return string
@@ -54,17 +74,17 @@ namespace Libre\Routing {
         /**
          * @return null|string
          */
-        public function getName()
+        public function getAlias()
         {
-            return $this->name;
+            return $this->alias;
         }
 
         /**
-         * @param null|string $name
+         * @param null|string $alias
          */
-        public function setName($name)
+        public function setAlias($alias)
         {
-            $this->name = $name;
+            $this->alias = $alias;
         }
 
         /**
@@ -120,14 +140,16 @@ namespace Libre\Routing {
          * @param string $controller
          * @param string $action
          * @param array $params
-         * @param null|string $name
+         * @param null|string $alias
+         * @param null|string $module
          */
-        public function __construct( $pattern, $controller, $action, $params = array(), $name = null ) {
+        public function __construct( $pattern, $controller, $action, $params = array(), $alias = null, $module = null ) {
             $this->setPattern($pattern);
             $this->setController($controller);
             $this->setAction($action);
             $this->setParams($params);
-            $this->setName($name);
+            $this->setAlias($alias);
+            $this->setModule($module);
         }
 
         /**
