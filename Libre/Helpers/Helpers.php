@@ -68,7 +68,7 @@ namespace Libre {
 
         static public function renderBody()
         {
-            include(System::this()->getCurrentView());
+            include(System::this()->getMvcView());
         }
 
     }
