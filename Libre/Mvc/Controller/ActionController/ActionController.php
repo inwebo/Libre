@@ -81,6 +81,6 @@ abstract class ActionController extends Controller
      */
     public function render()
     {
-        $this->getLayout()->attachPartial('body', $this->getSystem()->getCurrentView());
+        $this->getLayout()->attachPartial('body', $this->getSystem()->getMvcView());
     }
 }
