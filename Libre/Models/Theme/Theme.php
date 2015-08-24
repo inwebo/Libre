@@ -34,7 +34,14 @@ class Theme extends Module
         $this->setPathsLocator($pathsLocator);
         $this->setSystem($system);
     }
-
+    public function getName()
+    {
+        return $this->getConfig()->getSection('Theme')['name'];
+    }
+    public function getPriority()
+    {
+        return $this->getConfig()->getSection('Theme')['priority'];
+    }
     /**
      * @param string $type css | js
      * @return string
