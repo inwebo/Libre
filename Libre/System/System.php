@@ -180,15 +180,39 @@ class System {
     #endregion
 
     #region Module
-
     /**
      * @var AdjustablePriorityQueue
      */
+    protected $_modulesQueue;
+    /**
+     * @var array
+     */
     protected $_modules;
-
-    protected $_modulesConfig;
     /**
      * @return AdjustablePriorityQueue
+     */
+    public function getModulesQueue()
+    {
+        return $this->_modulesQueue;
+    }
+    /**
+     * @param Module $module
+     */
+    public function setModule(Module $module)
+    {
+        $this->_modulesQueue->insert($module, $module->getPriority());
+    }
+    public function initModulesQueue()
+    {
+        $this->_modulesQueue = new AdjustablePriorityQueue();
+    }
+    public function initModules()
+    {
+        $this->_modules = [];
+    }
+
+    /**
+     * @return array
      */
     public function getModules()
     {
@@ -196,15 +220,24 @@ class System {
     }
 
     /**
+     * @param string $name
      * @param Module $module
      */
-    public function setModule(Module $module)
+    public function appendModule($name, Module $module)
     {
-        $this->_modules->insert($module, $module->getPriority());
+        $this->_modules[$name] = $module;
     }
-    public function initModules()
+
+    /**
+     * @param $name
+     * @return Module
+     */
+    public function getModule($name)
     {
-        $this->_modules = new AdjustablePriorityQueue();
+        if( isset($this->getModules()[$name]) )
+        {
+            return $this->getModules()[$name];
+        }
     }
     #endregion
 
@@ -212,27 +245,54 @@ class System {
     /**
      * @var AdjustablePriorityQueue
      */
-    protected $_themes;
-
+    protected $_themesQueue;
     /**
      * @return AdjustablePriorityQueue
+     */
+    public function getThemesQueue()
+    {
+        return $this->_themesQueue;
+    }
+    /**
+     * @param $theme
+     */
+    public function setThemeQueue($theme)
+    {
+        $this->getThemesQueue()->insert($theme, $theme->getPriority());
+    }
+    public function initThemesQueue()
+    {
+        $this->_themesQueue = new AdjustablePriorityQueue();
+    }
+
+    /**
+     * @var array
+     */
+    protected $_themes;
+    /**
+     * @return array
      */
     public function getThemes()
     {
         return $this->_themes;
     }
-
     /**
-     * @param $theme
+     * @param array $themes
      */
-    public function setTheme($theme)
+    public function setThemes($name, $themes)
     {
-        $this->getThemes()->insert($theme, $theme->getPriority());
+        $this->_themes[$name] = $themes;
     }
-
+    public function getTheme($name)
+    {
+        if(isset($this->getThemes()[$name]))
+        {
+            return $this->getThemes()[$name];
+        }
+    }
     public function initThemes()
     {
-        $this->_themes = new AdjustablePriorityQueue();
+        $this->_themes = [];
     }
     #endregion
 
@@ -359,15 +419,25 @@ class System {
         return $this->getInstanceLocator()->getIndexDir();
     }
 
-    public function getCurrentView()
+    public function getMvcView()
     {
         //@todo buggé le bordel
         $ci = new ClassInfos($this->getRouted()->getDispatchable());
-        $ci->getClassName();
+        //$ci->getClassName();
 
         return  $this->getInstanceLocator()->getViewsDir() .
                 strtolower($ci->getClassName()) . DIRECTORY_SEPARATOR .
                 $this->getRouted()->getAction()  . Routed::FILE_EXT;
+    }
+    public function getModuleActionView($moduleName)
+    {
+        $ci = new ClassInfos($this->getRouted()->getDispatchable());
+
+        $module = $this->getModule($moduleName);
+        return  $module->getPathsLocator()->getViewsDir() .
+                strtolower($ci->getClassName()) .
+                DIRECTORY_SEPARATOR .
+                $this->getRouted()->getAction() . Routed::FILE_EXT;
     }
     #endregion
 }
