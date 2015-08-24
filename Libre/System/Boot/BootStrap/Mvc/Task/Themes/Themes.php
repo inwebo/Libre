@@ -57,6 +57,7 @@ class Themes extends AbstractTask
     {
         $this->setSystem($system);
         $this->setConfig($config);
+        $this->getSystem()->initThemesQueue();
         $this->getSystem()->initThemes();
     }
 
@@ -70,13 +71,13 @@ class Themes extends AbstractTask
             $pl      = new PathsLocator($baseUrl, $baseDir, $this->getConfig()->getSection('Themes'));
             $config  = new Config($pl->getConfigDir());
             $theme   = new Theme($config, $pl,$this->getSystem());
-            $this->getSystem()->setTheme($theme);
+            $this->getSystem()->setThemeQueue($theme);
         }
     }
 
     protected function themesAssets()
     {
-        $iterator = $this->getSystem()->getThemes();
+        $iterator = $this->getSystem()->getThemesQueue();
         $iterator->rewind();
         while($iterator->valid())
         {
@@ -85,6 +86,7 @@ class Themes extends AbstractTask
             $this->getSystem()->setCss($current->getCss());
             $this->getSystem()->setJs($current->getJs());
             $autoload = $current->getPathsLocator()->getAutoloadDir();
+            $this->getSystem()->setThemes($current->getName(),$current);
             if( is_file($autoload) )
             {
                 include_once $autoload;
