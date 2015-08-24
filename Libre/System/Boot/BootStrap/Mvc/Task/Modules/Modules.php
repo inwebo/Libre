@@ -54,6 +54,7 @@ class Modules extends AbstractTask
     {
         $this->setSystem($system);
         $this->setConfig($config);
+        $this->getSystem()->initModulesQueue();
         $this->getSystem()->initModules();
     }
 
@@ -70,15 +71,17 @@ class Modules extends AbstractTask
             $module  = new Module($config, $pl);
             $this->getSystem()->setModule($module);
         }
+
     }
 
     protected function moduleAutoload()
     {
-        $iterator = $this->getSystem()->getModules();
+        $iterator = $this->getSystem()->getModulesQueue();
         while($iterator->valid())
         {
             /** @var Module $current */
             $current = $iterator->current();
+            $this->getSystem()->appendModule($current->getName(), $current);
             if(is_file($current->getPathsLocator()->getAutoloadDir()))
             {
                 include_once $current->getPathsLocator()->getAutoloadDir();
