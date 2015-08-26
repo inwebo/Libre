@@ -2,6 +2,8 @@
 
 namespace Libre\Routing {
 
+    use Libre\Autoloader\ClassInfos;
+
     class Routed
     {
         const DEFAULT_ACTION    = "index";
@@ -67,6 +69,17 @@ namespace Libre\Routing {
         public function getDispatchableName()
         {
             return str_replace(self::CONTROLLER_SUFFIX,'', $this->getDispatchable());
+        }
+
+        /**
+         * @return string Class name eg <code>
+         *
+         * </code>
+         */
+        public function getDispatchableShortName()
+        {
+            $ci = new ClassInfos($this->getDispatchableName());
+            return $ci->getClassName();
         }
 
         /**

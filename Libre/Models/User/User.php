@@ -70,7 +70,7 @@ namespace Libre\Models {
             //return (is_null($this->id));
         }
 
-        public function toPublicUser() {
+        public function toPublic() {
             $clone = clone $this;
             unset($clone->privateKey);
             unset($clone->password);
