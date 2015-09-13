@@ -12,7 +12,7 @@ namespace Libre\Database {
                 // Init constructor params.
                 $reflection = new \ReflectionMethod($this->_toObject, '__construct');
                 $parameters = $reflection->getParameters();
-                $pdoStatement->setFetchMode(\PDO::FETCH_CLASS, $this->_toObject,$parameters);
+                $pdoStatement->setFetchMode(\PDO::FETCH_CLASS, $this->_toObject, $parameters);
             }
             try {
                 (!is_null($params) && is_array($params)) ?

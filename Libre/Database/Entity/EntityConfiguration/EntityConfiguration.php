@@ -8,10 +8,83 @@ namespace Libre\Database\Entity {
         /**
          * @var IDriver
          */
-        public $driver;
-        public $primaryKey;
-        public $table;
-        public $tableDescription;
+        protected $driver;
+        /**
+         * @var string
+         */
+        protected $primaryKey;
+        /**
+         * @var string
+         */
+        protected $table;
+        /**
+         * @var string
+         */
+        protected $tableDescription;
+
+        /**
+         * @return IDriver
+         */
+        public function getDriver()
+        {
+            return $this->driver;
+        }
+
+        /**
+         * @param IDriver $driver
+         */
+        public function setDriver($driver)
+        {
+            $this->driver = $driver;
+        }
+
+        /**
+         * @return string
+         */
+        public function getPrimaryKey()
+        {
+            return $this->primaryKey;
+        }
+
+        /**
+         * @param string $primaryKey
+         */
+        public function setPrimaryKey($primaryKey)
+        {
+            $this->primaryKey = $primaryKey;
+        }
+
+        /**
+         * @return string
+         */
+        public function getTable()
+        {
+            return $this->table;
+        }
+
+        /**
+         * @param string $table
+         */
+        public function setTable($table)
+        {
+            $this->table = $table;
+        }
+
+        /**
+         * @return string
+         */
+        public function getTableDescription()
+        {
+            return $this->tableDescription;
+        }
+
+        /**
+         * @param string $tableDescription
+         */
+        public function setTableDescription($tableDescription)
+        {
+            $this->tableDescription = $tableDescription;
+        }
 
         public function __construct(IDriver $iDriver, $primaryKey, $table, $tableDesc) {
             $this->driver           = $iDriver;

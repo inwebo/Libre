@@ -2,9 +2,13 @@
 
 namespace Libre\Models\User {
     use Libre\Database\Entity;
+    use Libre\Models\User\Role\Filters\PermissionFilter\ByName;
     use Libre\Models\User\Role\Filters\RoleFilter;
+    use Libre\Models\User\Role\Permission;
 
     class Role extends Entity{
+
+        const MODEL ='\\Libre\\Models\\User\\Role' ;
 
         const SQL_LOAD_PERMISSIONS = 'SELECT id,id_role, id_perm, description FROM role_perm AS T1 JOIN Permissions AS T2 ON T1.id_perm = T2.id WHERE T1.id_role =?';
 
@@ -16,19 +20,17 @@ namespace Libre\Models\User {
          * @var string
          */
         public $type;
-
+        static public $_entityConfiguration;
         protected $_permissions;
 
         public function init() {
             parent::init();
-            $conf = static::$_entityConfiguration;
-            $conf->driver->toObject('\\Libre\\Models\\User\\Role\\Permission');
-            //var_dump($this);
-            $this->_permissions = $conf->driver->query(
+            $this->getEntityConfiguration()->getDriver()->toObject(Permission::MODEL);
+
+            $this->_permissions =  $this->getEntityConfiguration()->getDriver()->query(
                 'SELECT DISTINCT id,id_role, id_perm, name FROM role_perm AS T1 JOIN Permissions AS T2 ON T1.id_perm = T2.id WHERE T1.id_role =?',
                 array($this->id_role)
             )->all();
-            //$this->_permissions = $conf->driver->query('SELECT id_role, id_perm, description FROM role_perm AS T1 JOIN Permissions AS T2 ON T1.id_perm = T2.id WHERE T1.id_role =?',array($this->id_role))->all();
         }
 
         public function getPermissions() {
@@ -36,13 +38,8 @@ namespace Libre\Models\User {
         }
 
         public function hasPermission($id) {
-            $iterator=  new \ArrayObject($this->_permissions);
-            $filtered = new RoleFilter($iterator->getIterator(),$id);
-            $filtered->rewind();
-            while($filtered->valid()) {
-                return true;
-            }
+            $filtered = new RoleFilter($this->getPermissions(),$id);
+            return (iterator_count($filtered) > 0 );
         }
-
     }
 }

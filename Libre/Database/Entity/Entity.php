@@ -10,11 +10,11 @@ namespace Libre\Database {
 
     abstract class Entity implements IModelable {
 
-        const SQL_LOAD ='Select * from `%s` WHERE %s=? LIMIT 1';
-        const SQL_DELETE ='Delete from `%s` WHERE %s=? LIMIT 1';
-        const SQL_DELETE_MULTIPLE ='Delete * from `%s` WHERE %s=? IN %s LIMIT 1';
-        const SQL_INSERT ='INSERT INTO %s %s VALUES %s';
-        const SQL_UPDATE ='UPDATE %s SET %s WHERE %s=?';
+        const SQL_LOAD              = 'Select * from `%s` WHERE %s=? LIMIT 1';
+        const SQL_DELETE            = 'Delete from `%s` WHERE %s=? LIMIT 1';
+        const SQL_DELETE_MULTIPLE   = 'Delete * from `%s` WHERE %s=? IN %s LIMIT 1';
+        const SQL_INSERT            = 'INSERT INTO %s %s VALUES %s';
+        const SQL_UPDATE            = 'UPDATE %s SET %s WHERE %s=?';
 
         /**
          * @var string
@@ -22,17 +22,21 @@ namespace Libre\Database {
         protected $_loaded;
 
         /**
-         * @var EntityConfiguration
+         * @var EntityConfiguration A surcharger !
          */
         static public $_entityConfiguration;
 
+        static public function getModelClass()
+        {
+            return array('model'=>str_replace('\\', '\\\\', '\\' . get_called_class()));
+        }
+
         public function __construct(){
-            //$this->_loaded = true;
             $this->init();
         }
         
         protected function init() {
-            $pk = static::$_entityConfiguration->primaryKey;
+            $pk = static::$_entityConfiguration->getPrimaryKey();
             if( !is_null($this->$pk) ) {
                 $this->_loaded = true;
             }
@@ -62,7 +66,7 @@ namespace Libre\Database {
 
         static public function getBoundDriver() {
             if( !is_null(static::$_entityConfiguration) ) {
-                return static::$_entityConfiguration->driver;
+                return static::$_entityConfiguration->getDriver();
             }
         }
 
@@ -76,10 +80,10 @@ namespace Libre\Database {
 
             if($this->isLoaded()) {
                 // Update
-                $sqlUpdateQuery = sprintf(self::SQL_UPDATE, $conf->table,$conf->toUpdate($toBindKeys),$conf->primaryKey);
+                $sqlUpdateQuery = sprintf(self::SQL_UPDATE, $conf->getTable(),$conf->toUpdate($toBindKeys),$conf->getPrimaryKey());
                 $toInject = array_merge($toBindValues, array($this->id));
                 try {
-                    $conf->driver->query($sqlUpdateQuery,$toInject);
+                    $conf->getDriver()->query($sqlUpdateQuery,$toInject);
                 }
                 catch(\Exception $e) {
                     throw $e;
@@ -87,9 +91,9 @@ namespace Libre\Database {
             }
             else {
                 // Insert
-                $sqlInsertQuery = sprintf(self::SQL_INSERT, $conf->table, $sqlKeys, $tokens);
+                $sqlInsertQuery = sprintf(self::SQL_INSERT, $conf->getTable(), $sqlKeys, $tokens);
                 try {
-                    $conf->driver->query($sqlInsertQuery, $toBindValues);
+                    $conf->getDriver()->query($sqlInsertQuery, $toBindValues);
                 }
                 catch(\Exception $e) {
                     throw $e;
@@ -98,18 +102,18 @@ namespace Libre\Database {
         }
 
         public function delete() {
-            $sqlDelete = sprintf(self::SQL_DELETE, $this->getConf()->table, $this->getConf()->primaryKey);
-            $this->getConf()->driver->query($sqlDelete,array($this->id));
+            $sqlDelete = sprintf(self::SQL_DELETE, $this->getEntityConfiguration()->getTable(), $this->getEntityConfiguration()->getPrimaryKey());
+            $this->getEntityConfiguration()->getDriver()->query($sqlDelete,array($this->id));
         }
 
         static public function load($id, $by = null) {
             $conf = static::$_entityConfiguration;
             // Est-il configuré ?
             if (!is_null($conf)) {
-                $conf->driver->toObject(get_called_class());
-                $by = (is_null($by)) ? $conf->primaryKey : $by;
-                $sqlSelect =  sprintf(self::SQL_LOAD,$conf->table,$by);
-                $obj = $conf->driver->query($sqlSelect,array($id))->first();
+                $conf->getDriver()->toObject(get_called_class());
+                $by = (is_null($by)) ? $conf->getPrimaryKey() : $by;
+                $sqlSelect =  sprintf(self::SQL_LOAD,$conf->getTable(),$by);
+                $obj = $conf->getDriver()->query($sqlSelect,array($id))->first();
                 if( !is_null($obj) ) {
                     $obj->setLoaded(true);
                     return $obj;
@@ -119,7 +123,10 @@ namespace Libre\Database {
             }
         }
 
-        static public function getConf() {
+        /**
+         * @return EntityConfiguration
+         */
+        static public function getEntityConfiguration() {
             return static::$_entityConfiguration;
         }
 
@@ -129,7 +136,7 @@ namespace Libre\Database {
         }
 
         protected function getValues() {
-            $members = $this->getConf()->intersectObj($this);
+            $members = $this->getEntityConfiguration()->intersectObj($this);
             $array = array();
             foreach($members as $v) {
                 $array[$v] = $this->$v;
