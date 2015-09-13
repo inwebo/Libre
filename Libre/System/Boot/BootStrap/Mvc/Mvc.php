@@ -9,6 +9,7 @@ use Libre\System\Boot\BootStrap\Mvc\Task\Modules;
 use Libre\System\Boot\BootStrap\Mvc\Task\Themes;
 use Libre\System\Boot\BootStrap\Mvc\Task\Router;
 use Libre\System\Boot\BootStrap\Mvc\Task\FrontController;
+use Libre\System\Boot\BootStrap\Mvc\Task\Rbac;
 
 class Mvc extends AbstractTasks
 {
@@ -17,6 +18,7 @@ class Mvc extends AbstractTasks
 
         $this->attach(new Init($system, $config));
         $this->attach(new Modules($system, $config));
+        $this->attach(new Rbac($system, $config));
         $this->attach(new Themes($system, $config));
         $this->attach(new Router($system, $config));
         $this->attach(new FrontController($system, $config));

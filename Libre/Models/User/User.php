@@ -13,9 +13,13 @@ namespace Libre\Models {
     class User extends Entity implements IAuth{
 
         /**
-         * @var array Associative array eg : array(1=>"default"), where index is id & key name
+         * @var int
          */
         static protected $_defaultUserConfig;
+        /**
+         * @var int
+         */
+        static protected $_defaultUserId;
 
         const SQL_SELECT_ROLES = "SELECT t1.id, t1.id_role, t2.type FROM %s AS t1 JOIN Roles AS t2 ON t1.id_role = t2.id WHERE t1.id =?";
         static public $_entityConfiguration;
@@ -57,21 +61,7 @@ namespace Libre\Models {
          */
         protected $_roles;
 
-        /**
-         * @return \ArrayIterator
-         */
-        public function getRoles()
-        {
-            return $this->_roles;
-        }
 
-        /**
-         * @param \ArrayIterator $roles
-         */
-        public function setRoles($roles)
-        {
-            $this->_roles = $roles;
-        }
         #endregion
 
         #region Getters / Setters
@@ -217,6 +207,37 @@ namespace Libre\Models {
         public static function setDefaultRoleId($defaultUserConfig)
         {
             self::$_defaultUserConfig = $defaultUserConfig;
+        }
+        /**
+         * @return \ArrayIterator
+         */
+        public function getRoles()
+        {
+            return $this->_roles;
+        }
+
+        /**
+         * @param \ArrayIterator $roles
+         */
+        public function setRoles($roles)
+        {
+            $this->_roles = $roles;
+        }
+
+        /**
+         * @return int
+         */
+        public static function getDefaultUserId()
+        {
+            return self::$_defaultUserId;
+        }
+
+        /**
+         * @param int $defaultUserId
+         */
+        public static function setDefaultUserId($defaultUserId)
+        {
+            self::$_defaultUserId = $defaultUserId;
         }
 
         #endregion
