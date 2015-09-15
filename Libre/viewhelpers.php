@@ -16,3 +16,8 @@ function js()
 {
     return Helpers::getJsAsTags(false, true);
 }
+
+function user()
+{
+    return $_SESSION['User'];
+}
