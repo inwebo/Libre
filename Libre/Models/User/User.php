@@ -21,6 +21,8 @@ namespace Libre\Models {
          */
         static protected $_defaultUserId;
 
+        const MODEL = "\\Libre\\Models\\User";
+
         const SQL_SELECT_ROLES = "SELECT t1.id, t1.id_role, t2.type FROM %s AS t1 JOIN Roles AS t2 ON t1.id_role = t2.id WHERE t1.id =?";
         static public $_entityConfiguration;
         #region Attributs
@@ -271,14 +273,22 @@ namespace Libre\Models {
         {
             return base64_encode( hash_hmac( "sha256", $user , $publicKey . $passPhrase ) ) ;
         }
+
+        public function loadByLoginPwd($login, $password)
+        {
+            $conf = self::getEntityConfiguration();
+            $conf->getDriver()->toObject(self::MODEL);
+            return $this->getEntityConfiguration()->getDriver()->query('SELECT * FROM Users WHERE login=? AND password=?',array($login, $password))->First();
+        }
         #endregion
 
         #region Init
         public function init()
         {
             parent::init();
-            $this->getEntityConfiguration()->getDriver()->toObject(Role::MODEL);
+            self::getEntityConfiguration()->getDriver()->toObject(Role::MODEL);
             $roles = $this->getEntityConfiguration()->getDriver()->query($this->injectTableNameIntoQuery(self::SQL_SELECT_ROLES), array($this->getId()))->All();
+            self::getEntityConfiguration()->getDriver()->toObject(User::MODEL);
             $this->setRoles($roles);
         }
         #endregion
