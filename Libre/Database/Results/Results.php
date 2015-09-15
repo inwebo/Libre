@@ -26,7 +26,7 @@ namespace Libre\Database {
         }
 
         public function gotResults() {
-            return ( $this->_pdoStatement->columnCount() === 0 ) ? false : true;
+            return ( $this->_pdoStatement->columnCount() > 0 );
         }
 
         public function all(){

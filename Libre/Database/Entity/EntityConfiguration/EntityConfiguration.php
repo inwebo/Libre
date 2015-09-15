@@ -8,34 +8,34 @@ namespace Libre\Database\Entity {
         /**
          * @var IDriver
          */
-        protected $driver;
+        protected $_driver;
         /**
          * @var string
          */
-        protected $primaryKey;
+        protected $_primaryKey;
         /**
          * @var string
          */
-        protected $table;
+        protected $_table;
         /**
          * @var string
          */
-        protected $tableDescription;
+        protected $_tableDescription;
 
         /**
          * @return IDriver
          */
         public function getDriver()
         {
-            return $this->driver;
+            return $this->_driver;
         }
 
         /**
-         * @param IDriver $driver
+         * @param IDriver $_driver
          */
-        public function setDriver($driver)
+        protected function setDriver(IDriver $_driver)
         {
-            $this->driver = $driver;
+            $this->_driver = $_driver;
         }
 
         /**
@@ -43,15 +43,15 @@ namespace Libre\Database\Entity {
          */
         public function getPrimaryKey()
         {
-            return $this->primaryKey;
+            return $this->_primaryKey;
         }
 
         /**
-         * @param string $primaryKey
+         * @param string $_primaryKey
          */
-        public function setPrimaryKey($primaryKey)
+        protected function setPrimaryKey($_primaryKey)
         {
-            $this->primaryKey = $primaryKey;
+            $this->_primaryKey = $_primaryKey;
         }
 
         /**
@@ -59,15 +59,15 @@ namespace Libre\Database\Entity {
          */
         public function getTable()
         {
-            return $this->table;
+            return $this->_table;
         }
 
         /**
-         * @param string $table
+         * @param string $_table
          */
-        public function setTable($table)
+        public function setTable($_table)
         {
-            $this->table = $table;
+            $this->_table = $_table;
         }
 
         /**
@@ -75,29 +75,28 @@ namespace Libre\Database\Entity {
          */
         public function getTableDescription()
         {
-            return $this->tableDescription;
+            return $this->_tableDescription;
         }
 
         /**
-         * @param string $tableDescription
+         * @param string $_tableDescription
          */
-        public function setTableDescription($tableDescription)
+        public function setTableDescription($_tableDescription)
         {
-            $this->tableDescription = $tableDescription;
+            $this->_tableDescription = $_tableDescription;
         }
 
         public function __construct(IDriver $iDriver, $primaryKey, $table, $tableDesc) {
-            $this->driver           = $iDriver;
-            $this->primaryKey       = $primaryKey;
-            $this->table            = $table;
-            $this->tableDescription = $tableDesc;
+            $this->setDriver($iDriver);
+            $this->setPrimaryKey($primaryKey);
+            $this->setTable($table);
+            $this->setTableDescription($tableDesc);
         }
 
         public function intersectObj($obj) {
-            $cols   = array_keys($this->tableDescription);
+            $cols   = array_keys($this->getTableDescription());
             $values = array_keys((array)$obj);
             $bind   = array_intersect($cols,$values);
-            //var_dump($cols,$values,$bind);
             return $bind;
         }
 

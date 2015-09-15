@@ -4,7 +4,7 @@ namespace Libre\Database\Driver {
 
     use Libre\Database\Driver;
 
-    class MySql extends Driver {
+    class MySql extends BaseDriver {
 
         const COLS_NAME          = "Field";
         const COLS_TYPE          = "Type";
@@ -43,16 +43,19 @@ namespace Libre\Database\Driver {
          * @throws
          */
         public function __construct($host, $database, $username, $password, $options = array(\PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8")) {
-            try {
-                $dsn = 'mysql:host=' . $host . ';dbname=' . $database;
-                $this->_driver = new \PDO($dsn, $username, $password, $options);
+            try
+            {
+                $dsn                = 'mysql:host=' . $host . ';dbname=' . $database;
+                $this->_driver      = new \PDO($dsn, $username, $password, $options);
                 $this->_driver->setAttribute(\PDO::ATTR_ERRMODE,\PDO::ERRMODE_EXCEPTION);
-                $this->_host = $host;
-                $this->_database = $database;
-                $this->_username = $username;
-                $this->passwd = $password;
-                $this->_options = $options;
-            } catch (\Exception $e) {
+                $this->_host        = $host;
+                $this->_database    = $database;
+                $this->_username    = $username;
+                $this->passwd       = $password;
+                $this->_options     = $options;
+            }
+            catch (\Exception $e)
+            {
                 throw $e;
             }
             return $this->_driver;

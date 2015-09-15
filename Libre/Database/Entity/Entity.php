@@ -64,13 +64,15 @@ namespace Libre\Database {
             static::$_entityConfiguration = $conf;
         }
 
-        static public function getBoundDriver() {
+        static public function getBoundDriver()
+        {
             if( !is_null(static::$_entityConfiguration) ) {
                 return static::$_entityConfiguration->getDriver();
             }
         }
 
-        public function save(){
+        public function save()
+        {
             $conf       = static::$_entityConfiguration;
             $toBind     = $this->getValues();
             $toBindKeys = array_keys($toBind);

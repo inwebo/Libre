@@ -2,6 +2,8 @@
 
 namespace Libre\Database\Driver {
 
+    use Libre\Database\Results;
+
     /**
      * Class Driver
      * @package Libre\Database
@@ -12,11 +14,6 @@ namespace Libre\Database\Driver {
          * @var IDriver
          */
         protected $_driver;
-
-        /**
-         * @var array
-         */
-        protected $_tables = array();
 
         /**
          * @var string
@@ -30,7 +27,10 @@ namespace Libre\Database\Driver {
             return $this->_driver;
         }
 
-        public function setDriver( $driver ) {
+        /**
+         * @param IDriver $driver
+         */
+        protected function setDriver( IDriver $driver ) {
             $this->_driver = $driver;
         }
 
@@ -85,33 +85,34 @@ namespace Libre\Database\Driver {
         }
 
         /**
-         * @param $table
+         * To override
+         * @param string $table Nom de la table,
          * @return mixed
          */
-        protected function getTableInfos($table) {
-            if( isset($this->_tables[$table]) ) {
-                return $this->_tables[$table];
-            }
-            else {
-                $this->_tables[$table] = $this->_driver->getTableInfos($table);
-            }
-        }
+        protected function getTableInfos($table){}
 
         public function getColsName($_table) {
             return $this->filterColumnInfo($_table, static::COLS_NAME);
         }
 
-        protected function getColumnsNullable($_table) {
-            return $this->filterColumnInfo($_table, static::COLS_NULLABLE);
-        }
-
-        public function getPrimaryKey( $_table ) {
-            $table = (array)$this->filterColumnInfo($_table, static::COLS_PRIMARY_KEY);
-            foreach($table as $k => $v) {
-                if( $v == static::COLS_PRIMARY_VALUE ) {
-                    return $k;
-                }
+        public function query($query, $params = array() )
+        {
+            $pdoStatement = $this->getDriver()->prepare($query);
+            if(isset($this->_toObject))
+            {
+                $pdoStatement->setFetchMode(\PDO::FETCH_CLASS, $this->_toObject);
             }
+            try
+            {
+                (!is_null($params) && is_array($params)) ?
+                    $pdoStatement->execute($params) :
+                    $pdoStatement->execute();
+            }
+            catch(\Exception $e)
+            {
+                throw $e;
+            }
+            return new Results($pdoStatement);
         }
     }
 }

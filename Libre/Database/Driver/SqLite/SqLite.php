@@ -4,7 +4,7 @@ namespace Libre\Database\Driver {
 
     class SqliteDriverException extends \Exception {}
 
-    class SqLite extends Driver {
+    class SqLite extends BaseDriver {
 
         const COLS_NAME          = "name";
         const COLS_TYPE          = "type";
@@ -63,7 +63,7 @@ namespace Libre\Database\Driver {
             return $dsn;
         }
 
-        public function getTableInfos( $table , $filter = null) {
+        public function getTableInfos($table) {
             $table = explode('\\',$table);
             $table = $table[count($table)-1];
             $statement = $this->_driver->query('PRAGMA table_info('. $table .');');
