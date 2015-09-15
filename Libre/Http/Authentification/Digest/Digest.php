@@ -22,24 +22,37 @@ namespace Libre\Http\Authentification {
          */
         protected $_opaque;
         /**
-         * @var string
+         * @var string Wanted user login
          */
-        protected $_users;
+        protected $_login;
+        /**
+         * @var string Wanted password
+         */
+        protected $_password;
 
+        /**
+         * @var string salt
+         */
         protected $_a1;
+        /**
+         * @var string salt
+         */
         protected $_a2;
-        protected $_hash;
-
+        /**
+         * @var \Closure
+         */
         protected $_callback;
 
-        public function __construct( $realm, $qop = "auth" ){
-            $this->_realm = $realm;
-            $this->_qop = $qop;
-            $this->_nonce = md5(uniqid());
+        public function __construct( $realm, $login, $password, $qop = "auth" ){
+            $this->_realm   = $realm;
+            $this->_qop     = $qop;
+            $this->_nonce   = md5(uniqid());
+            $this->_login   = $login;
+            $this->_password= $password;
         }
 
         protected function hashA1(){
-            return md5($this->_users[0] . ':' . $this->_realm . ':' . $this->_users[1]);
+            return md5($this->_login . ':' . $this->_realm . ':' . $this->_password);
         }
 
         protected function hashA2(){
@@ -65,7 +78,7 @@ namespace Libre\Http\Authentification {
         }
 
         public function header(){
-            if (empty($_SERVER['PHP_AUTH_DIGEST']) || !$this->isValidRequest() ) {
+            if (empty($_SERVER['PHP_AUTH_DIGEST']) || !$this->isValid() ) {
                 header('WWW-Authenticate: Digest realm="' . $this->_realm . '",qop="' . $this->_qop . '",nonce="' . $this->_nonce . '",opaque="' . md5($this->_realm) . '"');
                 header('HTTP/1.0 401 Unauthorized');
                 if( !is_null($this->_callback) ) {
@@ -82,19 +95,11 @@ namespace Libre\Http\Authentification {
             }
         }
 
-        public function isValidRequest(){
+        public function isValid(){
             $header = $this->parseHeaders();
             $valid = md5($this->hashA1() . ':'.$header['nonce'].':'.$header['nc'].':'.$header['cnonce'].':'.$header['qop'].':'.$this->hashA2());
             return $header['response'] === $valid;
         }
 
-        public function validateRequest(){
-            $this->header();
-        }
-
-        public function addUsers($user){
-            $this->_users = $user;
-            return $this;
-        }
     }
 }
