@@ -35,7 +35,6 @@ namespace Libre {
             )
         );
         $bootable->start();
-        echo Helpers::getBaseJsUrl();
         //var_dump(System::this());
     } catch (\Exception $e) {
         echo $e->getMessage();

@@ -6,6 +6,8 @@ namespace Libre{
     use Libre\Database\Driver\MySql;
     use Libre\Database\Driver\SqLite;
 
+    use Libre\Database\Entity;
+
     try{
 
         $mySql       = array(
@@ -15,7 +17,7 @@ namespace Libre{
             'root'
         );
         $sqlite      = './assets/db/valid/data.sqlite3';
-        $sqlite2      = './assets/db/data.sqlite3';
+        $sqlite2     = './assets/db/data.sqlite3';
         $querySelect =  'SELECT * FROM tests' ;
         $sql = new MySql(
             $mySql[0],
@@ -28,26 +30,29 @@ namespace Libre{
         $statement = $sql->query( $querySelect );
 
         var_dump( $statement->count() );
-        var_dump( $statement->first() );
+        //var_dump( $statement->first() );
         //var_dump( $statement->all() );
-        var_dump( $statement->last() );
+        //var_dump( $statement->last() );
 
-        var_dump($sql->toStdClass()->query($querySelect)->getOffset(1));
+        //var_dump($sql->toStdClass()->query($querySelect)->getOffset(1));
 
-        $sqlite = new SQLite($sqlite);
-
-        $infos = $sqlite->toStdClass()->query($querySelect)->first();
-        var_dump($infos);
-
-        class Mock extends \Libre\Database\Entity {
-
+        class Mock extends Entity {
+            public $foo;
+            public $id;
+            public $name;
         }
-
+        $sqlite = new SQLite($sqlite);
         Mock::binder($sqlite,'id', 'tests');
+        $infos = $sqlite->toObject('\\Libre\\Mock')->query($querySelect)->first();
+        var_dump($infos);
+        var_dump(serialize($infos));
+
+
         $mock = Mock::load(1);
         echo $mock->name;
-        $mock->name = 'test';
-        //$mock->save();
+        $mock->name = 'test2';
+        $mock->foo = 'bar';
+        $mock->save();
     }
     catch(\Exception $e)
     {

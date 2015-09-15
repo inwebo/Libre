@@ -5,11 +5,8 @@ namespace Libre{
 
     use Libre\Http\Authentification\Digest;
     try{
-
-        $user = array('a','z');
-        $realm = "Tesst";
-        $auth = new Digest($realm);
-        $auth->addUsers($user);
+        $realm = "Copain ?";
+        $auth = new Digest($realm,'a','z');
         $auth->registerShutDown(function(){
             echo "HaHA";
         });
