@@ -1,6 +1,6 @@
 <?php
 
-namespace Libre\Mvc\Controller\RestController {
+namespace Libre\Mvc\Controller {
 
     use Libre\Http\Authentification\IAuthenticable;
     use Libre\Mvc\Controller;
@@ -119,7 +119,7 @@ namespace Libre\Mvc\Controller\RestController {
             parent::init();
             if (!$this->validate()) {
                 $this->getResponse()->setStatusCode('HTTP/1.1 403 Forbidden');
-                return $this->getResponse();
+                $this->dispatch();
             }
         }
 
@@ -189,9 +189,12 @@ namespace Libre\Mvc\Controller\RestController {
 
         public function dispatch()
         {
-            $this->negotiateContentType();
-            $method = $this->negotiateRenderMethod();
-            $this->prepareResponse($method);
+            if( $this->validate() )
+            {
+                $this->negotiateContentType();
+                $method = $this->negotiateRenderMethod();
+                $this->prepareResponse($method);
+            }
             return $this->getResponse();
         }
 
@@ -219,27 +222,25 @@ namespace Libre\Mvc\Controller\RestController {
 
         protected function negotiateRenderMethod()
         {
-            $verb = $this->getRequest()->getVerb();
-
+            $verb = strtolower($this->getRequest()->getVerb());
             switch ($this->getRequest()->getHeader('Accept')) {
                 case 'application/json':
-                    $to = 'toJson';
+                    $to = 'ToJson';
                     break;
 
                 case 'text/xml':
-                    $to = 'toXml';
+                    $to = 'ToXml';
                     break;
 
                 case 'text/plain':
-                    $to = 'toText';
+                    $to = 'ToText';
                     break;
 
                 default:
                 case 'text/html':
-                    $to = 'toHtml';
+                    $to = 'ToHtml';
                     break;
             }
-
             return $method = $verb . $to;
         }
 
