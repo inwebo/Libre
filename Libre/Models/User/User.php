@@ -10,7 +10,8 @@ namespace Libre\Models {
 
     class DefaultUserException extends Exception {}
 
-    class User extends Entity implements IAuth{
+    class User extends Entity implements IAuth
+    {
 
         /**
          * @var int
