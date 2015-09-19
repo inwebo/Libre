@@ -8,7 +8,7 @@ use Libre\Helpers as H;
 try{
     echo 'autoload instance<hr>';
     H::registerInstance();
-    H::registerModule();
+
 
     $routed = new Routed('\\Libre\\TestController','index',array('@----->'));
 

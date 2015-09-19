@@ -8,3 +8,5 @@
 <p>
     <?php var_dump(\Libre\Session::this());?>
 </p>
+<?php \Libre\Helpers::getJsAsTags(true, true); ?>
+<?php new Libre\Modules\Foo\Core\Bar(); ?>
