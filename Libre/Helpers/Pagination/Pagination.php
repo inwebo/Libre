@@ -2,204 +2,215 @@
 
 namespace Libre\Helpers {
 
-    /**
-     * Pagination simplifiée.
-     *
-     * Description longue
-     *
-     * @category   Libre
-     * @package    View
-     * @subpackage Template
-     * @copyright  Copyright (c) 1793-2222 Inwebo Veritas (http://www.inwebo.net)
-     * @license    http://framework.zend.com/license   BSD License
-     * @version    $Id:$
-     * @link       https://github.com/inwebo/Template
-     * @since      File available since Beta
-     */
-    class Pagination {
+    class PaginationOutOfBondsIndex extends \Exception{}
 
+    class Pagination
+    {
         /**
-         * L'objet à paginer.
-         * @var mixed
+         * @var int Total items
          */
-        public $subject;
-
+        protected $_totalItems;
         /**
-         * Nombre de page
-         * @var int
+         * @var int Current page index (offset)
          */
-        public $max;
-
+        protected $_index;
         /**
-         * Index de la première page
-         * @var int
+         * @var int How many items by page
          */
-        public $min;
+        protected $_internalChunkSize;
 
         /**
-         * Nombre d'objet par page.
-         * @var int
+         * @var int How many displayable pages
          */
-        public $limite;
+        protected $_displayableIndexes;
 
         /**
-         * Index courant. (page en cours)
-         * @var int
-         */
-        public $index;
-
-        /**
-         * @param $subject
          * @param int $index
+         */
+        public function index($index)
+        {
+            $this->setIndex($index);
+        }
+
+        /**
+         * @return int
+         */
+        public function getTotalItems()
+        {
+            return $this->_totalItems;
+        }
+
+        /**
+         * @param int $size
+         */
+        protected function setTotalItems($size)
+        {
+            $this->_totalItems = $size;
+        }
+
+        /**
+         * @return int Current index
+         */
+        public function getIndex()
+        {
+            return $this->_index;
+        }
+
+        /**
+         * Alias getIndex();
+         * @return int
+         */
+        public function current()
+        {
+            return $this->getIndex();
+        }
+
+        /**
+         * @param int $index
+         */
+        public function setIndex($index)
+        {
+            $this->_index = $index;
+        }
+
+        /**
+         * @return int
+         */
+        public function getInternalChunkSize()
+        {
+            return $this->_internalChunkSize;
+        }
+
+        /**
          * @param int $limit
          */
-        public function __construct( $subject, $index = 1 , $limit = 25) {
-            $this->subject  = $subject;
-            $this->index    = $index;
-            $this->limite   = (int)$limit ;
-            $this->min      = $this->setMin();
-            $this->max      = $this->setMax();
-        }
-
-        /**
-         * Si le sujet est paginable retourne 1 sinon -1.
-         * @return int
-         */
-        public function setMin() {
-            return (!empty($this->subject)) ? 1 : -1;
-        }
-
-        /**
-         * @return int
-         */
-        public function getMax()
+        public function setInternalChunkSize($limit)
         {
-            return $this->max;
+            $this->_internalChunkSize = $limit;
         }
 
         /**
+         * @return int
+         */
+        public function getDisplayableIndexes()
+        {
+            return $this->_displayableIndexes;
+        }
+
+        /**
+         * @param int $displayableIndexes
+         */
+        public function setDisplayableIndexes($displayableIndexes)
+        {
+            $this->_displayableIndexes = $displayableIndexes;
+        }
+
+        /**
+         * @param int $size
+         * @param int $index
+         * @param int $limit
+         * @param int $displayableIndexes
+         * @throws OutOfBondsPaginationIndex
+         */
+        public function __construct($size = 100, $index = 1, $limit = 25, $displayableIndexes = 21)
+        {
+            $this->setTotalItems($size);
+            $this->setIndex($index);
+            $this->setInternalChunkSize($limit);
+            $this->setDisplayableIndexes($displayableIndexes);
+
+            if( $this->current() > $this->getMax() )
+            {
+                throw new OutOfBondsPaginationIndex('Out of bounds index');
+            }
+        }
+
+        /**
+         * @return int Nombre de page disponible
+         */
+        public function total()
+        {
+            return (int) ceil($this->getTotalItems() / $this->getInternalChunkSize());
+        }
+
+        /**
+         * Le nombre d'elements présent dans l'offset courant.
+         */
+        public function getCurrentChunkSize()
+        {
+            $array = array_chunk(array_fill(0, $this->getTotalItems(), null),$this->getInternalChunkSize());
+            if( isset($array[$this->getIndex()]) )
+            {
+                return count($array[$this->getIndex()]);
+            }
+            else
+            {
+                return 0;
+            }
+        }
+
+        /**
+         * Min offset
          * @return int
          */
         public function getMin()
         {
-            return $this->min;
+            return 1;
         }
 
         /**
-         * Si le sujet est paginable retourne le nombre de page total sinon -1.
+         * Max offset
          * @return int
          */
-        public function setMax() {
-            return (!empty($this->subject)) ? $this->total() : -1;
+        public function getMax()
+        {
+            return $this->total();
         }
 
         /**
-         * Existe t il une page suivante.
-         * @return bool True si une page suivante existe sinon false
+         * @return bool
          */
-        public function next() {
-            return (isset($this->chunk[$this->index+1])) ? true : false;
-        }
-
-        public function getNextIndex() {
-            return ($this->next()) ? $this->next() + 1 : $this->current();
-        }
-
-        public function getPrevIndex() {
-            return ($this->prev()) ? $this->prev() - 1 : $this->current();
+        public function gotNext()
+        {
+            return ($this->getIndex() * $this->getInternalChunkSize()) < $this->getTotalItems();
         }
 
         /**
-         * Existe t il une page précédente.
-         * @return bool True si une page précédente existe sinon false
+         * @return bool
          */
-        public function prev() {
-            return (isset($this->chunk[$this->index-1])) ? true : false;
+        public function gotPrev()
+        {
+            return ($this->getIndex() > 1 && $this->getIndex() < $this->getMax());
         }
 
         /**
-         * Retourne la premiére pagination si elle existe.
-         * @return mixed objet si elle existe ou null
+         * @return bool|int
          */
-        public function first() {
-            if($this->min !== -1) {
-                $this->index = 1;
-                return $this->chunk[1];
+        public function getNextIndex()
+        {
+            if($this->gotNext())
+            {
+                return $this->getIndex()+($this->total() - $this->getIndex());
             }
-            else {
-                return null;
+            else
+            {
+                return false;
             }
         }
 
         /**
-         * Retourne la dernière pagination si elle existe.
-         * @return mixed objet si elle existe ou null
+         * @return bool|int
          */
-        public function last() {
-            if( $this->max !== -1 ) {
-                $this->index = $this->total();
-                if( isset($this->chunk) ) {
-                    return $this->chunk[$this->total()];
-                }
+        public function getPrevIndex()
+        {
+            if($this->gotPrev())
+            {
+                return $this->getIndex()-($this->total() - $this->getIndex());
             }
-        }
-
-        /**
-         * Nombre items dans la pagination courante
-         * @return ints
-         */
-        public function count() {
-            return count( (array) $this->subject );
-        }
-
-        /**
-         * Nombre de page maximum.
-         * @return int
-         */
-        public function total() {
-            return (int) ceil($this->count() / $this->limite);
-        }
-
-        /**
-         * Retourne une pagination à la page $number.
-         *
-         * @param int $number Page souhaitée.
-         * @param bool $asObject Si vaut true la fonction retourne la page sous forme
-         * de class standart, sinon un tableau. Par défaut false
-         * @return mixed Selon la valeur de <b>$asObject</b>. Provoque une erreur si la page
-         * souhaitée $number est en dehors des limites.
-         */
-        public function page($number, $asObject = false) {
-            if( is_numeric($number) && $number <= $this->max && $number >= $this->min ) {
-                $chunks = $this->chunk();
-                $this->index = $number;
-                return ($asObject) ? (object) $chunks[$number] : $chunks[$number];
-
+            else
+            {
+                return false;
             }
-            else {
-                trigger_error("Page doesnt exists");
-            }
-
-        }
-
-        public function current() {
-            return $this->page((int)$this->index, true);
-        }
-
-        /**
-         * @see array_chunk()
-         * @return array
-         */
-        protected function chunk() {
-            $chunked = @array_chunk( (array) $this->subject, $this->limite, true);
-            $return = array();
-            if(!is_null($chunked)) {
-                $j=1;
-                foreach ( $chunked as $c ) {
-                    $return[$j++] = $c;
-                }
-            }
-            return $return;
         }
 
         /**
@@ -209,95 +220,86 @@ namespace Libre\Helpers {
          * SELECT * FROM table [LIMIT [offset,] lignes] ]
          * </code>
          *
-         * @param int $items Le nombre d'items à paginés
-         * @param int $limit Nombre maximum d'items par page
-         * @param int $page Le numéro de page demandé
-         * @return Mixed Un tableau si les limites pour le numéro de page existent.
-         * sinon null
+         * @return mixed
          */
-        static public function sqlLimit($items, $limit, $page) {
-            $totalPage= ceil($items/$limit);
-            if($page > $totalPage) {
-                $_limit['start'] = 1;
-                $_limit['end'] = 1;
-            }
-            else {
-                $_limit['start'] = $limit * $page - $limit;
-                $_limit['end'] = $limit * $page - 1;
-            }
-
+        public function sqlLimit() {
+            $_limit['start'] = $this->getInternalChunkSize() * $this->getIndex() - $this->getInternalChunkSize();
+            $_limit['end'] = $this->getInternalChunkSize() * $this->getIndex() - 1;
             return $_limit;
         }
 
         /**
-         * @param $items
-         * @param int $page
-         * @param int $limit
-         * @return Pagination
+         * Usefull for html menu
+         * @param null $interval
+         * @return \StdClass
          */
-        static public function dummyPagination($items, $page = 1, $limit = 20) {
-            if($items!=0) {
-                $subject = array_fill(0, $items, null);
-                $pagination = new Pagination($subject, $page, $limit);
-                return $pagination;
-            }
-        }
-
-        public function __set($attribut, $value) {
-            $this->$attribut = $value;
-        }
-
-        public function __get($attribut) {
-            if (property_exists($this, $attribut)) {
-                return $this->$attribut;
-            }
-        }
-
-        public function getInterval( $interval ) {
-
-            $index = $this->index;
-            $pages = $this->max;
-
-            $start  = 0;
-            $end    = 0;
-
-            $plage = $interval * 2 + 1;
-
-            if( $index - $interval > 0 && $index + $interval <= $pages ) {
-
-                $start = $index-$interval;
-                $end    = $index + $interval;
+        public function getOffsetBounds($interval = null)
+        {
+            if( !is_null($interval) )
+            {
+                $this->getDisplayableIndexes($interval);
             }
 
+            $result = new \StdClass();
+            $result->top = null;
+            $result->bottom = null;
 
-            if( $index <= $pages ) {
-                // Borne moins en dehors
-                if( $index - $interval <= 0 ) {
-                    $start = 1;
-                    $end = $plage + $start;
+            if($this->current() === $this->getMax())
+            {
+                $result->top = $this->total();
+
+                // Offset - $interval exist ?
+                $i = $this->total() - $this->getDisplayableIndexes();
+
+                if( $i > 0 )
+                {
+                    $result->bottom = $i;
                 }
-                elseif($index <= $interval ) {
-                    $start = 1;
-                    $end = ($interval*2+1)-($index - $interval);
+                else
+                {
+                    $result->bottom = $this->getMin();
                 }
-                else {
-                    $start = $index - $interval;
-                    $end = $index + $interval;
+            }
+            elseif( $this->current() === $this->getMin() )
+            {
+                $result->bottom = $this->getMin();
+
+                // Offset - $interval exist ?
+                $i = $this->getMin() + $this->getDisplayableIndexes();
+
+                if( $i < $this->getMax() )
+                {
+                    $result->top = $i;
+                }
+                else
+                {
+                    $result->top = $this->getMax();
+                }
+            }
+            else
+            {
+                $i = $this->total() - $this->getDisplayableIndexes();
+                if( $i > 0 )
+                {
+                    $result->bottom = $i;
+                }
+                else
+                {
+                    $result->bottom = $this->getMin();
                 }
 
-                if( $index + $interval >= $pages ) {
-                    $end = $pages;
-                    $start = $pages-$plage;
+                $i = $this->getMin() + $this->getDisplayableIndexes();
+                if( $i < $this->getMax() )
+                {
+                    $result->top = $i;
                 }
-
+                else
+                {
+                    $result->top = $this->getMax();
+                }
             }
 
-            if( $index == $this->total() ) {
-                $start = $end = 1;
-            }
-
-            return array($start, $end);
+            return $result;
         }
-
     }
 }
