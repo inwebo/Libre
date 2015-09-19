@@ -156,7 +156,6 @@ class Response
      */
     public function send()
     {
-        // @todo bug
         $this->headers();
         if( $this->_forceRender )
         {
@@ -165,7 +164,7 @@ class Response
                 echo $segment;
             }
         }
-        if( $this->_forceRender )
+        if( !$this->_forceRender )
         {
             return $this->_segments;
         }
