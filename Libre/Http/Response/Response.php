@@ -156,6 +156,7 @@ class Response
      */
     public function send()
     {
+        // @todo bug
         $this->headers();
         if( $this->_forceRender )
         {
