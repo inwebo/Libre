@@ -4,115 +4,125 @@ namespace Libre\Database\Driver {
 
     use Libre\Database\Results;
 
-    /**
-     * Class Driver
-     * @package Libre\Database
-     */
-    abstract class BaseDriver implements IDriver{
-
+    class BaseDriver
+    {
         /**
-         * @var IDriver
+         * @var \PDO
          */
         protected $_driver;
 
         /**
-         * @var string
+         * @var \ArrayObject
          */
-        protected $_toObject;
+        protected $_storedProcedures;
+        /**
+         * @var \ArrayObject
+         */
+        protected $_namedStoredProcedures;
 
         /**
-         * @return IDriver
+         * @return \PDO
          */
-        public function getDriver() {
+        public function getDriver()
+        {
             return $this->_driver;
         }
 
         /**
-         * @param IDriver $driver
+         * @param \PDO $pdo
          */
-        protected function setDriver( IDriver $driver ) {
-            $this->_driver = $driver;
-        }
-
-        /**
-         * @return $this
-         */
-        public function toAssoc() {
-            $this->_toObject = null;
-            $this->_driver->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE,\PDO::FETCH_ASSOC);
-            return $this;
-        }
-
-        /**
-         * @return $this
-         */
-        public function toStdClass() {
-            $this->_toObject = null;
-            $this->_driver->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE,\PDO::FETCH_OBJ);
-            return $this;
-        }
-
-        /**
-         * @param $class_name Bind Class to database cols
-         * @return $this
-         */
-        public function toObject( $class_name ) {
-            if(class_exists($class_name)) {
-                $this->_toObject = $class_name;
-            }
-            else {
-                trigger_error( "Unknown class : " . $class_name );
-            }
-            return $this;
-        }
-
-        /**
-         * @param $_table
-         * @param $col_filter
-         * @return array
-         */
-        protected function filterColumnInfo($_table, $col_filter) {
-            $selectKeys = array($col_filter);
-            $buffer = array();
-            $j = 0;
-            $table = $this->getTableInfos($_table);
-            foreach($table as $cols) {
-                $name = array_intersect_key((array)$cols, array_flip(array(static::COLS_NAME)))[static::COLS_NAME];
-                $buffer[$name] =  array_intersect_key((array)$cols, array_flip($selectKeys))[$col_filter];
-                $j++;
-            }
-            return $buffer;
-        }
-
-        /**
-         * To override
-         * @param string $table Nom de la table,
-         * @return mixed
-         */
-        protected function getTableInfos($table){}
-
-        public function getColsName($_table) {
-            return $this->filterColumnInfo($_table, static::COLS_NAME);
-        }
-
-        public function query($query, $params = array() )
+        protected function setDriver($pdo)
         {
-            $pdoStatement = $this->getDriver()->prepare($query);
-            if(isset($this->_toObject))
+            $this->_driver = $pdo;
+        }
+
+        /**
+         * @return \ArrayObject
+         */
+        public function getStoredProcedures()
+        {
+            return $this->_storedProcedures;
+        }
+
+        /**
+         * @return \ArrayObject
+         */
+        public function getNamedStoredProcedures()
+        {
+            return $this->_namedStoredProcedures;
+        }
+
+        /**
+         * @param string $name
+         * @return \PDOStatement
+         */
+        public function getNameStoredProcedure($name)
+        {
+            if(isset($this->_namedStoredProcedures[$name]))
             {
-                $pdoStatement->setFetchMode(\PDO::FETCH_CLASS, $this->_toObject);
+                return $this->_namedStoredProcedures[$name];
             }
-            try
+        }
+
+        /**
+         * @param string $name
+         * @param string $queryString
+         */
+        public function setNamedStoredProcedure($name, $queryString)
+        {
+            if( is_null($this->_namedStoredProcedures) )
             {
-                (!is_null($params) && is_array($params)) ?
-                    $pdoStatement->execute($params) :
-                    $pdoStatement->execute();
+                $this->_namedStoredProcedures = new \ArrayObject();
             }
-            catch(\Exception $e)
+            else
             {
-                throw $e;
+                if( is_null($this->_namedStoredProcedures[$name]) )
+                {
+                    $this->_namedStoredProcedures[$name] = $this->getDriver()->prepare($queryString);
+                }
             }
+        }
+        /**
+         * @param string $queryString
+         * @return \PDOStatement
+         */
+        protected function prepare($queryString)
+        {
+            if( is_null($this->_storedProcedures) )
+            {
+                $this->_storedProcedures = new \ArrayObject();
+            }
+
+            if( !isset($this->_storedProcedures[md5($queryString)]) )
+            {
+                $this->_storedProcedures[md5($queryString)] = $this->getDriver()->prepare($queryString);
+            }
+
+            return $this->_storedProcedures[md5($queryString)];
+        }
+
+        public function query($queryString, $params = null)
+        {
+            // Si est $queryString est la clef d'une procedure nommée
+            if( !is_null($this->getNameStoredProcedure($queryString)) )
+            {
+                $pdoStatement = $this->getNameStoredProcedure($queryString);
+            }
+            // Est une requete SQL
+            else
+            {
+                $pdoStatement = $this->prepare($queryString);
+                var_dump($pdoStatement);
+            }
+
+            if( !is_array($params) && is_string($params) )
+            {
+                $params = array($params);
+            }
+
+            (is_array($params)) ? $pdoStatement->execute($params) : $pdoStatement->execute();
             return new Results($pdoStatement);
         }
+
     }
 }

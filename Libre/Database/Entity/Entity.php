@@ -3,133 +3,113 @@
 namespace Libre\Database {
 
     use Libre\Database\Driver\IDriver;
+    use Libre\Database\Entity\Configuration;
     use Libre\Database\Entity\IModelable;
     use Libre\Database\Entity\EntityConfiguration;
 
     class EntityException extends \Exception{}
 
-    abstract class Entity implements IModelable {
+    abstract class Entity
+    {
 
-        const SQL_LOAD              = 'Select * from `%s` WHERE %s=? LIMIT 1';
+        const SQL_SELECT            = 'Select * from `%s` WHERE %s=? LIMIT 1';
         const SQL_DELETE            = 'Delete from `%s` WHERE %s=? LIMIT 1';
         const SQL_DELETE_MULTIPLE   = 'Delete * from `%s` WHERE %s=? IN %s LIMIT 1';
-        const SQL_INSERT            = 'INSERT INTO %s %s VALUES %s';
-        const SQL_UPDATE            = 'UPDATE %s SET %s WHERE %s=?';
+        const SQL_INSERT            = 'INSERT INTO `%s` %s VALUES %s';
+        const SQL_UPDATE            = 'UPDATE `%s` SET %s WHERE %s=?';
 
         /**
-         * @var string
+         * @var Configuration
          */
-        protected $_loaded;
+        static protected $_configuration;
 
         /**
-         * @var EntityConfiguration A surcharger !
+         * @return Configuration
          */
-        static public $_entityConfiguration;
-
-        static public function getModelClass()
+        static public function getConfiguration()
         {
-            return array('model'=>str_replace('\\', '\\\\', '\\' . get_called_class()));
+            return self::$_configuration;
+        }
+
+        /**
+         * @param IDriver $iDriver
+         * @param null|string $primaryKey
+         * @param null|string $tableName
+         */
+        static public function setConfiguration(IDriver $iDriver, $primaryKey = null, $tableName = null)
+        {
+            $driver    = $iDriver;
+            $tableName = (!is_null($tableName))     ? $tableName    : self::getShortName() . 's';
+            $primaryKey= (!is_null($primaryKey))    ? $primaryKey   : $iDriver->getPrimaryKey($tableName);
+
+            self::$_configuration = new Configuration($driver,$primaryKey,$tableName);
+        }
+
+        public function isLoaded()
+        {
+            $pk = $this->getConfiguration()->getPrimaryKey();
+            return !is_null($this->$pk);
         }
 
         public function __construct(){
             $this->init();
         }
-        
-        protected function init() {
-            $pk = static::$_entityConfiguration->getPrimaryKey();
-            if( !is_null($this->$pk) ) {
-                $this->_loaded = true;
-            }
-            else {
-                $this->_loaded = false;
-            }
-        }
 
-        /**
-         * @param bool $bool
-         */
-        protected function setLoaded($bool) {
-            $this->_loaded = $bool;
-        }
-
-        public function isLoaded() {
-            return $this->_loaded;
-        }
-
-        static public function binder(IDriver $iDriver, $primaryKey = null, $tableName = null, $tableDesc = null){
-            $_table = (!is_null($tableName)) ? $tableName : self::getShortName() . 's';
-            $pk     = (!is_null($primaryKey)) ? $primaryKey : $iDriver->getPrimaryKey($_table);
-            $cols   = $iDriver->getColsName($_table);
-            $conf   = new EntityConfiguration($iDriver, $pk, $_table, $cols);
-            static::$_entityConfiguration = $conf;
-        }
-
-        static public function getBoundDriver()
+        public function init()
         {
-            if( !is_null(static::$_entityConfiguration) ) {
-                return static::$_entityConfiguration->getDriver();
-            }
+            // Prépare les requetes
+            $select = sprintf(self::SQL_SELECT, $this->getConfiguration()->getTable(), $this->getConfiguration()->getPrimaryKey());
+            $delete = sprintf(self::SQL_DELETE, $this->getConfiguration()->getTable(), $this->getConfiguration()->getPrimaryKey());
+
+            $aggregatedColsName = $this->aggregate($this->getColsName());
+            $aggregatedColsValue = $this->aggregate($this->getTokens());
+
+            $insert = sprintf(self::SQL_INSERT, $aggregatedColsName, $aggregatedColsValue);
+            $update = sprintf(self::SQL_UPDATE,$aggregatedColsValue, $this->getConfiguration()->getPrimaryKey());
+
+            $this->getConfiguration()->getDriver()->setNamedStoredProcedure('insert', $insert);
+            $this->getConfiguration()->getDriver()->setNamedStoredProcedure('update', $update);
+            $this->getConfiguration()->getDriver()->setNamedStoredProcedure('delete', $delete);
+            $this->getConfiguration()->getDriver()->setNamedStoredProcedure('select', $select);
         }
 
-        public function save()
+        public function getColsName() {
+            $cols   = array_keys($this->getConfiguration()->getColsName());
+            $values = array_keys((array)$this);
+            return array_intersect($cols,$values);
+        }
+
+        public function getColsValue() {
+            $cols   = array_values($this->getConfiguration()->getColsName());
+            $values = array_values((array)$this);
+            return array_intersect($cols,$values);
+        }
+
+        public function getTokens( $token = '?') {
+            return array_fill(0, count($this->getColsName())-1, $token);
+        }
+
+        public function aggregate($array) {
+            return '('. implode(',', $array) .')';
+        }
+
+        public function getPrimaryKeyName()
         {
-            $conf       = static::$_entityConfiguration;
-            $toBind     = $this->getValues();
-            $toBindKeys = array_keys($toBind);
-            $toBindValues   = array_values($toBind);
-            $sqlKeys        = $conf->aggregateCols($toBindKeys);
-            $tokens         = $conf->aggregateCols($conf->getTokens(count($toBindKeys)));
+            return $this->getConfiguration()->getPrimaryKey();
+        }
 
-            if($this->isLoaded()) {
-                // Update
-                $sqlUpdateQuery = sprintf(self::SQL_UPDATE, $conf->getTable(),$conf->toUpdate($toBindKeys),$conf->getPrimaryKey());
-                $toInject = array_merge($toBindValues, array($this->id));
-                try {
-                    $conf->getDriver()->query($sqlUpdateQuery,$toInject);
-                }
-                catch(\Exception $e) {
-                    throw $e;
-                }
-            }
-            else {
-                // Insert
-                $sqlInsertQuery = sprintf(self::SQL_INSERT, $conf->getTable(), $sqlKeys, $tokens);
-                try {
-                    $conf->getDriver()->query($sqlInsertQuery, $toBindValues);
-                }
-                catch(\Exception $e) {
-                    throw $e;
-                }
+        public function getPrimaryKeyValue()
+        {
+            $pk = $this->getPrimaryKeyName();
+            if( isset($this->$pk) )
+            {
+                return $this->$pk;
             }
         }
 
-        public function delete() {
-            $sqlDelete = sprintf(self::SQL_DELETE, $this->getEntityConfiguration()->getTable(), $this->getEntityConfiguration()->getPrimaryKey());
-            $this->getEntityConfiguration()->getDriver()->query($sqlDelete,array($this->id));
-        }
-
-        static public function load($id, $by = null) {
-            $conf = static::$_entityConfiguration;
-            // Est-il configuré ?
-            if (!is_null($conf)) {
-                $conf->getDriver()->toObject(get_called_class());
-                $by = (is_null($by)) ? $conf->getPrimaryKey() : $by;
-                $sqlSelect =  sprintf(self::SQL_LOAD,$conf->getTable(),$by);
-                $obj = $conf->getDriver()->query($sqlSelect,array($id))->first();
-                if( !is_null($obj) ) {
-                    $obj->setLoaded(true);
-                    return $obj;
-                }
-            } else {
-                throw new EntityException("Bind model first");
-            }
-        }
-
-        /**
-         * @return EntityConfiguration
-         */
-        static public function getEntityConfiguration() {
-            return static::$_entityConfiguration;
+        static public function getModelClassName()
+        {
+            return str_replace('\\', '\\\\', '\\' . get_called_class());
         }
 
         static public function getShortName() {
@@ -137,14 +117,31 @@ namespace Libre\Database {
             return $ref->getShortName();
         }
 
-        protected function getValues() {
-            $members = $this->getEntityConfiguration()->intersectObj($this);
-            $array = array();
-            foreach($members as $v) {
-                $array[$v] = $this->$v;
+        public function save()
+        {
+            // Update
+            if($this->isLoaded())
+            {
+                $result = $this->getConfiguration()->getDriver()->query('update', array($this->aggregate($this->getColsValue(),$this->getPrimaryKeyValue()) ));
             }
-            return $array;
+            // Insert
+            else
+            {
+                $result = $this->getConfiguration()->getDriver()->query('insert', array($this->aggregate($this->getColsName(),$this->getColsValue()) ));
+            }
         }
 
+        public function delete()
+        {
+            $this->getConfiguration()->getDriver()->query('delete', $this->getPrimaryKeyValue());
+        }
+        static public function load($id)
+        {
+            /** @var Results $results */
+            $results = self::getConfiguration()->getDriver()->query('select', $id);
+            $results->toInstance(self::getModelClassName());
+            $instance = $results->first();
+            $instance->setLoaded(true);
+        }
     }
 }

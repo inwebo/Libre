@@ -4,7 +4,7 @@ namespace Libre\Database\Driver {
 
     class SqliteDriverException extends \Exception {}
 
-    class SqLite extends BaseDriver {
+    class SqLite extends BaseDriver implements IDriver{
 
         const COLS_NAME          = "name";
         const COLS_TYPE          = "type";

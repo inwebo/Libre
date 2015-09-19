@@ -1,52 +1,138 @@
 <?php
 namespace Libre\Database {
 
-    class Results {
+    class ResultsException extends \Exception{}
+
+    class Results
+    {
         /**
          * @var \PDOStatement
          */
         protected $_pdoStatement;
-        /**
-         * @var \ArrayIterator
-         */
-        protected $_rows;
 
         /**
-         * @return \ArrayIterator
+         * @var int
          */
-        public function getRows()
+        protected $_fetchMode;
+
+        public function getQueryString()
         {
-            return $this->_rows;
+            return $this->getPdoStatement()->queryString;
         }
 
-        public function __construct(\PDOStatement $pdoStatement) {
+        /**
+         * @return \PDOStatement
+         */
+        public function getPdoStatement()
+        {
+            return $this->_pdoStatement;
+        }
+
+        /**
+         * @param \PDOStatement $pdoStatement
+         */
+        protected function setPdoStatement($pdoStatement)
+        {
             $this->_pdoStatement = $pdoStatement;
-            $this->_rows = ($this->gotResults()) ? new \ArrayIterator( $this->_pdoStatement->fetchAll() ) :  new \ArrayIterator();
-            $this->_rows->rewind();
         }
 
-        public function gotResults() {
-            return ( $this->_pdoStatement->columnCount() > 0 );
+        /**
+         * @return int
+         */
+        public function getFetchMode()
+        {
+            return $this->_fetchMode;
         }
 
-        public function all(){
-            return $this->_rows;
+        /**
+         * @param $fetchMode
+         * @param int|string|obj $ar1 int pour FETCH_COLUMN, string FETCH_CLASS, obj FETCH_INTO
+         * @param array $ar2 Arguments constructeur pour FETCH_CLASS
+         *
+         * @link https://secure.php.net/manual/fr/pdostatement.setfetchmode.php
+         * @link https://secure.php.net/manual/en/pdo.constants.php
+         */
+        public function setFetchMode($fetchMode, $ar1 = null, $ar2 = null)
+        {
+            switch($fetchMode)
+            {
+                case \PDO::FETCH_COLUMN:
+                    $this->getPdoStatement()->setFetchMode($fetchMode, $ar1);
+                    break;
+
+                case \PDO::FETCH_CLASS:
+                    $this->getPdoStatement()->setFetchMode($fetchMode, $ar1, $ar2);
+                    break;
+
+                case \PDO::FETCH_INTO:
+                    $this->getPdoStatement()->setFetchMode($fetchMode, $ar1, $ar2);
+                    break;
+
+                default:
+                    $this->getPdoStatement()->setFetchMode($fetchMode);
+                    break;
+            }
         }
 
-        public function first(){
-            return $this->getOffset(0);
+        /**
+         * @param \PDOStatement $PDOStatement
+         */
+        public function __construct(\PDOStatement $PDOStatement)
+        {
+            $this->setPdoStatement($PDOStatement);
         }
 
-        public function last(){
-            return $this->getOffset($this->count()-1);
+        public function toStdClass()
+        {
+            $this->setFetchMode(\PDO::FETCH_OBJ);
+            return $this;
         }
 
-        public function getOffset($offset){
-            return ( isset($this->_rows[$offset]) && !empty($this->_rows[$offset]) ) ? $this->_rows[$offset] : null;
+        public function toAssoc()
+        {
+            $this->setFetchMode(\PDO::FETCH_ASSOC);
+            return $this;
         }
 
-        public function count(){
-            return $this->_pdoStatement->rowCount();
+        /**
+         * @param string $className
+         * @param array $cToArgs
+         * @throws ResultsException
+         * @return Results
+         */
+        public function toInstance($className, $cToArgs = array())
+        {
+            if(class_exists($className))
+            {
+                $this->setFetchMode(\PDO::FETCH_CLASS, $className, $cToArgs);
+            }
+            else
+            {
+                throw new ResultsException('Unknown class : ' . $className);
+            }
+            return $this;
         }
+
+        public function count()
+        {
+            return $this->getPdoStatement()->rowCount();
+        }
+
+        public function first()
+        {
+            return $this->getPdoStatement()->fetch(null,\PDO::FETCH_ORI_FIRST);
+        }
+
+        public function all()
+        {
+            return $this->getPdoStatement()->fetchAll();
+        }
+
+        public function getOffset($offset)
+        {
+            return $this->getPdoStatement()->fetch(null,\PDO::FET_ORI_ABS,$offset);
+        }
+
     }
+
 }

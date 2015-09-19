@@ -6,9 +6,8 @@ namespace Libre\Database\Driver {
      * @package Libre\Database\Driver
      */
     interface IDriver {
+        public function getTableInfos($table);
         public function getDriver();
-        public function toAssoc();
-        public function toStdClass();
-        public function toObject($class_name);
+
     }
 }

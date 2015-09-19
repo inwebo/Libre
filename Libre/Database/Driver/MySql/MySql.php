@@ -14,25 +14,25 @@ namespace Libre\Database\Driver {
         const COLS_PRIMARY_VALUE = "PRI";
 
         /**
-         * @var string
-         */
-        protected $_host;
-        /**
-         * @var string
-         */
-        protected $_database;
-        /**
-         * @var string
-         */
-        protected $_username;
-        /**
-         * @var string
-         */
-        protected $_password;
-        /**
          * @var array
          */
         protected $_options;
+
+        /**
+         * @return array
+         */
+        public function getOptions()
+        {
+            return $this->_options;
+        }
+
+        /**
+         * @param array $options
+         */
+        public function setOptions($options)
+        {
+            $this->_options = $options;
+        }
 
         /**
          * @param string $host Database server
@@ -45,13 +45,8 @@ namespace Libre\Database\Driver {
         public function __construct($host, $database, $username, $password, $options = array(\PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8")) {
             try
             {
-                $dsn                = 'mysql:host=' . $host . ';dbname=' . $database;
-                $this->_driver      = new \PDO($dsn, $username, $password, $options);
-                $this->_driver->setAttribute(\PDO::ATTR_ERRMODE,\PDO::ERRMODE_EXCEPTION);
-                $this->_host        = $host;
-                $this->_database    = $database;
-                $this->_username    = $username;
-                $this->passwd       = $password;
+                $this->setDriver(new \PDO('mysql:host=' . $host . ';dbname=' . $database, $username, $password, $options));
+                $this->getDriver()->setAttribute(\PDO::ATTR_ERRMODE,\PDO::ERRMODE_EXCEPTION);
                 $this->_options     = $options;
             }
             catch (\Exception $e)
