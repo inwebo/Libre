@@ -25,6 +25,35 @@ namespace Libre\Mvc\Controller {
          * @var array
          */
         protected $_verbsForceToPublic;
+
+        /**
+         * @var array
+         */
+        protected $_getBuffer = array();
+        /**
+         * @var array
+         */
+        protected $_putBuffer = array();
+        /**
+         * @var array
+         */
+        protected $_postBuffer = array();
+        /**
+         * @var array
+         */
+        protected $_optionsBuffer = array();
+        /**
+         * @var array
+         */
+        protected $_patchBuffer = array();
+        /**
+         * @var array
+         */
+        protected $_updateBuffer = array();
+        /**
+         * @var array
+         */
+        protected $_deleteBuffer = array();
         #endregion
 
         #region Getters / Setters
@@ -108,6 +137,125 @@ namespace Libre\Mvc\Controller {
                     "put" => false,
                     "patch" => false
                 );
+        }
+
+        /**
+         * @return array
+         */
+        protected function getGetBuffer()
+        {
+            return $this->_getBuffer;
+        }
+
+        /**
+         * @param string $name
+         * @param array $getBuffer
+         */
+        protected function setGetBuffer($name, $getBuffer)
+        {
+            $this->_getBuffer[$name] = $getBuffer;
+        }
+
+        /**
+         * @return array
+         */
+        protected function getPutBuffer()
+        {
+            return $this->_putBuffer;
+        }
+
+        /**
+         * @param string $name
+         * @param array $putBuffer
+         */
+        protected function setPutBuffer($name, $putBuffer)
+        {
+            $this->_putBuffer[$name] = $putBuffer;
+        }
+
+        /**
+         * @return array
+         */
+        protected function getPostBuffer()
+        {
+            return $this->_postBuffer;
+        }
+
+        /**
+         * @param string $name
+         * @param array $postBuffer
+         */
+        protected function setPostBuffer($name, $postBuffer)
+        {
+            $this->_postBuffer[$name] = $postBuffer;
+        }
+
+        /**
+         * @return array
+         */
+        protected function getOptionsBuffer()
+        {
+            return $this->_optionsBuffer;
+        }
+
+        /**
+         * @param string $name
+         * @param array $optionsBuffer
+         */
+        protected function setOptionsBuffer($name, $optionsBuffer)
+        {
+            $this->_optionsBuffer[$name] = $optionsBuffer;
+        }
+
+        /**
+         * @return array
+         */
+        protected function getPatchBuffer()
+        {
+            return $this->_patchBuffer;
+        }
+
+        /**
+         * @param string $name
+         * @param array $patchBuffer
+         */
+        protected function setPatchBuffer($name, $patchBuffer)
+        {
+            $this->_patchBuffer[$name] = $patchBuffer;
+        }
+
+        /**
+         * @return array
+         */
+        protected function getUpdateBuffer()
+        {
+            return $this->_updateBuffer;
+        }
+
+        /**
+         * @param string $name
+         * @param array $updateBuffer
+         */
+        protected function setUpdateBuffer($name, $updateBuffer)
+        {
+            $this->_updateBuffer[$name] = $updateBuffer;
+        }
+
+        /**
+         * @return array
+         */
+        protected function getDeleteBuffer()
+        {
+            return $this->_deleteBuffer;
+        }
+
+        /**
+         * @param string $name
+         * @param array $deleteBuffer
+         */
+        protected function setDeleteBuffer($name, $deleteBuffer)
+        {
+            $this->_deleteBuffer[$name] = $deleteBuffer;
         }
         #endregion
 
