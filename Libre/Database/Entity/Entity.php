@@ -33,7 +33,7 @@ namespace Libre\Database {
          */
         static public function getConfiguration()
         {
-            return self::$_configuration;
+            return static::$_configuration;
         }
 
         /**
@@ -47,7 +47,7 @@ namespace Libre\Database {
             $tableName = (!is_null($tableName))     ? $tableName    : self::getShortName() . 's';
             $primaryKey= (!is_null($primaryKey))    ? $primaryKey   : $iDriver->getPrimaryKey($tableName);
 
-            self::$_configuration = new Configuration($driver,$primaryKey,$tableName);
+            static::$_configuration = new Configuration($driver,$primaryKey,$tableName);
             self::prepareDefaultCrudQueries();
         }
 
@@ -78,8 +78,6 @@ namespace Libre\Database {
 
             $insert = sprintf(self::SQL_INSERT, self::getConfiguration()->getTable(), $aggregatedColsName, $aggregatedColsTokens);
             $update = sprintf(self::SQL_UPDATE,self::getConfiguration()->getTable(), $aggregatedColsUpdate, self::getConfiguration()->getPrimaryKey());
-
-            var_dump($insert,$select,$delete,$update);
 
             self::getConfiguration()->getDriver()->setNamedStoredProcedure('select', $select);
             self::getConfiguration()->getDriver()->setNamedStoredProcedure('insert', $insert);
@@ -170,6 +168,7 @@ namespace Libre\Database {
             $ref = new \ReflectionClass( get_called_class() );
             return $ref->getShortName();
         }
+
 
         public function save()
         {

@@ -125,7 +125,7 @@ namespace Libre\Database\Driver {
                 $pdoStatement = $this->getStoredProcedure($queryString);
             }
 
-            if (!is_array($params) && (is_string($params)||is_int($params))) {
+            if (is_string($params)||is_int($params)) {
                 $params = array($params);
             }
 

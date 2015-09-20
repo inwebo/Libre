@@ -11,9 +11,9 @@ namespace Libre{
     {
         $driver = new MySql('localhost', 'www.inwebo.net', 'root', 'root');
 
-        User::binder($driver,'id','Users');
-        Role::binder($driver,'id','Roles');
-        Permission::binder($driver,'id','Permissions');
+        User::setConfiguration($driver,'id','Users');
+        Role::setConfiguration($driver,'id','Roles');
+        Permission::setConfiguration($driver,'id','Permissions');
         User::setDefaultRoleId(2);
 
         $user = User::load(1);
