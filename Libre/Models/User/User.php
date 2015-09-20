@@ -25,7 +25,9 @@ namespace Libre\Models {
         const MODEL = "\\Libre\\Models\\User";
 
         const SQL_SELECT_ROLES = "SELECT t1.id, t1.id_role, t2.type FROM %s AS t1 JOIN Roles AS t2 ON t1.id_role = t2.id WHERE t1.id =?";
-        static public $_entityConfiguration;
+
+        static protected $_configuration;
+
         #region Attributs
         /**
          * @var int
@@ -287,17 +289,17 @@ namespace Libre\Models {
         public function init()
         {
             parent::init();
-            self::getEntityConfiguration()->getDriver()->toObject(Role::MODEL);
-            $roles = $this->getEntityConfiguration()->getDriver()->query($this->injectTableNameIntoQuery(self::SQL_SELECT_ROLES), array($this->getId()))->All();
-            self::getEntityConfiguration()->getDriver()->toObject(User::MODEL);
-            $this->setRoles($roles);
+
+            $getRoles = sprintf(self::SQL_SELECT_ROLES, $this->injectTableNameIntoQuery());
+            $this->getConfiguration()->getDriver()->setNamedStoredProcedure('select_roles', $getRoles);
+            $this->getConfiguration()->getDriver()->query('select_roles',$this->getId());
         }
         #endregion
 
         #region Helper
-        protected function injectTableNameIntoQuery($query)
+        protected function injectTableNameIntoQuery()
         {
-            return sprintf($query,$this->getEntityConfiguration()->getTable());
+            return sprintf(self::SQL_SELECT_ROLES,$this->getEntityConfiguration()->getTable());
         }
         #endregion
 

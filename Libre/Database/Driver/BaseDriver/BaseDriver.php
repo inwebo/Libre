@@ -4,7 +4,7 @@ namespace Libre\Database\Driver {
 
     use Libre\Database\Results;
 
-    class BaseDriver
+    class BaseDriver implements IDriver
     {
         /**
          * @var \PDO
@@ -41,7 +41,36 @@ namespace Libre\Database\Driver {
          */
         public function getStoredProcedures()
         {
-            return $this->_storedProcedures;
+            return $this->_namedStoredProcedures;
+        }
+
+        /**
+         * @param string $queryString
+         * @return \ArrayObject
+         */
+        public function getStoredProcedure($queryString)
+        {
+            $queryString = md5($queryString);
+
+            if($this->_storedProcedures->offsetExists($queryString))
+            {
+
+                return $this->_storedProcedures->offsetGet($queryString);
+            }
+        }
+
+        /**
+         * @param string $queryString
+         * @return \PDOStatement
+         */
+        protected function setStoredProcedure($queryString)
+        {
+            $offset = md5($queryString);
+            if($this->_storedProcedures->offsetExists($offset) === false)
+            {
+                $this->_storedProcedures->offsetSet($offset, $this->getDriver()->prepare($queryString));
+            }
+
         }
 
         /**
@@ -51,72 +80,52 @@ namespace Libre\Database\Driver {
         {
             return $this->_namedStoredProcedures;
         }
-
         /**
          * @param string $name
          * @return \PDOStatement
          */
-        public function getNameStoredProcedure($name)
+        public function getNamedStoredProcedure($name)
         {
-            if(isset($this->_namedStoredProcedures[$name]))
+            if($this->_namedStoredProcedures->offsetExists($name))
             {
-                return $this->_namedStoredProcedures[$name];
+                return $this->_namedStoredProcedures->offsetGet($name);
             }
         }
-
         /**
          * @param string $name
          * @param string $queryString
          */
         public function setNamedStoredProcedure($name, $queryString)
         {
-            if( is_null($this->_namedStoredProcedures) )
+            if(!$this->_namedStoredProcedures->offsetExists($name))
             {
-                $this->_namedStoredProcedures = new \ArrayObject();
-            }
-            else
-            {
-                if( is_null($this->_namedStoredProcedures[$name]) )
-                {
-                    $this->_namedStoredProcedures[$name] = $this->getDriver()->prepare($queryString);
-                }
+                $this->_namedStoredProcedures->offsetSet($name, $this->getDriver()->prepare($queryString));
             }
         }
-        /**
-         * @param string $queryString
-         * @return \PDOStatement
-         */
-        protected function prepare($queryString)
+
+        public function __construct()
         {
-            if( is_null($this->_storedProcedures) )
-            {
-                $this->_storedProcedures = new \ArrayObject();
-            }
-
-            if( !isset($this->_storedProcedures[md5($queryString)]) )
-            {
-                $this->_storedProcedures[md5($queryString)] = $this->getDriver()->prepare($queryString);
-            }
-
-            return $this->_storedProcedures[md5($queryString)];
+            $this->_namedStoredProcedures   = new \ArrayObject();
+            $this->_storedProcedures        = new \ArrayObject();
         }
 
         public function query($queryString, $params = null)
         {
             // Si est $queryString est la clef d'une procedure nommée
-            if( !is_null($this->getNameStoredProcedure($queryString)) )
-            {
-                $pdoStatement = $this->getNameStoredProcedure($queryString);
+            if (!is_null($this->getNamedStoredProcedure($queryString))) {
+                $pdoStatement = $this->getNamedStoredProcedure($queryString);
+            } // Est une requete SQL préparée ?
+            elseif(!is_null($this->getStoredProcedure($queryString))) {
+
+                $pdoStatement = $this->getStoredProcedure($queryString);
             }
-            // Est une requete SQL
             else
             {
-                $pdoStatement = $this->prepare($queryString);
-                var_dump($pdoStatement);
+                $this->setStoredProcedure($queryString);
+                $pdoStatement = $this->getStoredProcedure($queryString);
             }
 
-            if( !is_array($params) && is_string($params) )
-            {
+            if (!is_array($params) && (is_string($params)||is_int($params))) {
                 $params = array($params);
             }
 
@@ -124,5 +133,26 @@ namespace Libre\Database\Driver {
             return new Results($pdoStatement);
         }
 
+        /**
+         * A surcharger pour chaques drivers
+         * @param $table
+         */
+        public function getTableInfos($table)
+        {
+        }
+        /**
+         * A surcharger pour chaques drivers
+         * @param $table
+         */
+        public function getColsName($table)
+        {
+        }
+        /**
+         * A surcharger pour chaques drivers
+         * @param $table
+         */
+        public function getPrimaryKey($table)
+        {
+        }
     }
 }
