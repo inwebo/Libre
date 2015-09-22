@@ -266,9 +266,13 @@ namespace Libre\Mvc\Controller {
         {
             parent::init();
             if (!$this->validate()) {
-                $this->getResponse()->setStatusCode('HTTP/1.1 403 Forbidden');
+                $this->getResponse()->forbidden();
                 $this->dispatch();
             }
+            $this->getResponse()->poweredBy('Ta maman en slibard');
+            $this->getResponse()->server('Les gnomes voleurs de slip');
+            $this->getResponse()->disableCache();
+            $this->getResponse()->disableKeepAlive();
         }
 
         public function indexAction()
