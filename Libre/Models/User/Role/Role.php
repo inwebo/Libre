@@ -49,12 +49,7 @@ namespace Libre\Models\User {
             self::getConfiguration()->getDriver()->setNamedStoredProcedure('select_permissions', self::SQL_LOAD_PERMISSIONS);
             $result = self::getConfiguration()->getDriver()->query('select_permissions', array($this->id_role));
             $result->toInstance(Permission::getModelClassName());
-            echo '<hr>';
-            var_dump($result->all());
-            echo '<hr>';
-
-
-            $this->_permissions = $result->all();
+            $this->setPermissions($result->all());
         }
 
         static public function loadAll()

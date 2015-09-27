@@ -19,26 +19,26 @@ namespace Libre{
         Permission::setConfiguration($driver,'id','Permissions');
         User::setDefaultRoleId(2);
 
-        var_dump(User::getConfiguration());
+        //var_dump(User::getConfiguration());
 
         $user = User::load(1);
-        var_dump($user);
-        var_dump($user->toPublic());
-        echo '<hr>';
-        var_dump($user->isDefault());
-        echo '<hr>';
-        var_dump($user->hasRole(1));
-        echo '<hr>';
+        //var_dump($user);
+        //var_dump($user->toPublic());
+        //echo '<hr>';
+        //var_dump($user->isDefault());
+        //echo '<hr>';
+        //var_dump($user->hasRole(1));
+        //echo '<hr>';
         //var_dump($user->can('read'));
-        var_dump($user->is('Root'));
-        var_dump($user->is('d'));
-        echo '<hr>';
-        echo '<hr>';
-        var_dump($user->can('read'));
-        var_dump($user->can('proutie'));
-        echo '<hr>';
-        echo '<hr>';
-        var_dump($user->hasPermission(1));
+        //var_dump($user->is('Root'));
+        //var_dump($user->is('d'));
+        //echo '<hr>';
+        //echo '<hr>';
+        //var_dump($user->can('read'));
+        //var_dump($user->can('proutie'));
+        //echo '<hr>';
+        //echo '<hr>';
+        //var_dump($user->hasPermission(1));
 
         $_SESSION['User'] = $user;
         var_dump($_SESSION['User']->is('Root'));

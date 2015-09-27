@@ -67,8 +67,6 @@ namespace Libre\Models {
          * @var \ArrayIterator Role
          */
         protected $_roles;
-
-
         #endregion
 
         #region Getters / Setters
