@@ -8,15 +8,14 @@ namespace Libre\Models\User {
 
     class Role extends Entity{
 
-        const MODEL ='\\Libre\\Models\\User\\Role' ;
-
         const SQL_LOAD_PERMISSIONS = 'SELECT DISTINCT id_perm as id, name FROM role_perm AS T1 JOIN Permissions AS T2 ON T1.id_perm = T2.id WHERE T1.id_role =?';
 
         /*
         const SQL_SELECT_ROLES = "SELECT t1.id, t1.id_role, t2.type FROM Permissions AS t1 JOIN Roles AS t2 ON t1.id_role = t2.id";
         const SQL_GET_ROLES_ID = "SELECT T3.id FROM role_perm AS T1 JOIN Permissions AS T2 ON T1.id_perm = T2.id JOIN Roles AS T3 ON T1.id_role = T3.id GROUP BY T3.id";
         const SQL_GET_ROLE_BY_ID = "SELECT T3.id, T3.type, T2.id as perm_id, T2.name as name  FROM role_perm AS T1 JOIN Permissions AS T2 ON T1.id_perm = T2.id JOIN Roles AS T3 ON T1.id_role = T3.id where T3.id = ?";
-*/
+        */
+
         /**
          * @var int
          */

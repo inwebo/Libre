@@ -1,6 +1,7 @@
 <?php
 
 namespace Libre\Models {
+
     use Libre\Database\Entity;
     use Libre\Exception;
     use Libre\Models\User\IAuth;
@@ -16,15 +17,12 @@ namespace Libre\Models {
         /**
          * @var int
          */
-        static protected $_defaultUserConfig;
-        /**
-         * @var int
-         */
         static protected $_defaultUserId;
 
-        const MODEL = "\\Libre\\Models\\User";
+        const SQL_SELECT_ROLES      = "SELECT t1.id, t1.id_role, t2.type FROM %s AS t1 JOIN Roles AS t2 ON t1.id_role = t2.id WHERE t1.id =?";
+        const SQL_LOAD_BY_LOGIN_PWD = 'SELECT * FROM %s WHERE login=? AND password=?';
+        const SQL_LOAD_BY_LOGIN     = 'SELECT * FROM %s WHERE login=?';
 
-        const SQL_SELECT_ROLES = "SELECT t1.id, t1.id_role, t2.type FROM %s AS t1 JOIN Roles AS t2 ON t1.id_role = t2.id WHERE t1.id =?";
         /**
          * @var Entity\Configuration
          */
@@ -203,22 +201,23 @@ namespace Libre\Models {
          */
         public static function getDefaultRoleId()
         {
-            return self::$_defaultUserConfig;
+            return self::$_defaultUserId;
         }
 
         /**
-         * @param int $defaultUserConfig
+         * @param int $defaultUserId
          */
-        public static function setDefaultRoleId($defaultUserConfig)
+        public static function setDefaultRoleId($defaultUserId)
         {
-            self::$_defaultUserConfig = $defaultUserConfig;
+            self::$_defaultUserId = $defaultUserId;
         }
         /**
+         * @param bool $asArray
          * @return \ArrayIterator
          */
-        public function getRoles()
+        public function getRoles($asArray = false)
         {
-            return $this->_roles;
+            return (!$asArray) ? $this->_roles : iterator_to_array($this->_roles);
         }
 
         /**
@@ -280,8 +279,17 @@ namespace Libre\Models {
         public function loadByLoginPwd($login, $password)
         {
             $conf = self::getEntityConfiguration();
-            $conf->getDriver()->toObject(self::MODEL);
+            //self::getModelClassName();
+            $conf->getDriver()->toObject(self::getModelClassName());
             return $this->getEntityConfiguration()->getDriver()->query('SELECT * FROM Users WHERE login=? AND password=?',array($login, $password))->First();
+        }
+        static public function loadByLogin($login)
+        {
+            $conf = self::getConfiguration();
+            $getUserByLogin= self::injectTableNameIntoQuery(self::SQL_LOAD_BY_LOGIN);
+            $results = $conf->getDriver()->query($getUserByLogin, array($login));
+            $results->toInstance(self::getModelClassName());
+            return $results->first();
         }
         #endregion
 
@@ -290,11 +298,11 @@ namespace Libre\Models {
         {
             parent::init();
 
-            $getRolesQuery = sprintf(self::SQL_SELECT_ROLES, self::getConfiguration()->getTable());
+            $getRolesQuery = self::injectTableNameIntoQuery(self::SQL_SELECT_ROLES);
 
             self::getConfiguration()->getDriver()->setNamedStoredProcedure('select_roles', $getRolesQuery);
 
-            $results = self::getConfiguration()->getDriver()->query('select_roles',array($this->getId()));
+            $results = self::getConfiguration()->getDriver()->query('select_roles', array($this->getId()));
             $results->toInstance(Role::getModelClassName());
 
             $this->setRoles(new \ArrayIterator(new \ArrayObject($results->all())));
@@ -302,9 +310,9 @@ namespace Libre\Models {
         #endregion
 
         #region Helper
-        protected function injectTableNameIntoQuery()
+        static protected function injectTableNameIntoQuery($query)
         {
-            return sprintf(self::SQL_SELECT_ROLES,$this->getConfiguration()->getTable());
+            return sprintf($query, self::getConfiguration()->getTable());
         }
         #endregion
 
