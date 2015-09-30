@@ -6,11 +6,11 @@ namespace Libre\Database\Driver {
 
     class BaseDriver implements IDriver
     {
+        #region Attibuts
         /**
          * @var \PDO
          */
         protected $_driver;
-
         /**
          * @var \ArrayObject
          */
@@ -19,6 +19,7 @@ namespace Libre\Database\Driver {
          * @var \ArrayObject
          */
         protected $_namedStoredProcedures;
+        #endregion
 
         /**
          * @return \PDO
@@ -109,6 +110,11 @@ namespace Libre\Database\Driver {
             $this->_storedProcedures        = new \ArrayObject();
         }
 
+        /**
+         * @param string $queryString Soit le nom d'une requete préparée soit une chaine de requête.
+         * @param null|params $params
+         * @return Results
+         */
         public function query($queryString, $params = null)
         {
             // Si est $queryString est la clef d'une procedure nommée
