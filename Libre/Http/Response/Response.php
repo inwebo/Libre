@@ -295,7 +295,6 @@ class Response
     #endregion
 
     #region Helpers
-
     /**
      * @param bool $global Allow X-domain request from *
      * @param array $allowedVerbs
