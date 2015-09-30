@@ -3,6 +3,7 @@
 namespace Libre\Http\Authentification {
 
     use Libre\Http\Request;
+    use Libre\Models\User;
     use Libre\Models\User\IAuth;
 
     class ByPublicKey implements IAuthenticable
@@ -39,7 +40,7 @@ namespace Libre\Http\Authentification {
         }
 
         /**
-         * @return IAuth
+         * @return User
          */
         public function getWanted()
         {
@@ -47,7 +48,7 @@ namespace Libre\Http\Authentification {
         }
 
         /**
-         * @param IAuth $wanted
+         * @param User $wanted
          */
         public function setWanted($wanted)
         {
@@ -56,9 +57,9 @@ namespace Libre\Http\Authentification {
 
         /**
          * @param Request $request
-         * @param IAuth $wanted
+         * @param User $wanted
          */
-        public function __construct(Request $request, IAuth $wanted)
+        public function __construct(Request $request, User $wanted)
         {
             $this->setRequest($request);
             $this->setWanted($wanted);
@@ -92,13 +93,12 @@ namespace Libre\Http\Authentification {
         {
             if($this->isFingerPrintedRequest())
             {
-
+                return sha1('!' . $this->getGetPublicKey() .' : ' . $this->getGetTimestamp()) === sha1('!' . $this->getWanted()->getPublicKey() .' : '. $this->getGetTimestamp());
             }
             else
             {
                 return false;
             }
-
         }
 
         /**
