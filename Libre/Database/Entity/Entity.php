@@ -66,6 +66,26 @@ namespace Libre\Database {
 
         }
 
+        #region Aliases
+        /**
+         * @return IDriver
+         */
+        public function getDriver()
+        {
+            return self::getConfiguration()->getDriver();
+        }
+
+        public function setNamedStoredProcedure($name, $query)
+        {
+            self::getConfiguration()->getDriver()->setNamedStoredProcedure($name, $query);
+        }
+
+        public function query($queryString, $params = null)
+        {
+            self::getConfiguration()->getDriver()->query($queryString,$params);
+        }
+        #endregion
+
         static protected function prepareDefaultCrudQueries()
         {
             // Prépare les requetes
