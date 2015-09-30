@@ -269,8 +269,6 @@ namespace Libre\Mvc\Controller {
                 $this->getResponse()->forbidden();
                 $this->dispatch();
             }
-            $this->getResponse()->poweredBy('Ta maman en slibard');
-            $this->getResponse()->server('Les gnomes voleurs de slip');
             $this->getResponse()->disableCache();
             $this->getResponse()->disableKeepAlive();
         }
