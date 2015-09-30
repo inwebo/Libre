@@ -204,7 +204,7 @@ class System {
     }
     public function initModulesQueue()
     {
-        $this->_modulesQueue = new AdjustablePriorityQueue();
+        $this->_modulesQueue = new AdjustablePriorityQueue(AdjustablePriorityQueue::ASC);
     }
     public function initModules()
     {
