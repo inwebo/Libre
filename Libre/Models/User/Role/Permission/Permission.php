@@ -14,7 +14,11 @@ namespace Libre\Models\User\Role {
          */
         public $name;
 
-        static public $_entityConfiguration;
+        /**
+         * @var Entity\Configuration
+         */
+        static protected $_configuration;
+
         /**
          * @return int
          */
