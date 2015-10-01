@@ -27,7 +27,6 @@ class Rbac extends DefaultTask
                 $_SESSION['User'] = $user->toPublic();
             }
         }
-        var_dump($_SESSION['User']);
     }
 
 }
