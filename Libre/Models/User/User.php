@@ -278,10 +278,9 @@ namespace Libre\Models {
 
         public function loadByLoginPwd($login, $password)
         {
-            $conf = self::getEntityConfiguration();
-            //self::getModelClassName();
-            $conf->getDriver()->toObject(self::getModelClassName());
-            return $this->getEntityConfiguration()->getDriver()->query('SELECT * FROM Users WHERE login=? AND password=?',array($login, $password))->First();
+            $results = $this->getDriver()->query('SELECT * FROM Users WHERE login=? AND password=?',array($login, $password));
+            $results->toInstance(static::getModelClassName());
+            return $results->first();
         }
         static public function loadByLogin($login)
         {
