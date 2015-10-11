@@ -68,7 +68,7 @@ class Modules extends AbstractTask
             $baseDir = $this->getSystem()->getInstanceLocator()->getModulesDir() . basename($module) . DIRECTORY_SEPARATOR;
             $pl      = new PathsLocator($baseUrl, $baseDir, $this->getConfig()->getSection('Base'));
             $config  = new Config($pl->getConfigDir());
-            $module  = new Module($config, $pl);
+            $module  = new Module($config, $pl, $this->getSystem()->getInstanceLocator()->getPublicUrl());
             $this->getSystem()->setModule($module);
         }
 
@@ -85,6 +85,17 @@ class Modules extends AbstractTask
             if(is_file($current->getPathsLocator()->getAutoloadDir()))
             {
                 include_once $current->getPathsLocator()->getAutoloadDir();
+            }
+            $css = $current->getCss();
+            $js = $current->getJs();
+            if( !is_null($css) )
+            {
+                $this->getSystem()->setCss($current->getCss());
+            }
+
+            if( !is_null($js) )
+            {
+                $this->getSystem()->setJs($current->getJs());
             }
             $iterator->next();
         }
