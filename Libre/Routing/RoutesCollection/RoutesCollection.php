@@ -81,11 +81,13 @@ namespace Libre\Routing {
             $return = "";
             $this->routes->rewind();
             $j = 0;
+            /** @var Route $current */
+            $current = $this->routes->current();
             while($this->routes->valid()) {
                 $return .="<hr>";
                 $return .=$j . " : ";
-                $return .= $this->routes->current()->controller . ', ';
-                $return .= $this->routes->current()->action;
+                $return .= $current->getController(). ', ';
+                $return .= $current->getAction();
                 $return .="<hr>";
                 $j++;
                 $this->routes->next();
