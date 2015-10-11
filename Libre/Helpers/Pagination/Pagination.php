@@ -110,7 +110,7 @@ namespace Libre\Helpers {
          * @param int $index
          * @param int $limit
          * @param int $displayableIndexes
-         * @throws OutOfBondsPaginationIndex
+         * @throws PaginationOutOfBondsIndex
          */
         public function __construct($size = 100, $index = 1, $limit = 25, $displayableIndexes = 21)
         {
@@ -121,7 +121,7 @@ namespace Libre\Helpers {
 
             if( $this->current() > $this->getMax() )
             {
-                throw new OutOfBondsPaginationIndex('Out of bounds index');
+                throw new PaginationOutOfBondsIndex('Out of bounds index');
             }
         }
 
