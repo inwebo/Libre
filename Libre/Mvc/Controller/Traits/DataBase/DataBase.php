@@ -9,33 +9,35 @@ namespace Libre\Mvc\Controller\Traits {
         /**
          * @var IDriver
          */
-        protected $_driver;
+        protected $_dbDriver;
 
         /**
          * @return IDriver
          */
-        public function getDbDriver()
+        final public function getDb()
         {
-            return $this->_driver;
+            return $this->_dbDriver;
         }
 
         /**
          * @param IDriver $driver
          */
-        public function setDbDriver(IDriver $driver)
+        final public function setDb(IDriver $driver)
         {
-            $this->_driver = $driver;
+            $this->_dbDriver = $driver;
         }
 
-        public function initDb()
+        final public function newMySql($host, $database, $user, $password)
         {
-            //
+            $this->setDb( new MySql($host, $database, $user, $password) );
         }
 
-        public function newMySqlDriver($host,$database, $user, $password)
-        {
-            $this->setDbDriver( new MySql($host,$database, $user, $password) );
+        final public function setNamedStoredProcedure($name, $query){
+            $this->getDb()->setNamedStoredProcedure($name, $query);
         }
 
+        final public function query($queryString, $params = null){
+            return $this->getDb()->query($queryString,$params);
+        }
     }
 }
