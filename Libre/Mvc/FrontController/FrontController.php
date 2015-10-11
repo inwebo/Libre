@@ -97,7 +97,7 @@ namespace Libre\Mvc {
         }
 
         /**
-         * @return \ArrayObject
+         * @return array
          */
         public function getParamsAsArray()
         {
