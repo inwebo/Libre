@@ -20,7 +20,6 @@ namespace Libre\System\Boot\BootStrap\Mvc\Task {
             }
             catch(\Exception $e)
             {
-
                 // @todo Default route
                 var_dump($e);
             }
