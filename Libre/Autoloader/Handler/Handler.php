@@ -25,9 +25,7 @@ namespace Libre\Autoloader {
                 if ($decorator->isLoadable($classInfos)) {
                     if (!class_exists($classInfos->toAbsolute())) {
                         $path = $decorator->toPath();
-                        if (is_file($path)) {
-                            include($path);
-                        }
+                        include_once($path);
                     }
                 }
             }
