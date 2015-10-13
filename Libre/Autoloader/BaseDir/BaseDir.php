@@ -105,20 +105,9 @@ namespace Libre\Autoloader {
 
             $nameSpace = implode(DIRECTORY_SEPARATOR, $classArray);
             $fileName = str_replace('{class}', $this->_classInfos->getClassName(), $this->_classFilePattern);
-            $path = $this->_baseDir . DIRECTORY_SEPARATOR . $nameSpace . DIRECTORY_SEPARATOR . $fileName;
+            $path = rtrim($this->_baseDir,DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $nameSpace . DIRECTORY_SEPARATOR . $fileName;
             $path = str_replace('_', DIRECTORY_SEPARATOR, $path);
             return $path;
-/*
-            if(is_file($path))
-            {
-                return $path;
-            }
-            else {
-                $nameSpace = $this->_baseDir . implode(DIRECTORY_SEPARATOR,$classArray) . '.php';
-                echo $nameSpace . '<hr>';
-            }
-*/
-
         }
 
     }
