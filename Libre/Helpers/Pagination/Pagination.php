@@ -45,7 +45,7 @@ namespace Libre\Helpers {
          */
         protected function setTotalItems($size)
         {
-            $this->_totalItems = $size;
+            $this->_totalItems = intval($size);
         }
 
         /**
@@ -70,7 +70,7 @@ namespace Libre\Helpers {
          */
         public function setIndex($index)
         {
-            $this->_index = $index;
+            $this->_index = intval($index);
         }
 
         /**
@@ -86,7 +86,7 @@ namespace Libre\Helpers {
          */
         public function setInternalChunkSize($limit)
         {
-            $this->_internalChunkSize = $limit;
+            $this->_internalChunkSize = intval($limit);
         }
 
         /**
@@ -102,7 +102,7 @@ namespace Libre\Helpers {
          */
         public function setDisplayableIndexes($displayableIndexes)
         {
-            $this->_displayableIndexes = $displayableIndexes;
+            $this->_displayableIndexes = intval($displayableIndexes);
         }
 
         /**
@@ -190,7 +190,7 @@ namespace Libre\Helpers {
         {
             if($this->gotNext())
             {
-                return $this->getIndex()+($this->total() - $this->getIndex());
+                return $this->getIndex()+1;
             }
             else
             {
@@ -205,7 +205,7 @@ namespace Libre\Helpers {
         {
             if($this->gotPrev())
             {
-                return $this->getIndex()-($this->total() - $this->getIndex());
+                return $this->getIndex()-1;
             }
             else
             {
@@ -300,6 +300,40 @@ namespace Libre\Helpers {
             }
 
             return $result;
+        }
+
+        public function getPaginatedMenuBounds()
+        {
+            $currentIndex = $this->getIndex();
+            $limitePaire  = (($this->getDisplayableIndexes() % 2) === 0) ? true : false;
+            var_dump($limitePaire);
+            $amplitude =
+                ($this->getDisplayableIndexes() % 2 === 0) ?
+                    ($this->getDisplayableIndexes() / 2 ):
+                    ( ($this->getDisplayableIndexes()-1) / 2 );
+
+            var_dump($amplitude);
+            $result = array();
+
+            if($this->current() === $this->getMax())
+            {
+
+            }
+            elseif( $this->current() === $this->getMin() )
+            {
+
+            }
+            else
+            {
+
+
+            }
+            $result['bottom'] = ($currentIndex - $amplitude > 0 ) ? $currentIndex - $amplitude : $this->getMin();
+            $result['top'] = ($currentIndex + $amplitude < $this->getMax() ) ? $currentIndex + $amplitude +1: $this->getMax();
+
+            return $result;
+
+
         }
     }
 }
