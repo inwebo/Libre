@@ -144,8 +144,8 @@ namespace Libre\Web {
         public function getUri()
         {
             // Url sans la query string
-            $_url = $this->urlToDir(strtok($this->_baseUrl, '?'));
-            $_baseUri = ltrim(str_replace('/', '.', $this->_baseUrl), '.');
+            $_url = $this->urlToDir(strtok($this->getBaseUrl(), '?'));
+            $_baseUri = ltrim(str_replace('/', '.', $this->getBaseUrl()), '.');
 
             $getUri = explode($_baseUri, $_url);
             if (isset($getUri[1])) {
