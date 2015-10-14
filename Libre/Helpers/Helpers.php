@@ -2,6 +2,7 @@
 
 namespace Libre {
 
+    use Libre\Http\Url;
     use Libre\System;
     use Libre\Autoloader\BaseDir;
     use Libre\Autoloader\Handler;
@@ -11,7 +12,7 @@ namespace Libre {
 
         static public function getBaseUrl()
         {
-            return System::this()->getInstanceLocator()->getBaseUrl();
+            return System::this()->getInstance()->getBaseUrl();
         }
 
         static public function registerModule()
