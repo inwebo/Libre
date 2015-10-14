@@ -55,7 +55,7 @@ class Init extends DefaultTask
      */
     protected function instancePath()
     {
-        $pl = new PathsLocator(Url::getUrl(), $this->getSystem()->getInstance()->getRealPath(), $this->getConfig()->getSection('Base'));
+        $pl = new PathsLocator(Url::getUrl(true, false), $this->getSystem()->getInstance()->getRealPath(), $this->getConfig()->getSection('Base'));
         $this->getSystem()->setInstanceLocator($pl);
     }
 
