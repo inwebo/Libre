@@ -228,32 +228,19 @@ namespace Libre\Helpers {
             return $_limit;
         }
 
-        /**
-         * Usefull for html menu
-         * @param null $interval
-         * @return \StdClass
-         */
-        public function getOffsetBounds($interval = null)
+        public function getPaginatedMenuBounds()
         {
-            if( !is_null($interval) )
-            {
-                $this->getDisplayableIndexes($interval);
-            }
+
 
             $result = new \StdClass();
-            $result->top = null;
-            $result->bottom = null;
 
             if($this->current() === $this->getMax())
             {
-                $result->top = $this->total();
-
-                // Offset - $interval exist ?
-                $i = $this->total() - $this->getDisplayableIndexes();
-
-                if( $i > 0 )
+                $result->top = $this->getMax();
+                $isBottom = $this->getMax() - $this->getDisplayableIndexes();
+                if($isBottom >= 0)
                 {
-                    $result->bottom = $i;
+                    $result->bottom = $isBottom;
                 }
                 else
                 {
@@ -263,13 +250,10 @@ namespace Libre\Helpers {
             elseif( $this->current() === $this->getMin() )
             {
                 $result->bottom = $this->getMin();
-
-                // Offset - $interval exist ?
-                $i = $this->getMin() + $this->getDisplayableIndexes();
-
-                if( $i < $this->getMax() )
+                $isTop = $this->getMin() + $this->getDisplayableIndexes();
+                if($isTop < $this->getMax())
                 {
-                    $result->top = $i;
+                    $result->top = $isTop;
                 }
                 else
                 {
@@ -278,62 +262,15 @@ namespace Libre\Helpers {
             }
             else
             {
-                $i = $this->total() - $this->getDisplayableIndexes();
-                if( $i > 0 )
-                {
-                    $result->bottom = $i;
-                }
-                else
-                {
-                    $result->bottom = $this->getMin();
-                }
+                $amplitude =
+                    ($this->getDisplayableIndexes() % 2 === 0)  ?
+                        ($this->getDisplayableIndexes() / 2 )   :
+                        (($this->getDisplayableIndexes()-1) / 2);
 
-                $i = $this->getMin() + $this->getDisplayableIndexes();
-                if( $i < $this->getMax() )
-                {
-                    $result->top = $i;
-                }
-                else
-                {
-                    $result->top = $this->getMax();
-                }
+                $result->bottom = ($this->getIndex() - $amplitude > 0 ) ? $this->getIndex() - ($amplitude) : $this->getMin();
+                $result->top    = ($this->getIndex() + $amplitude < $this->getMax() ) ? $this->getIndex() + $amplitude +1: $this->getMax();
             }
-
             return $result;
-        }
-
-        public function getPaginatedMenuBounds()
-        {
-            $currentIndex = $this->getIndex();
-            $limitePaire  = (($this->getDisplayableIndexes() % 2) === 0) ? true : false;
-            var_dump($limitePaire);
-            $amplitude =
-                ($this->getDisplayableIndexes() % 2 === 0) ?
-                    ($this->getDisplayableIndexes() / 2 ):
-                    ( ($this->getDisplayableIndexes()-1) / 2 );
-
-            var_dump($amplitude);
-            $result = array();
-
-            if($this->current() === $this->getMax())
-            {
-
-            }
-            elseif( $this->current() === $this->getMin() )
-            {
-
-            }
-            else
-            {
-
-
-            }
-            $result['bottom'] = ($currentIndex - $amplitude > 0 ) ? $currentIndex - $amplitude : $this->getMin();
-            $result['top'] = ($currentIndex + $amplitude < $this->getMax() ) ? $currentIndex + $amplitude +1: $this->getMax();
-
-            return $result;
-
-
         }
     }
 }
