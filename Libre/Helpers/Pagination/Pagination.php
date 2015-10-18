@@ -230,8 +230,6 @@ namespace Libre\Helpers {
 
         public function getPaginatedMenuBounds()
         {
-
-
             $result = new \StdClass();
 
             if($this->current() === $this->getMax())
@@ -250,7 +248,7 @@ namespace Libre\Helpers {
             elseif( $this->current() === $this->getMin() )
             {
                 $result->bottom = $this->getMin();
-                $isTop = $this->getMin() + $this->getDisplayableIndexes();
+                $isTop          = $this->getMin() + $this->getDisplayableIndexes();
                 if($isTop < $this->getMax())
                 {
                     $result->top = $isTop;
@@ -263,8 +261,8 @@ namespace Libre\Helpers {
             else
             {
                 $amplitude =
-                    ($this->getDisplayableIndexes() % 2 === 0)  ?
-                        ($this->getDisplayableIndexes() / 2 )   :
+                    ($this->getDisplayableIndexes() % 2 === 0)?
+                        ($this->getDisplayableIndexes() / 2 ):
                         (($this->getDisplayableIndexes()-1) / 2);
 
                 $result->bottom = ($this->getIndex() - $amplitude > 0 ) ? $this->getIndex() - ($amplitude) : $this->getMin();
