@@ -46,6 +46,7 @@ namespace Libre {
             $js = System::this()->getJs();
             $buffer = "";
             $cache = ($nocache) ? '?t='. time() : '';
+            $js = array_reverse($js);
             foreach($js as $k=>$v) {
                 $buffer .= '<script src="'.$k .$cache.'"></script>'. "\n";
             }
