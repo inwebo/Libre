@@ -92,9 +92,14 @@ namespace Libre\Database {
             $select = sprintf(self::SQL_SELECT, self::getConfiguration()->getTable(), self::getConfiguration()->getPrimaryKey());
             $delete = sprintf(self::SQL_DELETE, self::getConfiguration()->getTable(), self::getConfiguration()->getPrimaryKey());
 
-            $aggregatedColsName     = self::aggregate(self::getColsName(), self::TO_COLS);
+            $colsInsert = self::getColsName();
+            //unset($colsInsert[0]);
+            $tokens = self::getTokens();
+            //unset($tokens[0]);
+            $aggregatedColsName     = self::aggregate($colsInsert, self::TO_COLS);
+            $aggregatedColsTokens   = self::aggregate($tokens, self::TO_TOKEN);
+
             $aggregatedColsUpdate   = self::aggregate(self::getColsName(), self::TO_UPDATE);
-            $aggregatedColsTokens   = self::aggregate(self::getTokens(), self::TO_TOKEN);
 
             $insert = sprintf(self::SQL_INSERT, self::getConfiguration()->getTable(), $aggregatedColsName, $aggregatedColsTokens);
             $update = sprintf(self::SQL_UPDATE,self::getConfiguration()->getTable(), $aggregatedColsUpdate, self::getConfiguration()->getPrimaryKey());
@@ -114,10 +119,9 @@ namespace Libre\Database {
             $cols   = array_values(self::getConfiguration()->getColsName());
 
             // Instance cols
-            $buffer = array();
-            $reflect = new \ReflectionClass($this);
-            $attr    = $reflect->getProperties();
-
+            $buffer     = array();
+            $reflect    = new \ReflectionClass($this);
+            $attr       = $reflect->getProperties();
             foreach($attr as $v)
             {
                 $n = $v->getName();
@@ -129,10 +133,9 @@ namespace Libre\Database {
             }
 
             $buffer2= array_flip($buffer);
-
             $buffer2 = array_merge($buffer2, (array)$this);
             $cols = array_flip($cols);
-            //var_dump( array_intersect_key($buffer2, $cols) );
+
             return array_intersect_key($buffer2, $cols);
         }
 
@@ -195,7 +198,7 @@ namespace Libre\Database {
             // Update
             if($this->isLoaded())
             {
-                $values = $this->getColsValue();
+                $values = $this->getColsValue(true);
                 $pk     = self::getConfiguration()->getPrimaryKey();
                 if( isset($values[$pk]) )
                 {
@@ -210,7 +213,12 @@ namespace Libre\Database {
             // Insert
             else
             {
-                $result = self::getConfiguration()->getDriver()->query('insert', array_values($this->getColsValue()));
+
+                $cols = $this->getColsValue();
+                unset($cols[$this->getConfiguration()->getPrimaryKey()]);
+                $cols = array_merge(array($this->getConfiguration()->getPrimaryKey()=>null), $cols);
+                //var_dump($this->getColsValue(), $cols);
+                $result = self::getConfiguration()->getDriver()->query('insert', array_values($cols));
                 return ($result->count() > 0);
             }
         }
