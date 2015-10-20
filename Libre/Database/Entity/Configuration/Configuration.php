@@ -50,7 +50,7 @@ namespace Libre\Database\Entity {
         /**
          * @param string $_primaryKey
          */
-        protected function setPrimaryKey($_primaryKey)
+        public function setPrimaryKey($_primaryKey)
         {
             $this->_primaryKey = $_primaryKey;
         }
