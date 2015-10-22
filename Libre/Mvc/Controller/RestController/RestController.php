@@ -2,6 +2,8 @@
 
 namespace Libre\Mvc\Controller {
 
+    class RestOAuthException extends \Exception{}
+
     use Libre\Http\Authentification\IAuthenticable;
     use Libre\Mvc\Controller;
 
@@ -268,6 +270,7 @@ namespace Libre\Mvc\Controller {
             if (!$this->validate()) {
                 $this->getResponse()->forbidden();
                 $this->dispatch();
+                throw new RestOAuthException();
             }
             $this->getResponse()->disableCache();
             $this->getResponse()->disableKeepAlive();
