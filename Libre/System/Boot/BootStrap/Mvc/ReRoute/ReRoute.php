@@ -10,8 +10,9 @@ use Libre\System\Boot\BootStrap\Mvc\Task\Themes;
 use Libre\System\Boot\BootStrap\Mvc\Task\Router;
 use Libre\System\Boot\BootStrap\Mvc\Task\FrontController;
 use Libre\System\Boot\BootStrap\Mvc\Task\Rbac;
+use Libre\System\Boot\BootStrap\Mvc as MVC;
 
-class ReRoute extends AbstractTasks
+class ReRoute extends MVC
 {
     public function __construct(System $system, Config $config)
     {
