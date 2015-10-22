@@ -127,11 +127,14 @@ namespace Libre\Routing {
                 }
                 $this->getRoutesCollection()->routes->next();
             }
+
             // Si on arrive ici est une route inconnue.
             if($this->_forceDefault)
             {
 
-                //return $this->getRoutesCollection()->getDefaultRoute();
+                $defaultRoute = $this->getRoutesCollection()->getDefaultRoute();
+                $routed = new UriParser($this->getUri(), $defaultRoute);
+                return $routed->processPattern();
             }
             else
             {
