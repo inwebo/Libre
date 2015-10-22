@@ -10,10 +10,16 @@ namespace Libre\System\Boot\BootStrap\Mvc\Task {
     {
         protected function invoker()
         {
-            $routed     = $this->getSystem()->getRouted();
-            $fc         = new Fc($routed);
-            $response   = $fc->invoker();
-            $this->getSystem()->setResponse($response);
+            try{
+                $routed     = $this->getSystem()->getRouted();
+                $fc         = new Fc($routed);
+                $response   = $fc->invoker();
+                $this->getSystem()->setResponse($response);
+            }
+            catch(\Exception $e)
+            {
+                throw $e;
+            }
         }
 
         protected function renderResponse()
