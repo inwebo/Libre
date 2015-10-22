@@ -196,6 +196,11 @@ class Response
         $this->setContentType('HTTP/1.1 404 Not Found');
     }
 
+    public function internalServerError()
+    {
+        $this->setContentType('HTTP/1.1 500 Internal Server Error');
+    }
+
     public function notModified()
     {
         $this->setContentType('HTTP/1.1 304 Not Modified');
