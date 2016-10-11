@@ -2,5 +2,11 @@
 namespace Libre\Models
 {
 
-    class Theme extends Module{}
+    class Theme extends Module
+    {
+        public function getName()
+        {
+            return $this->getConfig()->getSection('Theme')['name'];
+        }
+    }
 }
