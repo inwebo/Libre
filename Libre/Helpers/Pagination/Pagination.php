@@ -228,10 +228,11 @@ namespace Libre\Helpers {
             return $_limit;
         }
 
-        public function getPaginatedMenuBounds()
+        public function getBounds()
         {
             $result = new \StdClass();
-
+            $result->bottom = null;
+            $result->top    = null;
             if($this->current() === $this->getMax())
             {
                 $result->top = $this->getMax();
