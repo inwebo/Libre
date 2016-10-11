@@ -8,6 +8,7 @@ use Libre\Files\Config;
 use Libre\Http\Request;
 use Libre\Http\Response;
 use Libre\Models\Module;
+use Libre\Models\Theme;
 use Libre\Patterns\AdjustablePriorityQueue;
 use Libre\Routing\Routed;
 use Libre\Routing\RoutesCollection;
@@ -277,12 +278,18 @@ class System {
         return $this->_themes;
     }
     /**
+     * @param string $name
      * @param array $themes
      */
     public function setThemes($name, $themes)
     {
         $this->_themes[$name] = $themes;
     }
+
+    /**
+     * @param $name
+     * @return Theme
+     */
     public function getTheme($name)
     {
         if(isset($this->getThemes()[$name]))
