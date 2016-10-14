@@ -30,6 +30,8 @@ namespace Libre\Http {
             if($uri) {
                 $url .= $_SERVER["REQUEST_URI"];
             }
+            // if ssl activated
+            $url = str_replace(':443','',$url);
             return $url;
         }
 
