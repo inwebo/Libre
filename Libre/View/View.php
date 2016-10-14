@@ -123,10 +123,10 @@ namespace Libre {
         /**
          * @return Parser
          */
-        public function render()
+        public function render($enableParser=true)
         {
             $this->setContext();
-            $parser = $this->parserFactory();
+            $parser = $this->parserFactory($enableParser);
             if ($this->_autoRender) {
                 echo $parser;
             } else {
@@ -135,10 +135,10 @@ namespace Libre {
         }
 
         //region Factories
-        protected function parserFactory()
+        protected function parserFactory($enableParser)
         {
             try {
-                $parser = new Parser($this->_layout, $this->_vo);
+                $parser = new Parser($this->_layout, $this->_vo, false,$enableParser);
                 return $parser;
             } catch (\Exception $e) {
                 throw $e;
@@ -194,11 +194,11 @@ namespace Libre {
             }
         }
 
-        public function renderPartial($name)
+        public function renderPartial($name, $enableParser = true)
         {
             if (!is_null($this->getPartial($name))) {
                 $this->getPartial($name)->setAutoRender(true);
-                $this->getPartial($name)->render();
+                $this->getPartial($name)->render($enableParser);
             }
         }
 

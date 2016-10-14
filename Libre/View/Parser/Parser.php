@@ -31,18 +31,21 @@ class Parser {
 
     public $autoRender;
 
-    public function __construct(Template $template, ViewObject $dataProvider, $autoRender = false) {
+    public $enableParser;
+
+    public function __construct(Template $template, ViewObject $dataProvider, $autoRender = false, $parser = true) {
         try {
             $this->template = $template;
             $this->dataProvider = $dataProvider;
             $this->autoRender = $autoRender;
+            $this->enableParser = $parser;
         } catch (\Exception $e) {
             //@todo : What the duck ????
             //throw $e;
             var_dump($e);
         }
         $this->tasksCollection = new BaseTags( $this->dataProvider );
-        $this->process();
+        //$this->process();
     }
 
     /**
@@ -61,21 +64,23 @@ class Parser {
      *
      */
     public function process() {
-        $this->tasksCollection->rewind();
-        // Pour chaque tache contenue dans la file d'attente des taches.
-        // On execute une fonction preg_replace avec comme callback la methode
-        // process d'un objet Logic sur le contenu courant du template.
-        while ($this->tasksCollection->valid()) {
-            $this->template->setContent( preg_replace_callback(
-                                        $this->tasksCollection->current()->getTag()->getPattern(),
-                                        // Snippet pour l'acces a une methode
-                                        // d'objet dans un callback.
-                                        // array( Objet, methode )
-                                        array( $this->tasksCollection->current()->getLogic()->get(), 'process'),
-                                        $this->template->getContent() ) );
-            $this->tasksCollection->next();
+        if($this->enableParser)
+        {
+            $this->tasksCollection->rewind();
+            // Pour chaque tache contenue dans la file d'attente des taches.
+            // On execute une fonction preg_replace avec comme callback la methode
+            // process d'un objet Logic sur le contenu courant du template.
+            while ($this->tasksCollection->valid()) {
+                $this->template->setContent( preg_replace_callback(
+                    $this->tasksCollection->current()->getTag()->getPattern(),
+                    // Snippet pour l'acces a une methode
+                    // d'objet dans un callback.
+                    // array( Objet, methode )
+                    array( $this->tasksCollection->current()->getLogic()->get(), 'process'),
+                    $this->template->getContent() ) );
+                $this->tasksCollection->next();
+            }
         }
-
     }
 
     public function getContent() {
