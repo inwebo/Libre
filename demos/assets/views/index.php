@@ -4,8 +4,10 @@
 <h1>Layout</h1>
 <hr>
 {$viewObject}
-</hr>
+<hr>
 <?php $this->renderPartial('body'); ?>
 <a href="{}">test</a>
+<hr>
+<?php $this->renderPartial('partial'); ?>
 </body>
 </html>

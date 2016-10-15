@@ -12,17 +12,16 @@ namespace Libre{
         $driver = new MySql('localhost', 'www.inwebo.net', 'root', 'root');
 
         User::setConfiguration($driver,'id','Users');
-
-
-
         Role::setConfiguration($driver,'id','Roles');
         Permission::setConfiguration($driver,'id','Permissions');
+
         User::setDefaultRoleId(2);
 
         //var_dump(User::getConfiguration());
 
         $user = User::load(1);
-        //var_dump($user);
+
+        var_dump($user);
         //var_dump($user->toPublic());
         //echo '<hr>';
         //var_dump($user->isDefault());

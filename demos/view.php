@@ -8,24 +8,24 @@ namespace Libre{
     include_once 'header.php';
 
     $layout = ASSETS.'views/index.php';
-    $partial = ASSETS.'views/tpl/partial.php';
-    $demo = ASSETS.'views/tpl/demo.php';
+    $partial = ASSETS.'views/partial.php';
+    $demo = ASSETS.'views/demo.php';
     $fromString = "<html><body><h1>From string</h1><p>{dump}</p></body></html>";
 
     try{
-
         // View classic
+        /**
         $view = new View(
             new FromString($fromString),
             new ViewObject()
-        );
+        );*/
 
-        var_dump($view);
-        echo $view->render();
+        //var_dump($view);
+        //echo $view->render();
+        /**
         $viewObject = new ViewObject();
 
         $_layout = new Template($layout);
-        $_layout2 = new FromString($fromString);
 
         $viewLayout = new View($_layout, $viewObject);
 
@@ -35,7 +35,15 @@ namespace Libre{
         $viewLayout->attachPartial('body', $partial);
         $p1 = $viewLayout->getPartial('body');
         $p1->attachPartial('demo', $demo);
-        //echo $viewLayout->render();
+        echo $viewLayout->render();
+        */
+        $vo = new ViewObject();
+        $vo->viewObject = "From ViewObject !";
+        $layout = new View(new Template($layout), $vo);
+        $layout->attachPartial('partial', $partial);
+        $layout->attachPartial('body', $demo);
+
+        echo $layout->render(false);
     }
     catch(\Exception $e)
     {

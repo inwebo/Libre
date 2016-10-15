@@ -10,7 +10,7 @@ try {
     //var_dump(is_dir("./../Html5DragAndDrop/"));
     $phar->buildFromDirectory('../Libre/', '/^.+\..+$/');
     copy('../phar/Libre.phar','../../Libre-Base/Libre.phar');
-
+    echo 'Phar ok';
 }
 catch(Exception $e) {
     var_dump($e);
