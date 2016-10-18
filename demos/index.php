@@ -16,7 +16,7 @@
 <ul>
 <?php foreach($packages as $p) { ?>
 
-        <li><a href="<?php echo $p ?>"><?php if($p !== '.' || $p !== '..' || $p !== 'index.php') { echo $p;          }        ?></a></li>
+        <li><a href="<?php echo $p ?>"><?php if($p !== '.' || $p !== '..' || $p !== 'index.php' || $p !== 'img-reader.php') { echo $p; } ?></a></li>
 
 <?php } ?>
 </ul>

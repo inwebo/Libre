@@ -1,16 +1,9 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: inwebo
- * Date: 11/10/14
- * Time: 06:19
- */
-
 namespace Libre\Img\Drivers\Ico;
 
 
 use Libre\Img\Interfaces\iPackable;
-use Libre\Traits\Bin;
+use Libre\Img\Traits\Bin;
 
 class ImageMap implements iPackable{
 

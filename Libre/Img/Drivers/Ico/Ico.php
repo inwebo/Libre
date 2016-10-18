@@ -3,7 +3,7 @@
 namespace Libre\Img\Drivers;
 
 use Libre\Img\Drivers\Bmp\InfoHeader;
-use Libre\Traits\Bin;
+use Libre\Img\Traits\Bin;
 use Libre\Img;
 use Libre\Img\Drivers\Bmp\InfoHeader as BmpInfoHeader;
 use Libre\Img\Drivers\Ico\ImageMap;
@@ -11,7 +11,7 @@ use Libre\Img\Drivers\Ico\Image;
 use Libre\Img\Abstracts\aImgBin;
 use Libre\Img\Drivers\Ico\InfoHeader as IcoInfoHeader;
 
-class Ico extends aImgBin {
+class Ico extends aImgbin {
 
     const HEADER_LENGTH = 40;
 

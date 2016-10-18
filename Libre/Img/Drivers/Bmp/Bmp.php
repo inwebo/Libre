@@ -3,13 +3,13 @@
 namespace Libre\Img\Drivers;
 
 
-use Libre\Bin\Pack;
+use Libre\Img\Bin\Pack;
 use Libre\Img\Abstracts\aImgBin;
 use Libre\Img\Drivers\Bmp\FileHeader;
 use Libre\Img\Drivers\Bmp\InfoHeader;
 use Libre\Img\Edit;
 use Libre\Img\Interfaces\iPackable;
-use Libre\Traits\Bin;
+use Libre\Img\Traits\Bin;
 use Libre\Traits\Modifiable;
 
 /**
@@ -161,8 +161,6 @@ class Bmp extends aImgBin implements iPackable{
 
         $bin = 'BM';
         $bin .= Pack::dword($this->_fileHeader->getSize());
-        $d = fopen('../tests-bin/pack','w+b');
-        fwrite($d,$bin);
         $bin .= Pack::dword(0);
         $bin .= Pack::dword(self::BMP_HEADER_LENGTH + self::FILE_HEADER_LENGTH);
         $bin .= Pack::dword(self::BMP_HEADER_LENGTH);
@@ -205,7 +203,7 @@ class Bmp extends aImgBin implements iPackable{
 
         if ( $bmpHeader->getTotalColours() < 16777216)
         {
-            //$palette = unpack( 'V' . $bmpHeader['colors'], fread($f,$bmpHeader['colors']*4));
+            //$palette = Unpack( 'V' . $bmpHeader['colors'], fread($f,$bmpHeader['colors']*4));
         }
         return $palette;
     }

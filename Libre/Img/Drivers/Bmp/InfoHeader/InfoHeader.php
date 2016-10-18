@@ -10,8 +10,8 @@ namespace Libre\Img\Drivers\Bmp;
 
 use Libre\Img\Drivers\Bmp;
 use Libre\Img\Interfaces\iPackable;
-use Libre\Traits\Bin;
-use Libre\Bin\Unpack;
+use Libre\Img\Traits\Bin;
+
 
 class InfoHeader implements iPackable{
     /**

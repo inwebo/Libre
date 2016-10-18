@@ -4,10 +4,11 @@ namespace Libre\Img\Abstracts {
 
     use Libre\Img\Interfaces\iPackable;
     use Libre\Img\Drivers;
+    use Libre\Img\Traits\Bin;
 
     abstract class aImgBin extends Drivers implements iPackable {
 
-        use Libre\Traits\Bin;
+        use Bin;
 
         static public function unpack( $bin ){}
         public function pack(){}

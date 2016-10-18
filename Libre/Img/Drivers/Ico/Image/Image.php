@@ -51,7 +51,7 @@ class Image {
 
     static public function unpack($data, ImageMap $imageMap, Bmp\InfoHeader $header) {
         //var_dump($data);
-        $f = \Libre\Traits\Bin::binToStream($data);
+        $f = \Libre\Img\Traits\Bin::binToStream($data);
         fseek($f,$imageMap->getOffset());
         $totalColors = $imageMap->getPalette();
         $colors = array();
@@ -64,7 +64,7 @@ class Image {
                     "b" => unpack('C',fread($f,1))[1],
                     "g" => unpack('C',fread($f,1))[1],
                     "r" => unpack('C',fread($f,1))[1],
-                    //"a" => unpack('C',fread($f,1))[1]
+                    //"a" => Unpack('C',fread($f,1))[1]
                 );
                 fseek($f,ftell($f));
             }
