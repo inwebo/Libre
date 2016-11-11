@@ -1,5 +1,6 @@
 <?php
 namespace Libre\Helpers;
+use Libre\Helpers\Menu\IMenu;
 use Libre\Helpers\Menu\Item;
 
 /**
@@ -9,8 +10,9 @@ use Libre\Helpers\Menu\Item;
  *
  * @package Libre\Helpers
  */
-class Menu
+class Menu implements IMenu
 {
+    #region Getters/Setters
     /**
      * @var int|null
      */
@@ -18,7 +20,7 @@ class Menu
     /**
      * @var string
      */
-    protected $_text;
+    protected $_title;
     /**
      * @var string|null
      */
@@ -47,17 +49,17 @@ class Menu
     /**
      * @return string
      */
-    public function getText()
+    public function getTitle()
     {
-        return $this->_text;
+        return $this->_title;
     }
 
     /**
      * @param string|null $text
      */
-    public function setText($text)
+    public function setTitle($text)
     {
-        $this->_text = $text;
+        $this->_title = $text;
     }
 
     /**
@@ -83,6 +85,7 @@ class Menu
     {
         return $this->_queue;
     }
+    #endregion
 
     /**
      * Menu constructor.
@@ -93,17 +96,23 @@ class Menu
     public function __construct($id, $text, $baseUrl)
     {
         $this->_id     = $id;
-        $this->_text   = $text;
+        $this->_title  = $text;
         $this->_baseUrl= $baseUrl;
         $this->_queue  = new \SplPriorityQueue();
     }
 
-    public function addItem($label, $uri, $priority,$id="")
+    /**
+     * @param string $label
+     * @param string $uri
+     * @param int $priority
+     * @return \Exception
+     */
+    public function addItem($label, $uri, $priority)
     {
         try
         {
-            $item = new Item($id,$label, $uri);
-            $this->getQueue()->insert($item, $priority);
+            $item = new Item($priority, $label, $uri);
+            $this->getQueue()->insert($item,$priority*-1);
         }
         catch(\Exception $e)
         {
@@ -111,40 +120,15 @@ class Menu
         }
     }
 
+    /**
+     * @param Menu $menu
+     * @param $priority
+     */
     public function addMenu(Menu $menu, $priority)
     {
-        $this->getQueue()->insert($menu, $priority);
+        $this->getQueue()->insert($menu, $priority*-1);
     }
 
-    public function getItemById()
-    {
-
-    }
-
-    public function getItemByWeight()
-    {
-
-    }
-
-    public function getItems()
-    {
-
-    }
-
-    public function get()
-    {
-
-    }
-
-    public function getChildren()
-    {
-
-    }
-
-    public function getChild()
-    {
-
-    }
 
     public function generator()
     {

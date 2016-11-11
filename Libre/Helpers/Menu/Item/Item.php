@@ -3,8 +3,9 @@ namespace Libre\Helpers\Menu;
 
 use Libre\Helpers\Menu;
 
-class Item
+class Item implements IMenu
 {
+    #region Getters/Setters
     /**
      * @var int|null
      */
@@ -65,6 +66,7 @@ class Item
     {
         $this->_uri = $uri;
     }
+    #endregion
 
     /**
      * Item constructor.
