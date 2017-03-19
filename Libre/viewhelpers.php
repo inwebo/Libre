@@ -1,6 +1,7 @@
 <?php
 use Libre\Helpers;
 use Libre\System;
+use Libre\Helpers\Menu\IMenu;
 /**
  * @return string
  */
@@ -60,4 +61,21 @@ function publicInstanceUrl()
 function publicThemeUrl($name)
 {
     return System::this()->getTheme($name)->getPathsLocator()->getBaseUrl() . 'public/';
+};
+
+function displayMenu(IMenu $menu, $balise = "ul")
+{
+    $buffer = "<$balise>";
+    $generator = $menu->generator();
+    foreach($generator as $g)
+    {
+        if($g instanceof Menu){
+            $buffer .= \Libre\displayMenu($g);
+        }
+        else {
+            $buffer .= '<li><a href="'.$menu->getBaseUrl() . $g->getUri().'">'.$g->getLabel().'</a><br></li>';
+        }
+    }
+    $buffer .= "</$balise>";
+    return $buffer;
 };
