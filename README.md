@@ -17,15 +17,3 @@ Libre, usefull PHP5 framework
 * Well organized system, extensive use of php NAMESPACES
 * Simple Theming system
 * And more
-
-## Todo
- - [ ] Auth
-     - [ ] Refactor User object
-     - [ ] AuthUser should extends Entity
- - [ ] MVC
-     - [ ] Add Controllers
-         - [ ] ModuleController (Layout & views file from views/)
-         - [ ] AuthedController, Decorator pattern
- - [ ] Tests
-     - [ ] For all packages
- - [ ] Admin
