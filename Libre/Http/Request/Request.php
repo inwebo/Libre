@@ -1,113 +1,117 @@
 <?php
-namespace Libre\Http {
+/**
+ * @author inwebo
+ *
+ * @see    https://github.com/inwebo
+ *
+ * @since  05/10/2017
+ */
+namespace Libre\Http;
+
+use Libre\Helpers\ArrayCollection;
+
+/**
+ * Class Request
+ */
+class Request
+{
+
     /**
-     * Class Request
-     *
-     * Présente l'url courante sous forme d'objet Url, tous les headers de la requete HTTP
-     * ainsi que les variablaes HTTP d'entrées (GET, POST ...).
-     *
-     * @package Libre\Http
+     * @var Request
      */
-    class Request
+    static protected $this;
+    /**
+     * @var Url
+     */
+    protected $url;
+    /**
+     * @var array
+     */
+    protected $headers;
+    /**
+     * @var ArrayCollection
+     */
+    protected $arrayCollection;
+
+    /**
+     * @return array|false
+     */
+    public static function getAllHeaders()
     {
+        return getallheaders();
+    }
 
-        /**
-         * @var Request
-         */
-        static protected $_this;
-        /**
-         * @var Url
-         */
-        protected $_url;
-        /**
-         * @var array
-         */
-        protected $_headers;
-        /**
-         * @var array
-         */
-        protected $_inputs;
+    /**
+     * @return Url
+     */
+    public function getUrl() : Url
+    {
+        return $this->url;
+    }
 
-        static public function getAllHeaders()
-        {
-            return getallheaders();
+    /**
+     * @return array|false
+     */
+    public function getHeaders()
+    {
+        return $this->headers;
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return string
+     */
+    public function getHeader(string $name)
+    {
+        $headers = $this->getAllHeaders();
+        if (isset($headers[$name])) {
+            return $headers[$name];
         }
 
-        /**
-         * @return Url
-         */
-        public function getUrl()
-        {
-            return $this->_url;
+        return null;
+    }
+
+    /**
+     * @return string
+     */
+    public function getVerb() : string
+    {
+        return $this->getUrl()->getVerb();
+    }
+
+    /**
+     * @param Url $url
+     *
+     * @return Request
+     */
+    public static function get(Url $url)
+    {
+        if (is_null(self::$this)) {
+            self::$this = new self($url);
+
+            return self::$this;
         }
 
-        /**
-         * @return array|false
-         */
-        public function getHeaders()
-        {
-            return $this->_headers;
-        }
+        return self::$this;
+    }
 
-        public function getHeader($name)
-        {
-            $headers = $this->getAllHeaders();
-            if (isset($headers[$name])) {
-                return $headers[$name];
-            }
-        }
+    /**
+     * Request constructor.
+     *
+     * @param Url $url
+     */
+    private function __construct(Url $url)
+    {
+        $this->url             = $url;
+        $this->arrayCollection = new ArrayCollection();
+        $this->headers         = self::getAllHeaders();
+    }
 
-        public function getInfos()
-        {
-            $o = new \StdClass();
-            $o->url = $this->_url;
-            $o->headers = $this->_headers;
-            return $o;
-        }
-
-        public function getVerb()
-        {
-            return $this->getUrl()->getVerb();
-        }
-
-        private function __construct(Url $url)
-        {
-            $this->_url = $url;
-            $this->_headers = self::getAllHeaders();
-            $this->initInputs();
-        }
-
-        private function __clone()
-        {
-        }
-
-        protected function initInputs()
-        {
-            if (isset($_GET) && !empty($_GET)) {
-                $this->_inputs = $_GET;
-            } else {
-                parse_str(file_get_contents('php://input'), $this->_inputs);
-            }
-        }
-
-        public function getInputs($key = null)
-        {
-            if (is_null($key)) {
-                return $this->_inputs;
-            } elseif (isset($this->_inputs[$key])) {
-                return $this->_inputs[$key];
-            } else {
-                return null;
-            }
-        }
-
-        static public function get(Url $url)
-        {
-            if (is_null(self::$_this)) {
-                self::$_this = new self($url);
-                return self::$_this;
-            }
-            return self::$_this;
-        }
+    /**
+     * Singleton
+     */
+    private function __clone()
+    {
     }
 }
