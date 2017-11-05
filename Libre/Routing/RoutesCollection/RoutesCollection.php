@@ -1,11 +1,17 @@
 <?php
 
 namespace Libre\Routing {
+
     /**
      * Class EmptyRoutesCollection
+     *
      * @package Libre\Routing
      */
-    class EmptyRoutesCollection extends \Exception{};
+    class EmptyRoutesCollection extends \Exception
+    {
+    }
+
+    ;
 
     /**
      * Class RoutesCollection
@@ -14,7 +20,8 @@ namespace Libre\Routing {
      *
      * @package Libre\Routing
      */
-    class RoutesCollection {
+    class RoutesCollection
+    {
 
         static protected $instances;
         /**
@@ -22,7 +29,8 @@ namespace Libre\Routing {
          */
         public $routes;
 
-        public function __construct(){
+        public function __construct()
+        {
             $this->routes = new \SplStack();
         }
 
@@ -30,65 +38,74 @@ namespace Libre\Routing {
          * @param $name
          * @return RoutesCollection
          */
-        static public function get( $name ) {
+        static public function get($name)
+        {
 
-            if( is_null( self::$instances ) ) {
+            if (is_null(self::$instances)) {
                 self::$instances = new \StdClass();
             }
 
-            if( !isset( self::$instances->$name ) ) {
+            if (!isset(self::$instances->$name)) {
                 self::$instances->$name = new self;
             }
 
             return self::$instances->$name;
         }
 
-        public function addRoute(Route $route) {
+        public function addRoute(Route $route)
+        {
             $this->routes->push($route);
         }
 
-        public function getDefaultRoute() {
-            if( $this->count() > 0 ) {
+        public function getDefaultRoute()
+        {
+            if ($this->count() > 0) {
                 $this->routes->rewind();
-                return $this->routes->offsetGet($this->routes->count()-1);
-            }
-            else {
+
+                return $this->routes->offsetGet($this->routes->count() - 1);
+            } else {
                 throw new EmptyRoutesCollection('Please populate RoutesCollection before accessing it.');
             }
         }
 
-        public function count(){
+        public function count()
+        {
             return $this->routes->count();
         }
 
-        public function reset() {
+        public function reset()
+        {
             $this->routes = new \SplStack();
         }
 
-        public function getRoutes() {
+        public function getRoutes()
+        {
             return $this;
         }
 
-        public function toString() {
+        public function toString()
+        {
             return $this->routes->serialize();
         }
 
-        public function hasRoute( Routed $route ) {
+        public function hasRoute(Routed $route)
+        {
             return $this->routes->offsetExists($route);
         }
 
-        public function __toString() {
+        public function __toString()
+        {
             $return = "";
             $this->routes->rewind();
             $j = 0;
             /** @var Route $current */
             $current = $this->routes->current();
-            while($this->routes->valid()) {
-                $return .="<hr>";
-                $return .=$j . " : ";
-                $return .= $current->getController(). ', ';
+            while ($this->routes->valid()) {
+                $return .= "<hr>";
+                $return .= $j." : ";
+                $return .= $current->getController().', ';
                 $return .= $current->getAction();
-                $return .="<hr>";
+                $return .= "<hr>";
                 $j++;
                 $this->routes->next();
             }
