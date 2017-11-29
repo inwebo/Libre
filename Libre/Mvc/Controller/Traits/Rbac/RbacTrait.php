@@ -9,13 +9,12 @@ use Libre\Models\User;
 /**
  * Trait Rbac
  */
-trait Rbac
+trait RbacTrait
 {
     /**
      * @var User
      */
     protected $user;
-
     /**
      * @var array Nom des roles autorisés, null si tous
      */
