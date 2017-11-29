@@ -1,5 +1,7 @@
 <?php
-
+/**
+ * Inwebo
+ */
 namespace Libre\Web;
 
 /**
@@ -54,27 +56,25 @@ namespace Libre\Web;
  * // getBaseUrl
  * string 'http://localhost/Libre/demos/' (length=29)
  * </code>
- *
- * @package Libre\Web
  */
 class Instance
 {
     /**
      * @var string
      */
-    protected $_name;
+    protected $name;
 
     /**
      * @var string
      */
-    protected $_realPath;
+    protected $realPath;
 
     /**
      * @return string
      */
     public function getName()
     {
-        return $this->_name;
+        return $this->name;
     }
 
     /**
@@ -82,7 +82,7 @@ class Instance
      */
     public function setName($path)
     {
-        $this->_name = basename($path);
+        $this->name = basename($path);
     }
 
     /**
@@ -90,7 +90,7 @@ class Instance
      */
     public function getRealPath()
     {
-        return $this->_realPath;
+        return $this->realPath;
     }
 
     /**
@@ -98,7 +98,7 @@ class Instance
      */
     public function setRealPath($path)
     {
-        $this->_realPath = realpath($path);
+        $this->realPath = realpath($path);
     }
 
     /**
@@ -127,9 +127,9 @@ class Instance
         $pathInfo = pathinfo($_SERVER['PHP_SELF']);
         $hostName = $_SERVER['HTTP_HOST'];
         $protocol = (isset($_SERVER['HTTPS']) && filter_var(
-                $_SERVER['HTTPS'],
-                FILTER_VALIDATE_BOOLEAN
-            )) ? 'https://' : 'http://';
+            $_SERVER['HTTPS'],
+            FILTER_VALIDATE_BOOLEAN
+        )) ? 'https://' : 'http://';
         $string = $protocol.$hostName.$pathInfo['dirname'];
         $string .= ($string[strlen($string) - 1] === '/') ? '' : '/';
 
@@ -176,7 +176,7 @@ class Instance
         //$url = $this->getBaseUrl() . basename($this->getParent()) . '/' . $this->_name;
         $return = explode($this->getBaseUri(), $this->getParent());
         //var_dump($return);
-        $url = $this->getBaseUrl().end($return).DIRECTORY_SEPARATOR.$this->_name;
+        $url = $this->getBaseUrl().end($return).DIRECTORY_SEPARATOR.$this->name;
         $url .= ($trailingSlash) ? "/" : "";
 
         return $url;
