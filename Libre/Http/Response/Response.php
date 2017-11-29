@@ -48,27 +48,31 @@ class Response
 
     /**
      * Ajoute un segment avant le 1er segment
+     *
      * @param string $name
      * @param string $content
      */
     public function prependSegment($name, $content)
     {
-        $this->_segments = array_merge(array($name => $content), $this->getSegments());
+        $this->_segments = array_merge([$name => $content], $this->getSegments());
     }
 
     /**
      * Ajoute un segment après le 1er segment
+     *
      * @param string $name
      * @param string $content
      */
     public function appendSegment($name, $content)
     {
-        $this->_segments = array_merge((array)$this->_segments, array($name => $content));
+        $this->_segments = array_merge((array)$this->_segments, [$name => $content]);
     }
 
     /**
      * Retourne le contenus d'un segment nommé.
+     *
      * @param string $name
+     *
      * @return string
      */
     public function getSegment($name)
@@ -80,6 +84,7 @@ class Response
 
     /**
      * Supprime un segment nommé
+     *
      * @param string $name
      */
     public function deleteSegment($name)
@@ -98,28 +103,32 @@ class Response
     }
 
     /**
-     * @param string $key Le nom de l'entête à setter
-     * @param string $value La valeur de l'entête
+     * @param string     $key     Le nom de l'entête à setter
+     * @param string     $value   La valeur de l'entête
      * @param bool|false $replace Si la clef est déjà présente dans le tableau header. Force son écrasement.
+     *
      * @link http://php.net/manual/fr/function.header.php
      */
     public function setHeader($key, $value, $replace = true)
     {
-        $this->getHeaders()->offsetSet($key, array(
-            'key' => $key,
-            'value' => $value,
-            'replace' => $replace
-        ));
+        $this->getHeaders()->offsetSet(
+            $key,
+            [
+                'key'     => $key,
+                'value'   => $value,
+                'replace' => $replace,
+            ]
+        );
     }
 
     /**
      * @param $key
+     *
      * @return mixed
      */
     public function getHeader($key)
     {
-        if( $this->getHeaders()->offsetExists($key) )
-        {
+        if ($this->getHeaders()->offsetExists($key)) {
             return $this->getHeaders()->offsetGet($key);
         }
     }
@@ -136,7 +145,7 @@ class Response
     {
         header($this->getContentType());
         foreach ($this->getHeaders() as $k => $v) {
-            $stringHeader = $v['key'] . ': ' . trim($v['value'], ' ');
+            $stringHeader = $v['key'].': '.trim($v['value'], ' ');
             header($stringHeader, $v['replace']);
         }
     }
@@ -160,8 +169,8 @@ class Response
     public function __construct($forceRender = true)
     {
         $this->_forceRender = $forceRender;
-        $this->_headers     = new \ArrayObject();
-        $this->_segments    = array();
+        $this->_headers = new \ArrayObject();
+        $this->_segments = [];
     }
 
     /**
@@ -301,10 +310,10 @@ class Response
 
     #region Helpers
     /**
-     * @param bool $global Allow X-domain request from *
+     * @param bool  $global Allow X-domain request from *
      * @param array $allowedVerbs
      */
-    public function allowXDomain($global = true, $allowedVerbs = array('POST', 'GET', 'OPTIONS', 'DELETE', 'PUT'))
+    public function allowXDomain($global = true, $allowedVerbs = ['POST', 'GET', 'OPTIONS', 'DELETE', 'PUT'])
     {
         ($global) ?
             $this->setHeader('Access-Control-Allow-Origin', '*') :
@@ -326,9 +335,8 @@ class Response
     public function redirect($url, $delay = 0, $message = null)
     {
         if ($delay > 0) {
-            $this->setHeader('Refresh',$delay . '; url=' . $url);
-            if( !is_null($message) )
-            {
+            $this->setHeader('Refresh', $delay.'; url='.$url);
+            if (!is_null($message)) {
                 print $message;
             }
         } else {
@@ -349,7 +357,7 @@ class Response
 
     public function lastModified($birth)
     {
-        $this->setHeader('Last-Modified', gmdate('D, d M Y H:i:s', $birth) . ' GMT');
+        $this->setHeader('Last-Modified', gmdate('D, d M Y H:i:s', $birth).' GMT');
     }
 
     /**
@@ -367,7 +375,7 @@ class Response
 
     public function expires($birth, $life)
     {
-        $this->setHeader('Expires', gmdate('D, d M Y H:i:s',  $birth + $life));
+        $this->setHeader('Expires', gmdate('D, d M Y H:i:s', $birth + $life));
     }
 
     public function neverExpires()
@@ -378,6 +386,7 @@ class Response
 
     /**
      * Nécessite une configuration apache.
+     *
      * @param $name
      */
     public function server($name)
