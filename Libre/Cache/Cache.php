@@ -1,211 +1,228 @@
 <?php
+/**
+ * Inwebo
+ */
+namespace Libre;
 
-namespace Libre {
+use Libre\Cache\CacheException;
 
-    class CacheException extends \Exception{};
+/**
+ * Class Cache
+ */
+class Cache
+{
+    /**
+     * @var string
+     */
+    protected $baseDir;
+    /**
+     * @var string
+     */
+    protected $file;
+    /**
+     * @var int
+     */
+    protected $birth;
+    /**
+     * @var int
+     */
+    protected $death;
+    /**
+     * @var int
+     */
+    protected $life;
+    /**
+     * @var bool
+     */
+    protected $updating = false;
 
-    class Cache {
-        /**
-         * @var string
-         */
-        protected $_baseDir;
-        /**
-         * @var string
-         */
-        protected $_file;
-        /**
-         * @var int
-         */
-        protected $_birth;
-        /**
-         * @var int
-         */
-        protected $_death;
-        /**
-         * @var int
-         */
-        protected $_life;
-        /**
-         * @var bool
-         */
-        protected $_flagUpdating = false;
+    /**
+     * @return string
+     */
+    protected function getBaseDir()
+    {
+        return $this->baseDir;
+    }
 
-        /**
-         * @return string
-         */
-        protected function getBaseDir()
-        {
-            return $this->_baseDir;
-        }
+    /**
+     * @param string $baseDir
+     */
+    protected function setBaseDir($baseDir)
+    {
+        $this->baseDir = $baseDir;
+    }
 
-        /**
-         * @param string $baseDir
-         */
-        protected function setBaseDir($baseDir)
-        {
-            $this->_baseDir = $baseDir;
-        }
+    /**
+     * @return string
+     */
+    protected function getFile()
+    {
+        return $this->file;
+    }
 
-        /**
-         * @return string
-         */
-        protected function getFile()
-        {
-            return $this->_file;
-        }
+    /**
+     * @param string $file
+     */
+    public function setFile($file)
+    {
+        $this->file = $file;
+    }
 
-        /**
-         * @param string $file
-         */
-        public function setFile($file)
-        {
-            $this->_file = $file;
-        }
+    /**
+     * @return int
+     */
+    protected function getBirth()
+    {
+        return $this->birth;
+    }
 
-        /**
-         * @return int
-         */
-        protected function getBirth()
-        {
-            return $this->_birth;
-        }
+    /**
+     * @param int $birth
+     */
+    public function setBirth($birth)
+    {
+        $this->birth = $birth;
+    }
 
-        /**
-         * @param int $birth
-         */
-        public function setBirth($birth)
-        {
-            $this->_birth = $birth;
-        }
+    /**
+     * @return int
+     */
+    protected function getDeath()
+    {
+        return $this->death;
+    }
 
-        /**
-         * @return int
-         */
-        protected function getDeath()
-        {
-            return $this->_death;
-        }
+    /**
+     * @param int $death
+     */
+    protected function setDeath($death)
+    {
+        $this->death = $death;
+    }
 
-        /**
-         * @param int $death
-         */
-        protected function setDeath($death)
-        {
-            $this->_death = $death;
-        }
+    /**
+     * @return int
+     */
+    protected function getLife()
+    {
+        return $this->life;
+    }
 
-        /**
-         * @return int
-         */
-        protected function getLife()
-        {
-            return $this->_life;
-        }
+    /**
+     * @param int $life
+     */
+    protected function setLife($life)
+    {
+        $this->life = $life;
+    }
 
-        /**
-         * @param int $life
-         */
-        protected function setLife($life)
-        {
-            $this->_life = $life;
-        }
+    /**
+     * @return boolean
+     */
+    protected function isUpdating()
+    {
+        return $this->updating;
+    }
 
-        /**
-         * @return boolean
-         */
-        protected function isFlagUpdating()
-        {
-            return $this->_flagUpdating;
-        }
+    /**
+     * @param boolean $flagUpdating
+     */
+    protected function setUpdating($flagUpdating)
+    {
+        $this->updating = $flagUpdating;
+    }
 
-        /**
-         * @param boolean $flagUpdating
-         */
-        protected function setFlagUpdating($flagUpdating)
-        {
-            $this->_flagUpdating = $flagUpdating;
-        }
+    /**
+     * @param string $baseDir Place to save cache files. Must be readable & writable
+     * @param string $file    Cached file name
+     * @param int    $life    Seconds
+     *
+     * @throws \Exception
+     */
+    public function __construct($baseDir, $file, $life = 10)
+    {
+        try {
+            $this->validatePaths($baseDir);
+            $this->setBaseDir($baseDir);
+            $this->setFile($file);
+            $this->setLife($life);
 
-        /**
-         * @param string $baseDir Place to save cache files. Must be readable & writable
-         * @param string $file Cached file name
-         * @param int $life Seconds
-         * @throws \Exception
-         */
-        public function __construct( $baseDir, $file, $life = 10 ) {
-            try {
-                $this->validatePaths($baseDir);
-                $this->setBaseDir($baseDir);
-                $this->setFile($file);
-                $this->setLife($life);
-
-                if( file_exists($this->toPathFile()) ) {
-                    $this->setBirth( (integer) filemtime($this->toPathFile()) );
-                }
-                else {
-                    $this->setBirth( (integer) time() );
-                }
-                $this->setDeath($this->getBirth() + $this->getLife());
+            if (file_exists($this->toPathFile())) {
+                $this->setBirth((int) filemtime($this->toPathFile()));
+            } else {
+                $this->setBirth((int) time());
             }
-            catch(\Exception $e) {
-                throw $e;
-            }
+            $this->setDeath($this->getBirth() + $this->getLife());
+        } catch (\Exception $e) {
+            throw $e;
         }
+    }
 
-        /**
-         * @param string $baseDir Base dir path, must exists & must be writable.
-         * @throws CacheException
-         */
-        protected function validatePaths($baseDir){
-            if (!file_exists($baseDir)) {
-                throw new CacheException('Dir ' . $baseDir . ' doesn\'t exists ');
-            } elseif (!is_writable($baseDir)) {
-                throw new CacheException('Dir ' . $baseDir . ' isn\'t writable ');
+    /**
+     * Start cache until the $this->stop() method has been found.
+     */
+    public function start()
+    {
+        // Already cached ?
+        if (file_exists($this->toPathFile())) {
+            // Is up to date ?
+            if ($this->isValidCache()) {
+                readfile($this->toPathFile());
+            } else {
+                $this->setUpdating(true);
             }
+        } else {
+            $this->setUpdating(true);
         }
+        ob_start();
+    }
 
-        /**
-         * Start cache until the $this->stop() method has been found.
-         */
-        public function start(){
-            // Already cached ?
-            if( file_exists($this->toPathFile()) ) {
-                // Is up to date ?
-                if( $this->isValidCache() ) {
-                    readfile($this->toPathFile());
-                }
-                else {
-                    $this->setFlagUpdating(true);
-                }
-            }
-            else {
-                $this->setFlagUpdating(true);
-            }
-            ob_start();
-        }
-
-        /**
-         * @return int
-         */
-        public function stop() {
-            // Save
-            if($this->isFlagUpdating()){
-                $f = fopen($this->toPathFile(), 'w+');
-                fputs($f,ob_get_contents());
-                fclose($f);
-                ob_get_clean();
-                return readfile($this->toPathFile());
-            }
+    /**
+     * @return int
+     */
+    public function stop()
+    {
+        // Save
+        if ($this->isUpdating()) {
+            $f = fopen($this->toPathFile(), 'w+');
+            fputs($f, ob_get_contents());
+            fclose($f);
             ob_get_clean();
+
+            return readfile($this->toPathFile());
+        }
+        ob_get_clean();
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isValidCache()
+    {
+        return ($this->death < time()) ? false : true;
+    }
+
+    /**
+     * @return string
+     */
+    protected function toPathFile()
+    {
+        return $this->baseDir.$this->file;
+    }
+
+    /**
+     * @param string $baseDir Base dir path, must exists & must be writable.
+     *
+     * @throws CacheException
+     */
+    protected function validatePaths($baseDir)
+    {
+        if (!file_exists($baseDir)) {
+            throw new CacheException(sprintf('Dir %s doesn\'t exists ', $baseDir));
         }
 
-        protected function isValidCache() {
-            return ($this->_death < (integer) time()) ? false : true;
+        if (!is_writable($baseDir)) {
+            throw new CacheException(sprintf('Dir %s is not writable', $baseDir));
         }
-
-        protected function toPathFile(){
-            return $this->_baseDir . $this->_file;
-        }
-
     }
 }

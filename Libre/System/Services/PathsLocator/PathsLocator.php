@@ -48,7 +48,7 @@ class PathsLocator
      */
     public function setBaseUrl($baseUrl)
     {
-        $this->_baseUrl = rtrim($baseUrl,DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
+        $this->_baseUrl = rtrim($baseUrl, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
     }
 
     /**
@@ -64,7 +64,7 @@ class PathsLocator
      */
     public function setRealPath($realPath)
     {
-        $this->_realPath = rtrim($realPath,DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
+        $this->_realPath = rtrim($realPath, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
     }
 
     public function __construct($baseUrl, $realPath, $arrayConfig)
@@ -76,24 +76,22 @@ class PathsLocator
 
     private function getDir($key)
     {
-        return $this->getRealPath() . $this->getArrayConfig()[$key];
+        return $this->getRealPath().$this->getArrayConfig()[$key];
     }
 
     private function getUrl($key)
     {
 
-        return $this->getBaseUrl() . $this->getArrayConfig()[$key];
+        return $this->getBaseUrl().$this->getArrayConfig()[$key];
     }
 
     private function dispatcher($key, $type)
     {
         $type = strtoupper($type);
-        $key  = strtolower($key);
+        $key = strtolower($key);
 
-        if(isset($this->getArrayConfig()[$key]))
-        {
-            switch($type)
-            {
+        if (isset($this->getArrayConfig()[$key])) {
+            switch ($type) {
                 case 'DIR':
                     return $this->getDir($key);
                     break;
@@ -102,18 +100,17 @@ class PathsLocator
                     return $this->getUrl($key);
                     break;
             }
-        }
-        else
-        {
+        } else {
             return false;
         }
     }
 
     public function __call($name, $argument)
     {
-        $name   = str_replace('get', '', $name);
-        $type   = substr($name, -3);
-        $key    = str_replace($type, '', $name);
+        $name = str_replace('get', '', $name);
+        $type = substr($name, -3);
+        $key = str_replace($type, '', $name);
+
         return $this->dispatcher($key, $type);
     }
 
