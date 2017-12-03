@@ -1,0 +1,15 @@
+{
+    "name": "inwebo/libre",
+    "description": "Simple PHP7 M.V.C. framework",
+    "license": "Attribution 4.0 International",
+    "authors": [
+        {
+            "name": "inwebo",
+            "email": "github@inwebo.net"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php" : "^7.0"
+    }
+}
