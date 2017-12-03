@@ -1,4 +1,5 @@
 <?php
+
 namespace Libre\Routing {
 
     use Libre\Routing\UriParser\Segment;
@@ -11,9 +12,10 @@ namespace Libre\Routing {
      * Un segment représente un fragment de l'uri càd chaine entre /
      *
      * @package Libre\Routing
-     * @todo Métier segments est ce vraiment sa place ?
+     * @todo    Métier segments est ce vraiment sa place ?
      */
-    class Route {
+    class Route
+    {
         /**
          * @var string
          */
@@ -136,14 +138,15 @@ namespace Libre\Routing {
         }
 
         /**
-         * @param string $pattern
-         * @param string $controller
-         * @param string $action
-         * @param array $params
+         * @param string      $pattern
+         * @param string      $controller
+         * @param string      $action
+         * @param array       $params
          * @param null|string $alias
          * @param null|string $module
          */
-        public function __construct( $pattern, $controller, $action, $params = array(), $alias = null, $module = null ) {
+        public function __construct($pattern, $controller, $action, $params = [], $alias = null, $module = null)
+        {
             $this->setPattern($pattern);
             $this->setController($controller);
             $this->setAction($action);
@@ -157,14 +160,15 @@ namespace Libre\Routing {
          *
          * @return string
          */
-        protected function extractMandatorySegment() {
-            $crochetStart = strpos($this->pattern,"[");
-            if( $crochetStart !== false ) {
-                $mandatory = substr( $this->getPattern(), 0, $crochetStart );
-            }
-            else {
+        protected function extractMandatorySegment()
+        {
+            $crochetStart = strpos($this->pattern, "[");
+            if ($crochetStart !== false) {
+                $mandatory = substr($this->getPattern(), 0, $crochetStart);
+            } else {
                 $mandatory = $this->getPattern();
             }
+
             return $mandatory;
         }
 
@@ -175,28 +179,28 @@ namespace Libre\Routing {
         {
             $mandatory = $this->extractMandatorySegment();
             // 1 - Final slash ?
-            $finalSlash = (substr($mandatory, -1) === '/') ? true : false ;
+            $finalSlash = (substr($mandatory, -1) === '/') ? true : false;
 
-            $mandatoryAsArray = explode('/', trim($mandatory) );
+            $mandatoryAsArray = explode('/', trim($mandatory));
             //var_dump($mandatory);
-            $buffer = array();
-            $j=0;
-            foreach($mandatoryAsArray as $value){
+            $buffer = [];
+            $j = 0;
+            foreach ($mandatoryAsArray as $value) {
                 // Slash final
-                if($value === '') {
+                if ($value === '') {
                     //$buffer[] = '/';
-                }
-                else {
-                    if($j !== 0) {
+                } else {
+                    if ($j !== 0) {
                         $buffer[] = '/';
                     }
                     $buffer[] = $value;
                 }
                 $j++;
             }
-            if( $finalSlash ) {
+            if ($finalSlash) {
                 $buffer[] = '/';
             }
+
             return $buffer;
         }
 
@@ -212,7 +216,7 @@ namespace Libre\Routing {
                 $match
             );
 
-            return array_merge( $this->mandatoryToArray(), $match[0] )  ;
+            return array_merge($this->mandatoryToArray(), $match[0]);
         }
 
         /**
@@ -220,11 +224,12 @@ namespace Libre\Routing {
          */
         public function toSegments()
         {
-            $buffer = array();
+            $buffer = [];
             $segments = $this->toArray();
-            foreach($segments as $segment) {
+            foreach ($segments as $segment) {
                 $buffer[] = new Segment($segment);
             }
+
             return $buffer;
         }
 

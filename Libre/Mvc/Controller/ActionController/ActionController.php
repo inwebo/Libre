@@ -36,7 +36,7 @@ abstract class ActionController extends Controller
     }
 
     /**
-     * @param string $key Le nom de l'index du viewobject a setter
+     * @param string $key   Le nom de l'index du viewobject a setter
      * @param string $value La valeur
      */
     protected function toView($key, $value)
@@ -50,7 +50,7 @@ abstract class ActionController extends Controller
      */
     protected function setPartial($name, $path)
     {
-        $this->getLayout()->attachPartial($name,$path);
+        $this->getLayout()->attachPartial($name, $path);
     }
 
     /**
@@ -59,9 +59,10 @@ abstract class ActionController extends Controller
     public function init()
     {
         $view = new View(
-                new Template($this->getSystem()->getLayout()),
-                new View\ViewObject()
-            );
+            new Template($this->getSystem()->getLayout()),
+            new View\ViewObject()
+        );
+
         $view->setAutoRender(false);
         // Layout
         $this->setLayout($view);
@@ -73,6 +74,7 @@ abstract class ActionController extends Controller
     public function dispatch()
     {
         $this->getResponse()->appendSegment('layout', $this->getLayout()->render());
+
         return $this->getResponse();
     }
 

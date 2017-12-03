@@ -2,13 +2,16 @@
 
 namespace Libre\Mvc\Controller {
 
-    class RestOAuthException extends \Exception{}
+    class RestOAuthException extends \Exception
+    {
+    }
 
     use Libre\Http\Authentification\IAuthenticable;
     use Libre\Mvc\Controller;
 
     /**
      * Class RestController
+     *
      * @package Libre\Mvc\Controller\RestController
      */
     abstract class RestController extends Controller
@@ -17,7 +20,7 @@ namespace Libre\Mvc\Controller {
         /**
          * @var array
          */
-        protected $_decorators = array();
+        protected $_decorators = [];
 
         /**
          * @var bool
@@ -31,36 +34,36 @@ namespace Libre\Mvc\Controller {
         /**
          * @var array
          */
-        protected $_getBuffer = array();
+        protected $_getBuffer = [];
         /**
          * @var array
          */
-        protected $_putBuffer = array();
+        protected $_putBuffer = [];
         /**
          * @var array
          */
-        protected $_postBuffer = array();
+        protected $_postBuffer = [];
         /**
          * @var array
          */
-        protected $_optionsBuffer = array();
+        protected $_optionsBuffer = [];
         /**
          * @var array
          */
-        protected $_patchBuffer = array();
+        protected $_patchBuffer = [];
         /**
          * @var array
          */
-        protected $_updateBuffer = array();
+        protected $_updateBuffer = [];
         /**
          * @var array
          */
-        protected $_deleteBuffer = array();
+        protected $_deleteBuffer = [];
         #endregion
 
         #region Getters / Setters
         /**
-         * @param string $name
+         * @param string         $name
          * @param IAuthenticable $decorator
          */
         protected function addDecorator($name, IAuthenticable $decorator)
@@ -74,11 +77,11 @@ namespace Libre\Mvc\Controller {
          */
         protected function getDecorator($name)
         {
-            if( isset($this->_decorators[$name]) )
-            {
+            if (isset($this->_decorators[$name])) {
                 return $this->_decorators[$name];
             }
         }
+
         /**
          * @return array
          */
@@ -130,15 +133,15 @@ namespace Libre\Mvc\Controller {
         protected function initVerbsForceToPublic()
         {
             $this->_verbsForceToPublic =
-                array(
-                    "get" => false,
-                    "post" => false,
+                [
+                    "get"     => false,
+                    "post"    => false,
                     "options" => false,
-                    "update" => false,
-                    "delete" => false,
-                    "put" => false,
-                    "patch" => false
-                );
+                    "update"  => false,
+                    "delete"  => false,
+                    "put"     => false,
+                    "patch"   => false,
+                ];
         }
 
         /**
@@ -151,7 +154,7 @@ namespace Libre\Mvc\Controller {
 
         /**
          * @param string $name
-         * @param array $getBuffer
+         * @param array  $getBuffer
          */
         protected function setGetBuffer($name, $getBuffer)
         {
@@ -168,7 +171,7 @@ namespace Libre\Mvc\Controller {
 
         /**
          * @param string $name
-         * @param array $putBuffer
+         * @param array  $putBuffer
          */
         protected function setPutBuffer($name, $putBuffer)
         {
@@ -185,7 +188,7 @@ namespace Libre\Mvc\Controller {
 
         /**
          * @param string $name
-         * @param array $postBuffer
+         * @param array  $postBuffer
          */
         protected function setPostBuffer($name, $postBuffer)
         {
@@ -202,7 +205,7 @@ namespace Libre\Mvc\Controller {
 
         /**
          * @param string $name
-         * @param array $optionsBuffer
+         * @param array  $optionsBuffer
          */
         protected function setOptionsBuffer($name, $optionsBuffer)
         {
@@ -219,7 +222,7 @@ namespace Libre\Mvc\Controller {
 
         /**
          * @param string $name
-         * @param array $patchBuffer
+         * @param array  $patchBuffer
          */
         protected function setPatchBuffer($name, $patchBuffer)
         {
@@ -236,7 +239,7 @@ namespace Libre\Mvc\Controller {
 
         /**
          * @param string $name
-         * @param array $updateBuffer
+         * @param array  $updateBuffer
          */
         protected function setUpdateBuffer($name, $updateBuffer)
         {
@@ -253,7 +256,7 @@ namespace Libre\Mvc\Controller {
 
         /**
          * @param string $name
-         * @param array $deleteBuffer
+         * @param array  $deleteBuffer
          */
         protected function setDeleteBuffer($name, $deleteBuffer)
         {
@@ -342,12 +345,12 @@ namespace Libre\Mvc\Controller {
 
         public function dispatch()
         {
-            if( $this->validate() )
-            {
+            if ($this->validate()) {
                 $this->negotiateContentType();
                 $method = $this->negotiateRenderMethod();
                 $this->prepareResponse($method);
             }
+
             return $this->getResponse();
         }
 
@@ -394,7 +397,8 @@ namespace Libre\Mvc\Controller {
                     $to = 'ToHtml';
                     break;
             }
-            return $method = $verb . $to;
+
+            return $method = $verb.$to;
         }
 
         protected function prepareResponse($method)

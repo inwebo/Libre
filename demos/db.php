@@ -1,5 +1,6 @@
 <?php
-namespace Libre{
+
+namespace Libre {
 
     include_once 'header.php';
 
@@ -8,17 +9,17 @@ namespace Libre{
 
     use Libre\Database\Entity;
 
-    try{
+    try {
 
-        $mySql       = array(
+        $mySql = [
             'localhost',
             'Tests',
             'root',
-            'root'
-        );
+            'root',
+        ];
 
         //$sqlite2     = './assets/db/data.sqlite3';
-        $querySelect =  'SELECT * FROM tests' ;
+        $querySelect = 'SELECT * FROM tests';
         $sql = new MySql(
             $mySql[0],
             $mySql[1],
@@ -31,7 +32,7 @@ namespace Libre{
         //var_dump($sql->getPrimaryKey('tests'));
 
         //$sql->toStdClass();
-        $statement = $sql->query( $querySelect );
+        $statement = $sql->query($querySelect);
 
         //var_dump( $statement->count() );
         //var_dump( $statement->first() );
@@ -40,7 +41,8 @@ namespace Libre{
 
         //var_dump($sql->toStdClass()->query($querySelect)->getOffset(1));
 
-        class Mock extends Entity {
+        class Mock extends Entity
+        {
 
             static protected $_configuration;
 
@@ -55,10 +57,10 @@ namespace Libre{
             }
         }
 
-        $sqlite      = './assets/db/valid/data.sqlite3';
+        $sqlite = './assets/db/valid/data.sqlite3';
         $sqlite = new SQLite($sqlite);
 
-        Mock::setConfiguration($sqlite,'id', 'tests');
+        Mock::setConfiguration($sqlite, 'id', 'tests');
 
 
         $mock = Mock::load(1);
@@ -79,9 +81,7 @@ namespace Libre{
         //$mock->name = 'test2';
         //$mock->foo = 'bar';
         //$mock->save();
-    }
-    catch(\Exception $e)
-    {
+    } catch (\Exception $e) {
         echo $e->getMessage();
     }
 }

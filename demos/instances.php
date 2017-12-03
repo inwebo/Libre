@@ -7,10 +7,10 @@ namespace Libre{
 const BR = "<br>";
     try{
         $baseDir=ASSETS."instances/";
-        $url = "http://foo.test.fr";
+        $url = "http://www.test.fr";
         $url2 = "http://www.foo.test.fr";
         $factory = new InstanceFactory($url, $baseDir);
-        $instance = $factory->search();
+        $instance = $factory->find();
         var_dump($instance);
         echo('Parent : '.$instance->getParent());
         echo BR;

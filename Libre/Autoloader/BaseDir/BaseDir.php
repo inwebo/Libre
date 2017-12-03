@@ -1,4 +1,5 @@
 <?php
+
 namespace Libre\Autoloader {
 
     /**
@@ -83,17 +84,20 @@ namespace Libre\Autoloader {
 
         /**
          * Le fichier source de la classe demandée existe il
+         *
          * @param ClassInfos $classInfos
          * @return bool
          */
         public function isLoadable(ClassInfos $classInfos)
         {
             $this->_classInfos = $classInfos;
+
             return is_file($this->toPath());
         }
 
         /**
          * Représente un namespace sous forme de chaine PSR-0
+         *
          * @return string
          */
         public function toPath()
@@ -105,8 +109,12 @@ namespace Libre\Autoloader {
 
             $nameSpace = implode(DIRECTORY_SEPARATOR, $classArray);
             $fileName = str_replace('{class}', $this->_classInfos->getClassName(), $this->_classFilePattern);
-            $path = rtrim($this->_baseDir,DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $nameSpace . DIRECTORY_SEPARATOR . $fileName;
+            $path = rtrim(
+                    $this->_baseDir,
+                    DIRECTORY_SEPARATOR
+                ).DIRECTORY_SEPARATOR.$nameSpace.DIRECTORY_SEPARATOR.$fileName;
             $path = str_replace('_', DIRECTORY_SEPARATOR, $path);
+
             return $path;
         }
 

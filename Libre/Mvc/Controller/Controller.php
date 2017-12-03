@@ -1,4 +1,5 @@
 <?php
+
 namespace Libre\Mvc {
 
     use Libre\Http\Request;
@@ -50,19 +51,16 @@ namespace Libre\Mvc {
         }
 
         /**
-         * @param Request $request
+         * @param Request       $request
          * @param Response|null $response
          */
         public function __construct(Request $request, Response $response = null)
         {
             $this->setRequest($request);
 
-            if(!is_null($response))
-            {
+            if (!is_null($response)) {
                 $this->setResponse($response);
-            }
-            else
-            {
+            } else {
                 $this->setResponse(new Response());
             }
             $this->init();
@@ -71,10 +69,13 @@ namespace Libre\Mvc {
         /**
          * Est le constructeur local. Est appelé systématiquement à chaques instantiation
          */
-        protected function init(){}
+        protected function init()
+        {
+        }
 
         /**
          * Doit être surchargé
+         *
          * @return Response
          */
         public function dispatch()
