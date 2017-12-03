@@ -1,9 +1,9 @@
 <?php
 namespace Libre\Routing\UriParser {
 
-    use Libre\Routing\ISegmentComparable;
+    use Libre\Routing\ISegmentComparableInterface;
 
-    class SegmentConstraint implements ISegmentComparable {
+    class SegmentConstraintInterface implements ISegmentComparableInterface {
 
         protected $valid;
         protected $segmentUri;

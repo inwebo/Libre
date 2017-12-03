@@ -1,4 +1,5 @@
 <?php
+
 namespace Libre\System\Boot\BootStrap;
 
 use Libre\Files\Config;
@@ -11,11 +12,19 @@ use Libre\System\Boot\BootStrap\Mvc\Task\Router;
 use Libre\System\Boot\BootStrap\Mvc\Task\FrontController;
 use Libre\System\Boot\BootStrap\Mvc\Task\Rbac;
 
+/**
+ * Class Mvc
+ */
 class Mvc extends AbstractTasks
 {
+    /**
+     * Mvc constructor.
+     *
+     * @param System $system
+     * @param Config $config
+     */
     public function __construct(System $system, Config $config)
     {
-
         $this->attach(new Init($system, $config));
         $this->attach(new Modules($system, $config));
         $this->attach(new Rbac($system, $config));

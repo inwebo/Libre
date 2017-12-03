@@ -17,10 +17,11 @@ use Libre\Web\Instance;
 
 /**
  * Class System
- * @todo Les dépendences tain
+ * @todo    Les dépendences tain
  * @package Libre
  */
-class System {
+class System
+{
 
     #region Pattern Singleton
     /**
@@ -29,24 +30,38 @@ class System {
     static protected $_this;
     protected $_readOnly = false;
 
-    private function __construct() {}
-    private function __clone() {}
-    static public function this() {
-        if ( !isset( static::$_this ) ) {
-            $class= get_called_class();
+    private function __construct()
+    {
+    }
+
+    private function __clone()
+    {
+    }
+
+    static public function this()
+    {
+        if (!isset(static::$_this)) {
+            $class = get_called_class();
             static::$_this = new $class();
         }
+
         return static::$_this;
     }
-    public function readOnly($bool) {
-        if(is_bool($bool)) {
+
+    public function readOnly($bool)
+    {
+        if (is_bool($bool)) {
             $this->_readOnly = $bool;
         }
     }
-    public function __set($key, $value) {
+
+    public function __set($key, $value)
+    {
         static::$_this->$key = $value;
     }
-    public function __get($key) {
+
+    public function __get($key)
+    {
         return static::$_this->$key;
     }
     #endregion
@@ -56,6 +71,7 @@ class System {
      * @var Request
      */
     protected $_request;
+
     /**
      * @return Request
      */
@@ -63,6 +79,7 @@ class System {
     {
         return $this->_request;
     }
+
     /**
      * @param Request $request
      */
@@ -131,6 +148,7 @@ class System {
      * @var Config
      */
     protected $_instanceConfig;
+
     /**
      * @return Instance
      */
@@ -189,6 +207,7 @@ class System {
      * @var array
      */
     protected $_modules;
+
     /**
      * @return AdjustablePriorityQueue
      */
@@ -196,6 +215,7 @@ class System {
     {
         return $this->_modulesQueue;
     }
+
     /**
      * @param Module $module
      */
@@ -203,10 +223,12 @@ class System {
     {
         $this->_modulesQueue->insert($module, $module->getPriority());
     }
+
     public function initModulesQueue()
     {
         $this->_modulesQueue = new AdjustablePriorityQueue(AdjustablePriorityQueue::ASC);
     }
+
     public function initModules()
     {
         $this->_modules = [];
@@ -231,12 +253,12 @@ class System {
 
     /**
      * @param $name
+     *
      * @return Module
      */
     public function getModule($name)
     {
-        if( isset($this->getModules()[$name]) )
-        {
+        if (isset($this->getModules()[$name])) {
             return $this->getModules()[$name];
         }
     }
@@ -247,6 +269,7 @@ class System {
      * @var AdjustablePriorityQueue
      */
     protected $_themesQueue;
+
     /**
      * @return AdjustablePriorityQueue
      */
@@ -254,6 +277,7 @@ class System {
     {
         return $this->_themesQueue;
     }
+
     /**
      * @param $theme
      */
@@ -261,6 +285,7 @@ class System {
     {
         $this->getThemesQueue()->insert($theme, $theme->getPriority());
     }
+
     public function initThemesQueue()
     {
         $this->_themesQueue = new AdjustablePriorityQueue();
@@ -270,6 +295,7 @@ class System {
      * @var array
      */
     protected $_themes;
+
     /**
      * @return array
      */
@@ -277,9 +303,10 @@ class System {
     {
         return $this->_themes;
     }
+
     /**
      * @param string $name
-     * @param array $themes
+     * @param array  $themes
      */
     public function setThemes($name, $themes)
     {
@@ -288,15 +315,16 @@ class System {
 
     /**
      * @param $name
+     *
      * @return Theme
      */
     public function getTheme($name)
     {
-        if(isset($this->getThemes()[$name]))
-        {
+        if (isset($this->getThemes()[$name])) {
             return $this->getThemes()[$name];
         }
     }
+
     public function initThemes()
     {
         $this->_themes = [];
@@ -307,11 +335,12 @@ class System {
     /**
      * @var array
      */
-    protected $_css = array();
+    protected $_css = [];
     /**
      * @var array
      */
-    protected $_js = array();
+    protected $_js = [];
+
     /**
      * @return array
      */
@@ -325,11 +354,9 @@ class System {
      */
     public function setCss($css)
     {
-        if( is_array($css) )
-        {
+        if (is_array($css)) {
             $this->_css = array_merge($this->_css, $css);
-        }
-        else {
+        } else {
             $this->_css[] = $css;
         }
     }
@@ -347,11 +374,9 @@ class System {
      */
     public function setJs($js)
     {
-        if( is_array($js) )
-        {
+        if (is_array($js)) {
             $this->_js = array_merge($this->_js, $js);
-        }
-        else {
+        } else {
             $this->_js[] = $js;
         }
     }
@@ -368,10 +393,10 @@ class System {
      */
     public function getRoutesCollection()
     {
-        if( is_null($this->_routesCollection) )
-        {
+        if (is_null($this->_routesCollection)) {
             $this->_routesCollection = RoutesCollection::get('default');
         }
+
         return $this->_routesCollection;
     }
     #endregion
@@ -381,6 +406,7 @@ class System {
      * @var Routed
      */
     protected $_routed;
+
     /**
      * @return Routed
      */
@@ -388,6 +414,7 @@ class System {
     {
         return $this->_routed;
     }
+
     /**
      * @param Routed $routed
      */
@@ -430,21 +457,24 @@ class System {
     {
         //@todo buggé le bordel
         $ci = new ClassInfos($this->getRouted()->getDispatchable());
+
         //$ci->getClassName();
 
-        return  $this->getInstanceLocator()->getViewsDir() .
-                strtolower($ci->getClassName()) . DIRECTORY_SEPARATOR .
-                $this->getRouted()->getAction()  . Routed::FILE_EXT;
+        return $this->getInstanceLocator()->getViewsDir().
+            strtolower($ci->getClassName()).DIRECTORY_SEPARATOR.
+            $this->getRouted()->getAction().Routed::FILE_EXT;
     }
+
     public function getModuleActionView($moduleName)
     {
         $ci = new ClassInfos($this->getRouted()->getDispatchable());
 
         $module = $this->getModule($moduleName);
-        return  $module->getPathsLocator()->getViewsDir() .
-                strtolower($ci->getClassName()) .
-                DIRECTORY_SEPARATOR .
-                $this->getRouted()->getAction() . Routed::FILE_EXT;
+
+        return $module->getPathsLocator()->getViewsDir().
+            strtolower($ci->getClassName()).
+            DIRECTORY_SEPARATOR.
+            $this->getRouted()->getAction().Routed::FILE_EXT;
     }
     #endregion
 }

@@ -1,9 +1,14 @@
 <?php
-
+/**
+ * Inwebo
+ */
 namespace Libre;
 
-use Libre\CacheException;
+use Libre\Cache\CacheException;
 
+/**
+ * Class Cache
+ */
 class Cache
 {
     /**
@@ -29,7 +34,7 @@ class Cache
     /**
      * @var bool
      */
-    protected $flagUpdating = false;
+    protected $updating = false;
 
     /**
      * @return string
@@ -114,17 +119,17 @@ class Cache
     /**
      * @return boolean
      */
-    protected function isFlagUpdating()
+    protected function isUpdating()
     {
-        return $this->flagUpdating;
+        return $this->updating;
     }
 
     /**
      * @param boolean $flagUpdating
      */
-    protected function setFlagUpdating($flagUpdating)
+    protected function setUpdating($flagUpdating)
     {
-        $this->flagUpdating = $flagUpdating;
+        $this->updating = $flagUpdating;
     }
 
     /**
@@ -143,9 +148,9 @@ class Cache
             $this->setLife($life);
 
             if (file_exists($this->toPathFile())) {
-                $this->setBirth((int)filemtime($this->toPathFile()));
+                $this->setBirth((int) filemtime($this->toPathFile()));
             } else {
-                $this->setBirth((int)time());
+                $this->setBirth((int) time());
             }
             $this->setDeath($this->getBirth() + $this->getLife());
         } catch (\Exception $e) {
@@ -164,10 +169,10 @@ class Cache
             if ($this->isValidCache()) {
                 readfile($this->toPathFile());
             } else {
-                $this->setFlagUpdating(true);
+                $this->setUpdating(true);
             }
         } else {
-            $this->setFlagUpdating(true);
+            $this->setUpdating(true);
         }
         ob_start();
     }
@@ -178,7 +183,7 @@ class Cache
     public function stop()
     {
         // Save
-        if ($this->isFlagUpdating()) {
+        if ($this->isUpdating()) {
             $f = fopen($this->toPathFile(), 'w+');
             fputs($f, ob_get_contents());
             fclose($f);
@@ -194,7 +199,7 @@ class Cache
      */
     protected function isValidCache()
     {
-        return ($this->death < (int)time()) ? false : true;
+        return ($this->death < time()) ? false : true;
     }
 
     /**
@@ -205,7 +210,6 @@ class Cache
         return $this->baseDir.$this->file;
     }
 
-
     /**
      * @param string $baseDir Base dir path, must exists & must be writable.
      *
@@ -214,10 +218,11 @@ class Cache
     protected function validatePaths($baseDir)
     {
         if (!file_exists($baseDir)) {
-            throw new CacheException('Dir '.$baseDir.' doesn\'t exists ');
+            throw new CacheException(sprintf('Dir %s doesn\'t exists ', $baseDir));
         }
+
         if (!is_writable($baseDir)) {
-            throw new CacheException('Dir '.$baseDir.' isn\'t writable ');
+            throw new CacheException(sprintf('Dir %s is not writable', $baseDir));
         }
     }
 }

@@ -1,13 +1,29 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: inwebo
- * Date: 05/11/17
- * Time: 17:16
+ * @author    Julien Hannotin <julien@ddf.agency>
+ *
+ * @copyright 2017 Digital Dealer Factory
+ *
+ * @license   All rights reserved
+ *
+ * Date: 30/11/17
+ * Time: 13:38
+ *
  */
 
-namespace Libre;
+namespace Libre\Cache;
 
+/**
+ * @author    Julien Hannotin <julien@ddf.agency>
+ *
+ * @copyright 2017 Digital Dealer Factory
+ *
+ * @license   All rights reserved
+ *
+ * Date: 30/11/17
+ * Time: 13:38
+ *
+ */
 class CacheException extends \Exception
 {
 

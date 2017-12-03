@@ -1,7 +1,5 @@
 <?php
-/**
- *
- */
+
 namespace Libre\Http;
 
 /**
@@ -10,32 +8,34 @@ namespace Libre\Http;
  * Doit pouvoir représenter un ensemble d'en tête HTTP ainsi que le corps de la réponse.
  *
  * Le corps de la réponse doit être segmentable.
+ *
+ * @package Libre\Http
  */
 class Response
 {
     /**
      * @var bool
      */
-    protected $forceRender = true;
+    protected $_forceRender = true;
     /**
      * @var \ArrayObject
      */
-    protected $headers;
+    protected $_headers;
     /**
      * @var array
      */
-    protected $segments;
+    protected $_segments;
     /**
      * @var string
      */
-    protected $contentType;
+    protected $_contentType;
 
     /**
      * @return boolean
      */
     public function isForceRender()
     {
-        return $this->forceRender;
+        return $this->_forceRender;
     }
 
     /**
@@ -43,7 +43,7 @@ class Response
      */
     public function getSegments()
     {
-        return $this->segments;
+        return $this->_segments;
     }
 
     /**
@@ -54,7 +54,7 @@ class Response
      */
     public function prependSegment($name, $content)
     {
-        $this->segments = array_merge([$name => $content], $this->getSegments());
+        $this->_segments = array_merge([$name => $content], $this->getSegments());
     }
 
     /**
@@ -65,19 +65,20 @@ class Response
      */
     public function appendSegment($name, $content)
     {
-        $this->segments = array_merge((array) $this->segments, [$name => $content]);
+        $this->_segments = array_merge((array)$this->_segments, [$name => $content]);
     }
 
     /**
      * Retourne le contenus d'un segment nommé.
      *
      * @param string $name
+     *
      * @return string
      */
     public function getSegment($name)
     {
-        if (isset($this->segments[$name])) {
-            return $this->segments[$name];
+        if (isset($this->_segments[$name])) {
+            return $this->_segments[$name];
         }
     }
 
@@ -88,8 +89,8 @@ class Response
      */
     public function deleteSegment($name)
     {
-        if (isset($this->segments[$name])) {
-            unset($this->segments[$name]);
+        if (isset($this->_segments[$name])) {
+            unset($this->_segments[$name]);
         }
     }
 
@@ -98,13 +99,14 @@ class Response
      */
     public function setForceRender($forceRender)
     {
-        $this->forceRender = $forceRender;
+        $this->_forceRender = $forceRender;
     }
 
     /**
      * @param string     $key     Le nom de l'entête à setter
      * @param string     $value   La valeur de l'entête
      * @param bool|false $replace Si la clef est déjà présente dans le tableau header. Force son écrasement.
+     *
      * @link http://php.net/manual/fr/function.header.php
      */
     public function setHeader($key, $value, $replace = true)
@@ -121,6 +123,7 @@ class Response
 
     /**
      * @param $key
+     *
      * @return mixed
      */
     public function getHeader($key)
@@ -135,7 +138,7 @@ class Response
      */
     public function getHeaders()
     {
-        return $this->headers;
+        return $this->_headers;
     }
 
     public function headers()
@@ -152,12 +155,12 @@ class Response
      */
     public function setContentType($code)
     {
-        $this->contentType = $code;
+        $this->_contentType = $code;
     }
 
     public function getContentType()
     {
-        return $this->contentType;
+        return $this->_contentType;
     }
 
     /**
@@ -165,9 +168,9 @@ class Response
      */
     public function __construct($forceRender = true)
     {
-        $this->forceRender = $forceRender;
-        $this->headers = new \ArrayObject();
-        $this->segments = [];
+        $this->_forceRender = $forceRender;
+        $this->_headers = new \ArrayObject();
+        $this->_segments = [];
     }
 
     /**
@@ -177,12 +180,12 @@ class Response
     {
         $this->headers();
         if ($this->isForceRender()) {
-            foreach ($this->segments as $segment) {
+            foreach ($this->_segments as $segment) {
                 echo $segment;
             }
         }
         if (!$this->isForceRender()) {
-            return $this->segments;
+            return $this->_segments;
         }
     }
 

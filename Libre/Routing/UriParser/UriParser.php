@@ -4,7 +4,7 @@ namespace Libre\Routing {
 
     use Libre\Instance;
 
-    use Libre\Routing\UriParser\SegmentConstraint;
+    use Libre\Routing\UriParser\SegmentConstraintInterface;
 
 
     /**
@@ -91,7 +91,7 @@ namespace Libre\Routing {
                     // Alias segment courant
                     $uriSegment = $uriSegments[$j];
 
-                    $constraint = new SegmentConstraint( $uriSegment, $routeSegment );
+                    $constraint = new SegmentConstraintInterface( $uriSegment, $routeSegment );
 
                     // Le segment un element static
                     // @todo static
