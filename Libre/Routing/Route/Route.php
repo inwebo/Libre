@@ -13,8 +13,7 @@ use Libre\Routing\UriParser\Segment;
  * Une route est formée de segments, qui peuvent être obligatoire ou facultatif.
  * Un segment représente un fragment de l'uri càd chaine entre /
  *
- * @package Libre\Routing
- * @todo    Métier segments est ce vraiment sa place ?
+ * @todo Métier segments est ce vraiment sa place ?
  */
 class Route
 {
@@ -64,7 +63,7 @@ class Route
     }
 
     /**
-     * @param null|string $name
+     * @param string $name
      */
     public function setName($name)
     {

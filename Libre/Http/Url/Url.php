@@ -47,10 +47,11 @@ class Url
     /**
      * @param bool $protocol
      * @param bool $uri
+     * @param bool $port
      *
      * @return string
      */
-    public static function getUrl($protocol = true, $uri = true)
+    public static function getUrl($protocol = true, $uri = true, $port = false)
     {
         $url = "";
         if ($protocol) {
@@ -60,7 +61,7 @@ class Url
         }
 
         $url .= $_SERVER["SERVER_NAME"];
-        $url .= ($_SERVER["SERVER_PORT"] !== (int) "80") ? ":".$_SERVER["SERVER_PORT"] : '';
+        $url .= ($_SERVER["SERVER_PORT"] !== 80 && $port) ? ":".$_SERVER["SERVER_PORT"] : '';
         if ($uri) {
             $url .= $_SERVER["REQUEST_URI"];
         }

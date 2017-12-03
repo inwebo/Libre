@@ -78,7 +78,7 @@ class ClassInfos
             if ($offset > 1) {
                 $a = $asArray;
                 $toPop = count($a) - $offset;
-                for ($i = 0; $i < $toPop; $i++) {
+                for ($i = 0; $i < $toPop; ++$i) {
                     array_pop($a);
                 }
 

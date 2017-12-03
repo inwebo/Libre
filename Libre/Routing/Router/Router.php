@@ -97,7 +97,7 @@ namespace Libre\Routing {
         /**
          * Si l'uri valide un nom de route alors retourn route.
          * @return bool|Routed|mixed
-         * @throws EmptyRoutesCollection
+         * @throws EmptyRoutesCollectionException
          * @throws RouterExceptionError404
          * @throws \Exception
          */

@@ -8,6 +8,7 @@ namespace Libre{
     use Libre\Autoloader\Handler;
     use Libre\Http\Url;
     use Libre\Modules;
+    use Libre\Routing\RoutesCollection\EmptyRoutesCollectionException;
 
     try{
 /*
@@ -63,7 +64,8 @@ namespace Libre{
         Handler::handle("Libre\\Modules\\Foo");
 */
         spl_autoload_register("\\Libre\\Autoloader\\Handler::handle");
-
+        $a = new EmptyRoutesCollectionException("");
+//        dump($a);
     }
     catch(\Exception $e)
     {
