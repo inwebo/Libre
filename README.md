@@ -2,7 +2,7 @@
 Libre, usefull PHP5 framework
 
 ## Requirements
-* PHP 5.4+
+* PHP 7+
 
 ## What can i do ?
 * Databases abstraction layer, able to use MySQL, SQlite and many others
@@ -17,3 +17,21 @@ Libre, usefull PHP5 framework
 * Well organized system, extensive use of php NAMESPACES
 * Simple Theming system
 * And more
+
+## Installation
+
+```bash
+apt-get install node
+```
+
+```bash
+apt-get install npm
+```
+
+```bash
+npm install --global gulp-cli
+```
+
+```bash
+gulp make
+```
