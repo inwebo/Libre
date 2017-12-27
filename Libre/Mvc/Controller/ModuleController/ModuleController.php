@@ -2,10 +2,10 @@
 
 namespace Libre\Mvc\Controller {
 
-    use Libre\Mvc\Controller;
+    use Libre\Mvc\AbstractController;
     use Libre\View\Template;
 
-    class ModuleController extends ActionController
+    class ModuleController extends ActionAbstractController
     {
         public function render()
         {
@@ -15,12 +15,10 @@ namespace Libre\Mvc\Controller {
 
         protected function getModuleName()
         {
-            $isModule = explode('Modules',get_called_class());
-            if( isset($isModule[1]) )
-            {
+            $isModule = explode('Modules', get_called_class());
+            if (isset($isModule[1])) {
                 $name = explode('\\', $isModule[1]);
-                if( isset($name[1]) )
-                {
+                if (isset($name[1])) {
                     return $name[1];
                 }
             }

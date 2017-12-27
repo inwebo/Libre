@@ -2,7 +2,7 @@
 
 namespace Libre\Mvc\Controller {
 
-    use Libre\Mvc\Controller;
+    use Libre\Mvc\AbstractController;
     use Libre\View\Template;
 
     class AdminController extends ModuleController

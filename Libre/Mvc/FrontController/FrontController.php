@@ -151,7 +151,7 @@ namespace Libre\Mvc {
                 {
                     $className = $this->getRouted()->getDispatchable();
 
-                    /** @var Controller $instance */
+                    /** @var AbstractController $instance */
                     // More efficient than Reflection classes
                     $instance = new $className(Request::get(Url::get()));
 

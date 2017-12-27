@@ -2,17 +2,17 @@
 
 namespace Libre\Mvc\Controller\Traits {
 
-    use Libre\Database\Driver\IDriver;
+    use Libre\Database\Driver\DriverInterface;
     use Libre\Database\Driver\MySql;
 
     trait DataBase {
         /**
-         * @var IDriver
+         * @var DriverInterface
          */
         protected $_dbDriver;
 
         /**
-         * @return IDriver
+         * @return DriverInterface
          */
         final public function getDb()
         {
@@ -20,9 +20,9 @@ namespace Libre\Mvc\Controller\Traits {
         }
 
         /**
-         * @param IDriver $driver
+         * @param DriverInterface $driver
          */
-        final public function setDb(IDriver $driver)
+        final public function setDb(DriverInterface $driver)
         {
             $this->_dbDriver = $driver;
         }

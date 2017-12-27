@@ -2,7 +2,7 @@
 
 namespace Libre\Database {
 
-    use Libre\Database\Driver\IDriver;
+    use Libre\Database\Driver\DriverInterface;
 
     class Drivers {
 
@@ -23,10 +23,10 @@ namespace Libre\Database {
         }
 
         /**
-         * @param string $name
-         * @param IDriver $driver
+         * @param string          $name
+         * @param DriverInterface $driver
          */
-        static public function add( $name, IDriver $driver ) {
+        static public function add( $name, DriverInterface $driver ) {
             if ( !isset( self::$_instances ) ) {
                 self::$_instances = new \stdClass();
             }

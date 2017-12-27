@@ -2,9 +2,9 @@
 
 namespace Libre\Mvc\Controller {
 
-    use Libre\Mvc\Controller;
+    use Libre\Mvc\AbstractController;
 
-    class StaticController extends ActionController
+    class StaticController extends ActionAbstractController
     {
         /**
          * @var Controller\Traits\StaticView

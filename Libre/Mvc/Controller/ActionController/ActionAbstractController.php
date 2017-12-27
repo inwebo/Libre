@@ -1,12 +1,12 @@
 <?php
 namespace Libre\Mvc\Controller;
 
-use Libre\Mvc\Controller;
+use Libre\Mvc\AbstractController;
 use Libre\View;
 use Libre\Http\Response;
 use Libre\View\Template;
 
-abstract class ActionController extends Controller
+abstract class ActionAbstractController extends AbstractController
 {
     /**
      * @var Controller\Traits\System

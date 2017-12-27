@@ -7,14 +7,14 @@ namespace Libre\Mvc\Controller {
     }
 
     use Libre\Http\Authentification\IAuthenticable;
-    use Libre\Mvc\Controller;
+    use Libre\Mvc\AbstractController;
 
     /**
      * Class RestController
      *
      * @package Libre\Mvc\Controller\RestController
      */
-    abstract class RestController extends Controller
+    abstract class RestAbstractController extends AbstractController
     {
         #region Attributs
         /**
