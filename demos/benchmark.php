@@ -1,9 +1,9 @@
 <?php
 namespace Libre{
 
-    use Libre\Helpers\Benchmark;
 
-    include_once 'header.php';
+//    include_once 'header.php';
+    include('../Libre/Helpers/Benchmark/Benchmark.php');
 
     try{
         $results =array();
