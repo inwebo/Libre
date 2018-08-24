@@ -2,29 +2,28 @@
 
 namespace Libre\Web;
 
-
-use Libre\Exception;
 use Libre\Web\Rss\Channel;
 use Libre\Web\Rss\Item;
 
-class Rss {
+class Rss
+{
 
     /**
      * @var \DOMDocument
      */
-    protected $_dom;
+    protected $dom;
 
     /**
      * @var Channel
      */
-    protected $_channel;
+    protected $channel;
 
     /**
      * @return Channel
      */
     public function getChannel()
     {
-        return $this->_channel;
+        return $this->channel;
     }
 
     /**
@@ -32,7 +31,7 @@ class Rss {
      */
     public function setChannel($channel)
     {
-        $this->_channel = $channel;
+        $this->channel = $channel;
     }
 
     /**
@@ -40,7 +39,7 @@ class Rss {
      */
     public function getDom()
     {
-        return $this->_dom;
+        return $this->dom;
     }
 
     /**
@@ -49,17 +48,15 @@ class Rss {
     protected function setDom($dom)
     {
         $dom->formatOutput = true;
-        $this->_dom = $dom;
+        $this->dom = $dom;
     }
 
     public function __construct($itemsArray)
     {
-        try{
+        try {
             $this->setChannel(new Channel($itemsArray));
             $this->setDom(new \DOMDocument());
-        }
-        catch(\Exception $e)
-        {
+        } catch (\Exception $e) {
             throw $e;
         }
     }
@@ -79,21 +76,18 @@ class Rss {
         $attr = $dom->createAttribute('version');
         $attr->value = "2.0";
         $rss->appendChild($attr);
-        foreach($this->getChannel()->getElements() as $k=>$v)
-        {
-            if( !is_null($v) ){
-                $rss->appendChild($this->elementToNode($dom,$k,$v));
+        foreach ($this->getChannel()->getElements() as $k => $v) {
+            if (!is_null($v)) {
+                $rss->appendChild($this->elementToNode($dom, $k, $v));
             }
         }
 
-        foreach($this->getChannel()->getItems() as $item)
-        {
+        foreach ($this->getChannel()->getItems() as $item) {
             $itemNode = $dom->createElement('item');
             /* @var \Libre\Web\Rss\Item $item */
-            foreach($item->getElements() as $k=>$v)
-            {
-                if( !is_null($v) ){
-                    $itemNode->appendChild($this->elementToNode($dom,$k,$v));
+            foreach ($item->getElements() as $k => $v) {
+                if (!is_null($v)) {
+                    $itemNode->appendChild($this->elementToNode($dom, $k, $v));
                 }
             }
             $rss->appendChild($itemNode);
@@ -107,6 +101,7 @@ class Rss {
         $description = $dom->createElement(trim($element));
         $descriptionContent = $dom->createTextNode($text);
         $description->appendChild($descriptionContent);
+
         return $description;
     }
 

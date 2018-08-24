@@ -1,19 +1,20 @@
 <?php
-namespace Libre\View\Helpers {
 
-    use Libre\View\Interfaces ;
+namespace Libre\View\Helpers;
 
-    class BasePath implements IViewHelper
+use Libre\View\Interfaces;
+
+class BasePath implements IViewHelper
+{
+    protected $_basePath;
+
+    public function __construct($basePath)
     {
-        protected $_basePath;
+        $this->_basePath = $basePath;
+    }
 
-        public function __construct($basePath) {
-            $this->_basePath = $basePath;
-        }
-
-        public function __toString($path = null) {
-            return $this->_basePath . $path;
-        }
-
+    public function __toString($path = null)
+    {
+        return $this->_basePath.$path;
     }
 }

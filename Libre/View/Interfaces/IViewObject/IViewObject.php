@@ -1,5 +1,7 @@
 <?php
 
-namespace Libre\View\Interfaces {
-    interface IViewObject {}
+namespace Libre\View\Interfaces;
+
+interface IViewObject
+{
 }

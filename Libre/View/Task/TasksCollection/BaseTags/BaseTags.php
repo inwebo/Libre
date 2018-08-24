@@ -1,9 +1,10 @@
 <?php
+
 namespace Libre\View\Task\TasksCollection;
 
 /**
  * Collection de tâches.
- * 
+ *
  * @category   Libre
  * @package    View
  * @subpackage Template
@@ -25,37 +26,39 @@ use Libre\View\Parser\Logic\Loop;
 use Libre\View\Parser\Logic\Template;
 use Libre\View\Parser\Logic\Vars;
 
-class BaseTags extends \SplObjectStorage {
+class BaseTags extends \SplObjectStorage
+{
 
     protected $dataProvider;
 
     /**
      * Setter des tâches de recherche des tags de bases
      */
-    public function __construct( $dataProvider ) {
+    public function __construct($dataProvider)
+    {
 
         $this->dataProvider = $dataProvider;
 
         // Var_dump
-        $this->attach( new Task( new Tag(Tag::VAR_DUMP), new VarDump($this->dataProvider)) );
+        $this->attach(new Task(new Tag(Tag::VAR_DUMP), new VarDump($this->dataProvider)));
 
         // No parse pattern {noparse}{/noparse}
-        $this->attach( new Task( new Tag(Tag::ESCAPEMENT), new Escapement($this->dataProvider)) );
+        $this->attach(new Task(new Tag(Tag::ESCAPEMENT), new Escapement($this->dataProvider)));
 
         // Loop pattern {loop="array"}{/loop}
-        $this->attach( new Task( new Tag(Tag::LOOP), new Loop($this->dataProvider) ) );
+        $this->attach(new Task(new Tag(Tag::LOOP), new Loop($this->dataProvider)));
 
         // variable pattern {$vars}
-        $this->attach( new Task( new Tag(Tag::VARS), new Vars($this->dataProvider) ) );
+        $this->attach(new Task(new Tag(Tag::VARS), new Vars($this->dataProvider)));
 
         // Constante pattern {CONSTANTE}
-        $this->attach( new Task( new Tag(Tag::CONSTS), new Constant($this->dataProvider) ) );
+        $this->attach(new Task(new Tag(Tag::CONSTS), new Constant($this->dataProvider)));
 
         // Include pattern {includer="fileToInclude"}
-        $this->attach( new Task( new Tag(Tag::INCLUDER), new Includer($this->dataProvider) ) );
+        $this->attach(new Task(new Tag(Tag::INCLUDER), new Includer($this->dataProvider)));
 
         // Tpl pattern {tpl="tplToInclude"}
-        $this->attach( new Task( new Tag(Tag::TEMPLATE), new Template($this->dataProvider) ) );
+        $this->attach(new Task(new Tag(Tag::TEMPLATE), new Template($this->dataProvider)));
 
         // Href
         //$this->attach(new \Libre\Views\Template\Task(new \Libre\Views\Template\Tag(PATTERN_HREF), new \Libre\Views\Template\Logic\LogicHref()));

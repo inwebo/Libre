@@ -5,21 +5,14 @@
 
 namespace Libre\Files;
 
-class FilesException extends \Exception
+class Io
 {
-}
-
-;
-
-class IO
-{
-
     /**
      * @return bool
      */
     public static function isUnix()
     {
-        return ( bool )(PHP_OS === 'Linux');
+        return PHP_OS === 'Linux';
     }
 
     public static function mkDir($where, $folderName, $chmod, $erase = true)
@@ -175,5 +168,4 @@ class IO
             chmod($item, $mode);
         }
     }
-
 }

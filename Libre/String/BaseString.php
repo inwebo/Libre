@@ -42,9 +42,9 @@ class BaseString
     public function startWith($string, $ltr = true)
     {
         return ($ltr) ? (substr('@sujet', 0, strlen($string)) === $string) : (substr(
-            '@sujet',
-            strlen($string) * -1
-        ) === $string);
+                '@sujet',
+                strlen($string) * -1
+            ) === $string);
     }
 
     /**

@@ -1,7 +1,9 @@
 <?php
+
 namespace Libre\Web\Rss;
 
-class Reader {
+class Reader
+{
 
     /**
      * @var \DOMDocument
@@ -50,18 +52,14 @@ class Reader {
         $items = new \ArrayIterator();
         $xpath = new \DOMXPath($this->getDom());
         $results = $xpath->query("/rss/channel/item");
-        foreach($results as $element)
-        {
-            $config = array();
+        foreach ($results as $element) {
+            $config = [];
 
             /* @var \DOMElement $element */
-            if( $element->hasChildNodes() )
-            {
-                foreach($element->childNodes as $domElement)
-                {
+            if ($element->hasChildNodes()) {
+                foreach ($element->childNodes as $domElement) {
                     /* @var \DOMElement $domElement */
-                    if( is_a($domElement, '\\DOMElement') )
-                    {
+                    if (is_a($domElement, '\\DOMElement')) {
                         $config[$domElement->nodeName] = $domElement->nodeValue;
                     }
 
@@ -72,51 +70,40 @@ class Reader {
             $items->rewind();
 
         }
+
         return $items;
     }
 
+    /**
+     * @return Channel
+     */
     public function getChannel()
     {
         $xpath = new \DOMXPath($this->getDom());
         $results = $xpath->query("/rss/channel");
-        foreach($results as $element)
-        {
-            $config = array();
+        foreach ($results as $element) {
+            $config = [];
 
-            //var_dump($element);
             /* @var \DOMElement $element */
-            if( $element->hasChildNodes() )
-            {
-                foreach($element->childNodes as $domElement)
-                {
+            if ($element->hasChildNodes()) {
+                foreach ($element->childNodes as $domElement) {
                     /* @var \DOMElement $domElement */
                     //var_dump($domElement);
-                    if( is_a($domElement, '\\DOMElement') )
-                    {
+                    if (is_a($domElement, '\\DOMElement')) {
                         $config[$domElement->nodeName] = $domElement->nodeValue;
                     }
                 }
             }
             $channel = new Channel($config);
-            //var_dump($channel);
             $items = $this->getItems();
             $items->rewind();
-            //var_dump((array)$items);
-            foreach($items as $item)
-            {
+            foreach ($items as $item) {
                 $channel->setItems($item);
             }
 
             $channel->getItems()->rewind();
-            /*
-            foreach($channel->getItems() as $item)
-            {
-                var_dump($item);
-                //echo $item->getElement('description');
-            }
-            */
-
         }
+
         return $channel;
     }
 

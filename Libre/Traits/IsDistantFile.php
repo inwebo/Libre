@@ -1,31 +1,29 @@
 <?php
 
-namespace Libre\Traits {
+namespace Libre\Traits;
 
-    trait isDistantFile
+trait isDistantFile
+{
+
+    public function isDistantFile($filename)
     {
 
-        public function isDistantFile($filename)
-        {
+        if (filter_var($filename, FILTER_VALIDATE_URL)) {
 
-            if (filter_var($filename, FILTER_VALIDATE_URL)) {
+            $opts = [
+                'http' => [
+                    'method' => 'HEAD',
+                ],
+            ];
 
-                $opts = [
-                    'http' => [
-                        'method' => 'HEAD',
-                    ],
-                ];
+            $context = stream_context_create($opts);
 
-                $context = stream_context_create($opts);
+            $file = file_get_contents($filename, false, $context, null, 0);
 
-                $file = file_get_contents($filename, false, $context, null, 0);
-
-                return ($file !== false) ? true : false;
-            }
-
-            return false;
+            return ($file !== false) ? true : false;
         }
 
+        return false;
     }
 
 }

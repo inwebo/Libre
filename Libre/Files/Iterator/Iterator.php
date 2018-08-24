@@ -2,7 +2,6 @@
 
 namespace Libre\Files;
 
-
 use Libre\Files\Filters\DirFilter;
 use Libre\Files\Filters\FileFilter;
 
